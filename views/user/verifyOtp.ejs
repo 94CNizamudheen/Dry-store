@@ -1,0 +1,155 @@
+<%- include("../../views/partials/user/header.ejs") %>
+
+<main class="main">
+    <!-- <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="" rel="nofollow">Home</a>
+                <span></span> Pages
+                <span></span> OTP Verification
+            </div>
+        </div>
+    </div> -->
+    <section class="pt-150 pb-150">
+        <div class="container">
+            <div class="col-lg-5 m-auto">
+                <div class="otp_wrap widget-taber-content p-30 background-white border-radius-10">
+                    <div class="padding_eight_all bg-white">
+                        <div class="heading_s1">
+                            <h3 class="mb-30">OTP Verification</h3>
+                            <%if(locals.message && message.length>0){%>
+                                <h5 style="color: rgb(198, 27, 27);"><%=message %></h5>
+                            <% } %> 
+                        </div>
+                        <p class="mb-4">Please enter the OTP sent to your registered email</p>
+                        <form method="post" action="/verifyOtp" id="otpForm" onsubmit="return validateOtpForm()">
+                            <div class="form-group">
+                                <input type="text" required name="otp" id="otp" placeholder="Enter OTP" maxlength="6">
+                            </div>
+                            <span id="otpError" class="error-message"></span>
+                            
+                            <div class="timer mt-2 mb-3">
+                                <span>Time remaining: <span id="timer">01:00</span></span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-fill-out btn-block hover-up" name="verifyOtp" id="verifyBtn">Verify OTP</button>
+                            </div>
+                        </form>
+                        <p class="text-center mt-2">
+                            Didn't receive an OTP? <a href="#" id="resendLink" onclick="resendOtp()">Resend OTP</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    let timeLeft = 60;
+    let countdown;
+
+    // Wait until the DOM is fully loaded
+    window.onload = function() {
+        const verifyBtn = document.getElementById("verifyBtn");
+        const timerDisplay = document.getElementById("timer");
+
+        function startTimer() {
+            timeLeft = 60;  // Reset the timer
+            verifyBtn.disabled = false;  // Re-enable the verify button
+            document.getElementById("otpError").textContent = "";  // Clear any error message
+
+            countdown = setInterval(() => {
+                const minutes = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+                const seconds = String(timeLeft % 60).padStart(2, '0');
+                timerDisplay.textContent = `${minutes}:${seconds}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    verifyBtn.disabled = true;
+                    timerDisplay.textContent = "00:00";
+                    document.getElementById("otpError").textContent = "OTP expired. Please request a new one.";
+                }
+
+                timeLeft--;
+            }, 1000);
+        }
+
+        // Initializing the timer
+        startTimer();
+
+        window.validateOtpForm = function() {
+            const otpInput = document.getElementById('otp').value;
+
+            $.ajax({
+                type: "POST",
+                url: "/verifyOtp",
+                data: { otp: otpInput },
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: "success",
+                            title: "OTP verified successfully",
+                            showConfirmButton: false,
+                            timer: 1500,
+                        }).then(() => {
+                            window.location.href = response.redirectUrl;
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Invalid OTP",
+                            text: "Please try again",
+                        });
+                    }
+                }
+            });
+
+            return false;
+        }
+
+        window.resendOtp = function() {
+            clearInterval(countdown);  
+            startTimer();  
+    
+            $.ajax({
+                type: "GET",
+                url: "/resendOtp",  
+                success: function(response) {
+                    Swal.fire({
+                        icon: "info",
+                        title: "OTP Resent",
+                        text: "A new OTP has been sent to your registered email.",
+                        timer: 2000,
+                        showConfirmButton: false,
+                    });
+                },
+                error: function() {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "Failed to resend OTP. Please try again later.",
+                    });
+                }
+            });
+        }
+    };
+</script>
+
+
+<style>
+    .error-message {
+        color: red;
+        font-size: 0.9em;
+    }
+
+    .timer {
+        font-weight: bold;
+        color: #555;
+    }
+</style>
+
+<%- include("../../views/partials/user/footer.ejs") %>
