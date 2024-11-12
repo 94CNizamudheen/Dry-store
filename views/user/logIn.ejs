@@ -125,7 +125,11 @@
     <div class="card mx-auto card-login">
         <div class="card-body">
             <h4 class="card-title mb-4">Sign in</h4>
-           
+            <% if (message) { %>
+                <div class="alert alert-danger text-center">
+                    <%= message %>
+                </div>
+            <% } %>
             <form action="/logIn" method="POST" onsubmit="return validateEmail()">
                 <div class="mb-3">
                     <input class="form-control" id="email" name="email" placeholder="Email" type="text" required>

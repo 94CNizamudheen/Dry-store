@@ -154,7 +154,7 @@ const logIn= async(req,res)=>{
 const loadLogIn= async(req,res)=>{
     try {
         if(!req.session.user){
-            return res.render('logIn');
+            return res.render('logIn',{message:''});
         }else{
             res.redirect('/');
         }
@@ -224,13 +224,6 @@ const resendOtp= async(req,res)=>{
     }
 };
 
-const loadUserProfile= async(req,res)=>{
-    try {
-        
-    } catch (error) {
-        
-    }
-};
 const logOut= async(req,res)=>{
     try {
         req.session.destroy((err)=>{
@@ -267,7 +260,7 @@ module.exports={
     logIn,
     verifyOtp,
     resendOtp,
-    loadUserProfile,
+
     logOut,
     getProductDetials
 }

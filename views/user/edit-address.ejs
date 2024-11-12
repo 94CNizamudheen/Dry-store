@@ -1,0 +1,307 @@
+<%- include('../partials/user/header.ejs') %>
+<!-- <link rel="stylesheet" href="/evara-frontend/assets/css/main.css?v=3.4"> -->
+<style>
+    /* Content layout styling */
+.content-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background-color: #f9fafb;
+}
+
+/* Card and form styling */
+.card-address {
+    border-radius: 12px;
+    border: none;
+    max-width: 600px;
+    width: 100%;
+}
+
+/* Title styling */
+.card-title {
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+}
+
+/* Input styling */
+.form-control {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: none;
+    transition: border-color 0.2s;
+}
+
+.form-control:focus {
+    border-color: #5a67d8;
+    box-shadow: 0px 0px 4px rgba(90, 103, 216, 0.5);
+}
+
+.form-label {
+    font-weight: 500;
+    color: #4a5568;
+}
+
+.btn-primary {
+    background-color: #5a67d8;
+    border-color: #5a67d8;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #4c51bf;
+    transform: translateY(-2px);
+}
+
+    /* Centering and spacing for the main card */
+.content-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background-color: #f9fafb;
+}
+
+/* Card styling */
+.card {
+    border-radius: 12px;
+    border: none;
+    overflow: hidden;
+}
+
+/* Form title styling */
+.card-title {
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+}
+
+/* Input field styling */
+.form-control {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: none;
+    transition: border-color 0.2s;
+}
+
+/* Input focus effect */
+.form-control:focus {
+    border-color: #5a67d8;
+    box-shadow: 0px 0px 4px rgba(90, 103, 216, 0.5);
+}
+
+/* Label styling */
+.form-label {
+    font-weight: 500;
+    color: #4a5568;
+}
+
+/* Dropdown styling */
+.form-select {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.btn-primary {
+    background-color: #5a67d8;
+    border-color: #5a67d8;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+
+.btn-primary:hover {
+    background-color: #4c51bf;
+    transform: translateY(-2px);
+}
+
+
+.text-danger {
+    font-size: 0.875rem;
+    font-weight: 400;
+}
+
+
+@media (max-width: 576px) {
+    .content-main {
+        padding: 15px;
+    }
+
+    .card {
+        width: 100%;
+    }
+}
+
+</style>
+<section class="content-main">
+    <div class="card mx-auto card-address">
+        <div class="card-body">
+            <h4 class="card-title mb-4">Edit your Address</h4>
+
+            <form id="addressForm" action="/edit-address?id=<%= address._id%>" method="POST">
+                <!-- First Row -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="addressType" class="form-label">Address Type</label>
+                        <input type="text" id="addressType" name="addressType" class="form-control" value="<%= address.addressType %>" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="name" class="form-label">Full Name</label>
+                        <input type="text" id="name" name="name" class="form-control" value="<%= address.name %>" required>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="city" class="form-label">City</label>
+                        <input type="text" id="city" name="city" class="form-control" value="<%= address.city %>" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="landmark" class="form-label">Landmark</label>
+                        <input type="text" id="landmark" name="landmark" class="form-control" value="<%= address.landmark %>">
+                    </div>
+                </div>
+
+                <!-- Second Row -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="state" class="form-label">State</label>
+                        <input type="text" id="state" name="state" class="form-control" value="<%= address.state %>" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="pincode" class="form-label">Pincode</label>
+                        <input type="text" id="pincode" name="pincode" class="form-control" value="<%= address.pincode %>" required>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="phone" class="form-label">Phone</label>
+                        <input type="text" id="phone" name="phone" class="form-control" value="<%= address.phone %>" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="altPhone" class="form-label">Alternative Phone</label>
+                        <input type="text" id="altPhone" name="altPhone" class="form-control" value="<%= address.altPhone %>">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <button type="submit" class="btn btn-primary w-100">Update Address</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+   document.getElementById('addressForm').addEventListener('submit', function(event) {
+       if (!validateForm()) {
+           event.preventDefault();
+       }
+   });
+
+   function validateForm() {
+       let isValid = true;
+       const requiredFields = ["addressType", "name", "city", "landmark", "state", "pincode", "phone", "altPhone"];
+       requiredFields.forEach(function(field) {
+           const input = document.getElementById(field);
+           const inputValue = input.value.trim();
+           const errorElement = document.getElementById(field + '-error');
+
+           if (inputValue === "" && field !== 'landmark' && field !== 'altPhone') {
+               if (!errorElement) {
+                   const errorMessage = "This field is required.";
+                   const errorDiv = document.createElement('div');
+                   errorDiv.className = "text-danger";
+                   errorDiv.textContent = errorMessage;
+                   errorDiv.id = field + '-error';
+                   input.parentNode.appendChild(errorDiv);
+               }
+               isValid = false;
+           } else {
+               if (errorElement) {
+                   errorElement.remove();
+               }
+           }
+       });
+
+       const namePattern = /^[A-Za-z\s]+$/;
+       const pincodePattern = /^\d{6}$/;
+       const phonePattern = /^\d{10}$/;
+
+       if (!namePattern.test(document.getElementById('name').value)) {
+           Swal.fire({
+               title: 'Error',
+               text: 'Name should contain alphabets only.',
+               icon: 'error'
+           });
+           isValid = false;
+       }
+       if (!namePattern.test(document.getElementById('city').value)) {
+           Swal.fire({
+               title: 'Error',
+               text: 'City should contain alphabets only.',
+               icon: 'error'
+           });
+           isValid = false;
+       }
+       if (document.getElementById('landmark').value && !namePattern.test(document.getElementById('landmark').value)) {
+           Swal.fire({
+               title: 'Error',
+               text: 'Landmark should contain alphabets only.',
+               icon: 'error'
+           });
+           isValid = false;
+       }
+       if (!namePattern.test(document.getElementById('state').value)) {
+           Swal.fire({
+               title: 'Error',
+               text: 'State should contain alphabets only.',
+               icon: 'error'
+           });
+           isValid = false;
+       }
+       if (!pincodePattern.test(document.getElementById('pincode').value)) {
+           Swal.fire({
+               title: 'Error',
+               text: 'Pincode should be a 6-digit number.',
+               icon: 'error'
+           });
+           isValid = false;
+       }
+       if (!phonePattern.test(document.getElementById('phone').value)) {
+           Swal.fire({
+               title: 'Error',
+               text: 'Phone number should be a 10-digit number.',
+               icon: 'error'
+           });
+           isValid = false;
+       }
+       const altPhoneValue = document.getElementById('altPhone').value;
+       if (altPhoneValue && !phonePattern.test(altPhoneValue)) {
+           Swal.fire({
+               title: 'Error',
+               text: 'Alternate phone number should be a 10-digit number.',
+               icon: 'error'
+           });
+           isValid = false;
+       }
+       if (document.getElementById('phone').value === altPhoneValue) {
+           Swal.fire({
+               title: 'Error',
+               text: 'Phone number and alternate phone number should be different.',
+               icon: 'error'
+           });
+           isValid = false;
+       }
+
+       return isValid;
+   }
+</script>
+
+

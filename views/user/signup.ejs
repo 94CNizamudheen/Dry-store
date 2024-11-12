@@ -1,9 +1,174 @@
 <%- include ("../../views/partials/user/header.ejs") %>
 <style>
-    .error-message {
-        color: red;
-        font-size: 0.9em;
-    }
+    /* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f8fa;
+    color: #333;
+}
+
+/* Section Styling */
+section.pt-150.pb-150 {
+    padding-top: 50px;
+    padding-bottom: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f7f8fa;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login_wrap {
+    padding: 40px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.login_wrap:hover {
+    transform: translateY(-5px);
+}
+
+/* Header Styling */
+.heading_s1 h3 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.error-message {
+    color: #d9534f;
+    font-size: 0.875rem;
+    margin-top: -8px;
+    display: block;
+    padding-left: 10px;
+}
+
+/* Input Field Styling */
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fafafa;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #007bff;
+    background-color: #fff;
+}
+
+.login_footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.875rem;
+}
+
+.custome-checkbox {
+    display: flex;
+    align-items: center;
+}
+
+.custome-checkbox input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+/* Button Styling */
+.btn-fill-out {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-fill-out:hover {
+    background-color: #0056b3;
+}
+
+/* Divider Styling */
+.divider-text-center {
+    position: relative;
+    text-align: center;
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.divider-text-center::before,
+.divider-text-center::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 40%;
+    height: 1px;
+    background: #ddd;
+}
+
+.divider-text-center::before {
+    left: 0;
+}
+
+.divider-text-center::after {
+    right: 0;
+}
+
+/* Social Button Styling */
+.btn-facebook,
+.btn-google {
+    display: block;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-facebook {
+    background-color: #3b5998;
+    color: #fff;
+}
+
+.btn-google {
+    background-color: #db4437;
+    color: #fff;
+}
+
+.btn-facebook:hover {
+    background-color: #2d4373;
+}
+
+.btn-google:hover {
+    background-color: #c53727;
+}
+
+/* Link Styling */
+.text-muted a {
+    color: #007bff;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.text-muted a:hover {
+    color: #0056b3;
+}
+
 </style>
 
 <main class="main">
@@ -30,6 +195,61 @@
                         <p class="mb-50 font-sm">
                             Your personal data will be used to support your experience throughout this website, to manage access to your account, and for other purposes described in our privacy policy.
                         </p>
+                        <form method="post" action="/signUp" id="signInForm" onsubmit="return submitForm();">
+                            <div class="form-group">
+                                <input type="text" id="name" required name="name" placeholder="Name" onblur="validateName()">
+                            </div>
+                            <span id="nameError" class="error-message"></span>
+                        
+                            <div class="form-group">
+                                <input type="text" id="email" required name="email" placeholder="Email" onblur="validateEmail()">
+                            </div>
+                            <span id="emailError" class="error-message"></span>
+                        
+                            <div class="form-group">
+                                <input type="text" id="phone" required name="phone" placeholder="Mobile Number" onblur="validatePhone()">
+                            </div>
+                            <span id="phoneError" class="error-message"></span>
+                        
+                            <div class="form-group">
+                                <input required id="password" type="password" name="password" placeholder="Password" onblur="validatePassword()">
+                            </div>
+                            <span id="passwordError" class="error-message"></span>
+                        
+                            <div class="form-group">
+                                <input required id="cPassword" type="password" name="cPassword" placeholder="Confirm password" onblur="validateConfirmPassword()">
+                            </div>
+                            <span id="cPasswordError" class="error-message"></span>
+                        
+                            <div class="login_footer form-group">
+                                <div class="chek-form">
+                                    <div class="custome-checkbox">
+                                        <input class="form-check-input" type="checkbox" name="checkbox" id="terms" value="">
+                                        <label class="form-check-label" for="terms"><span>I agree to terms &amp; Policy.</span></label>
+                                    </div>
+                                </div>
+                                <span id="termsError" class="error-message"></span>
+                                <a href="page-privacy-policy.html"><i class="fi-rs-book-alt mr-5 text-muted"></i>Learn more</a>
+                            </div>
+                        
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-fill-out btn-block hover-up" name="register">Submit & Register</button>
+                            </div>
+                        </form>
+                        
+                        <div class="divider-text-center mt-15 mb-15">
+                            <span> or</span>
+                        </div>
+                        <ul class="btn-login list_none text-center mb-15">
+                            <li><a href="#" class="btn btn-facebook hover-up mb-lg-0 mb-sm-4">Login With Facebook</a></li>
+                            <li><a href="/auth/google" class="btn btn-google hover-up">Login With Google</a></li>
+                        </ul>
+                        <div class="text-muted text-center">Already have an account? <a href="/logIn">Sign in now</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
                         <form method="post" action="/signUp" id="signInForm" onsubmit="return submitForm();">
                             <div class="form-group">
                                 <input type="text" id="name" required name="name" placeholder="Name" onblur="validateName()">

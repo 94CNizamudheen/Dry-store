@@ -3,43 +3,31 @@ const User= require('../models/userSchema');
 
 
 
-const useruth= (req,res,next)=>{
-    if(req.session.user){
-        User.findById(req.session.user)
-                                    .then(data=>{
-                                        if(data && !data.isBlocked){
-                                            next();
-                                        }
-                                        else{
-                                            res.redirect('logIn');
-                                        }
-                                    })
-                                    .catch(error=>{
-                                        console.log("Error in user auth Middelware",error);
-                                        res.status(500).send("Internal Server Error")
-                                    })
+const userAuth=async (req,res,next)=>{
+    
+        try {
+            if(req.session.user){
 
-    }else{
-        res.redirect('/logIn');
-    }
+                const user= await User.findById(req.session.user);
+                if(user && !user.isBlocked){
+                    return next();
+                }else{
+                    return res.redirect("/logIn");
+                }
+            }else{
+                return res.redirect("/logIn");
+            }
+          
+            
+        } catch (error) {
+            console.log("Error in user Auth Middlewre");
+            res.status(500).send("Internal Server Error");
+        }
+    
+   
 };
 
-// const adminAuth= (req,res,next)=>{
- 
-//     User.findOne({isAdmin:true})
-//                             .then(data=>{
-//                                 if(data){
-//                                     next()
-//                                 }
-//                                 else{
-//                                     res.redirect('/admin/logIn')
-//                                 }
-//                             })
-//                             .catch(error=>{
-//                                 console.log("Error on admin Auth Middleware",error);
-//                                 res.status(500).send("Internel server Problem")
-//                             })
-// };
+
 const adminAuth= async(req,res,next)=>{
     if(req.session.admin){
         try {
@@ -61,6 +49,6 @@ const adminAuth= async(req,res,next)=>{
 
 
 module.exports={
-    useruth,
+    userAuth,
     adminAuth,
 }
