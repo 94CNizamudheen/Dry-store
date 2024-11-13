@@ -12,7 +12,7 @@
     <meta property="og:url" content="">
     <meta property="og:image" content="">
     <!-- Favicon -->
-    <link rel="shortcut icon" type="image/x-icon" href="DryStoreBackend/assets/imgs/theme/favicon.svg">
+    <link rel="shortcut icon" type="image/x-icon" href="">
     <!-- Template CSS -->
     <link href="DryStoreBackend/assets/css/main.css" rel="stylesheet" type="text/css" />
 </head>
@@ -31,6 +31,11 @@
             <div class="card mx-auto card-login">
                 <div class="card-body">
                     <h4 class="card-title mb-4">Sign in</h4>
+                    <% if (message) { %>
+                        <div class="alert alert-danger text-center">
+                            <%= message %>
+                        </div>
+                    <% } %>
                     <form action="/admin/logIn" method="POST">
                         <div class="mb-3">
                             <input class="form-control" placeholder="Username or email" name="email" type="text" required>

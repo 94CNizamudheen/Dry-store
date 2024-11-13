@@ -1,11 +1,13 @@
 
 const express= require('express');
 const router= express.Router();
-const userController= require('../controllers/user/userController')
+const userController= require('../controllers/user/userController');
+const profileController= require('../controllers/user/profileController');
+const cartController= require('../controllers/user/cartController');
 const path= require("path");
 const passport = require('passport');
 const { profile } = require('console');
-const profileController= require('../controllers/user/profileController');
+
 const { userAuth } = require('../middlewares/auth');
 
 
@@ -28,6 +30,7 @@ router.get('/logOut',userController.logOut);
 router.get("/productDetails",userController.getProductDetials)
 
 //profile management
+
 router.get('/forgot-password',profileController.getForgotPasswordPage);
 router.post('/forgot-email-valid',profileController.forgotEmailValid);
 router.post('/verify-passForgot-otp',profileController.verifyPassForgotOtp)
@@ -52,7 +55,12 @@ router.get('/add-address',userAuth,profileController.addAddressPage);
 router.post('/add-address',userAuth,profileController.postAddAddress);
 router.get('/edit-address',userAuth,profileController.editAddress);
 router.post('/edit-address',userAuth,profileController.postEditAddress);
-// router.get('/delete-address',userAuth,profileController.deleteAddess);
+router.get('/delete-address',userAuth,profileController.deleteAddess);
+
+//cart mgt
+
+router.get('/cart',userAuth,cartController.loadCart);
+router.post('/add-to-cart',userAuth,cartController.addToCart);
 
 
 module.exports=router;

@@ -34,7 +34,7 @@ const  loadHomepage= async(req,res)=>{
             return res.render("home",{user:userData,products:productData});     
         }
         else{
-            return res.render('home',{products:productData})
+            return res.render('home',{products:productData})    
         }
     } catch (error) {
         console.log("Home page not Found");
@@ -54,7 +54,17 @@ const loadSignUp=async(req,res)=>{
 
 const loadShopping=async(req,res)=>{
     try {
-        return  res.render('shop')
+        const user= req.session.user;
+        const categories=await Category.find({isListed:true});
+        const productData= await Product.find({
+            category:{$in:categories.map(category=>category._id)},quantity:{$gt:0},
+        }).populate('category').populate('brand').sort({createdAt:-1});
+        
+        productData.sort((a,b)=>new Date(b.createdOn)-new Date(a.createdOn));
+        
+
+
+        return  res.render('shop',{ products:productData})
     } catch (error) {
         console.log("shopping Page not loading:",error);
         res.status(500).send('Server error');
@@ -156,7 +166,7 @@ const loadLogIn= async(req,res)=>{
         if(!req.session.user){
             return res.render('logIn',{message:''});
         }else{
-            res.redirect('/');
+            res.redirect('/logIn');
         }
     } catch (error) {
         res.redirect('/pageNotFound');

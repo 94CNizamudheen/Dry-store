@@ -417,6 +417,21 @@ const postEditAddress=async(req,res)=>{
         console.error("error for edit Profile page",error);
         res.redirect('/pageNotFound')
     }
+};
+
+const deleteAddess=async(req,res)=>{
+    try {
+        const addressId=req.query.id;
+        const findAddress= await Address.findOne({"address._id":addressId});
+        if(!findAddress){
+            return res.status(404).send("Address not Found")
+        }
+        await Address.updateOne({"address._id":addressId},{$pull:{address:{_id:addressId}}})
+        res.redirect('/user-profile')
+    } catch (error) {
+        console.error('error for delete address',error);
+        res.redirect('/pageNotFound');
+    }
 }
 
 
@@ -442,4 +457,5 @@ module.exports={
     postAddAddress,
     editAddress,
     postEditAddress,
+    deleteAddess
 }

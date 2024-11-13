@@ -40,4 +40,5 @@ passport.deserializeUser((id,done)=>{
         done(err,null);
     });
 })
+
 module.exports= passport ;

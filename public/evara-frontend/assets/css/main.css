@@ -46,7 +46,7 @@ footer, header, hgroup, menu, nav, section {
 
 body {
   line-height: 1;
-  background-color: #f5eaf0;
+  background-color: #ffe2f2;
 
 }
 
@@ -361,7 +361,7 @@ input[type=number]:focus,
 }
 
 .border {
-  border: 1px solid #e2e9e1 !important;
+  border: 1px solid #92067d !important;
 }
 
 .box-shadow-outer-6 {
@@ -2790,7 +2790,7 @@ table p {
 
 table.clean td, table.clean th {
   border: 0;
-  border-top: 1px solid #e2e9e1;
+  /* border: 1px solid #9f0d95; */
 }
 
 table .product-thumbnail img {
