@@ -97,12 +97,12 @@
                                             <h2><a href="shop-product-right.html"><%= products[i].productName %></a></h2>
                                             <div class="rating-result" title="90%">
                                                 <span>
-                                                    <span>90%</span>
+                                                    <span><%= products[i].productOffer %></span>
                                                 </span>
                                             </div>
                                             <div class="product-price">
                                                 <span>₹<%= products[i].salePrice %></span>
-                                                <span class="old-price">₹<%= products[i].reg %></span>
+                                                <span class="old-price">₹<%= products[i].regularPrice %></span>
                                             </div>
                                             <div class="product-action-1 show">
                                                 <a aria-label="Add To Cart" class="action-btn hover-up" href="#" id="addToCartButton"
@@ -537,32 +537,89 @@
 </main>
 
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
 <script>
+// Frontend JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('click', async function(e) {
+        if (e.target && e.target.id === 'addToCartButton') {
+            e.preventDefault();
+            
+            const button = e.target;
+            const productId = button.dataset.productId;
+            const quantity = 1;
+            
+            // Disable button during request
+            button.disabled = true;
+            
+            try {
+                const response = await fetch('/add-to-cart', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ productId, quantity })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to add item to cart');
+                }
 
-    $(document).on('click', '#addToCartButton', function(e) {
-    e.preventDefault();
-
-    const productId = $(this).data('product-id');
-    const quantity = 1;
-
-    $.ajax({
-        url: '/add-to-cart',
-        type: 'POST',
-        data: { productId, quantity },
-        success: function(response) {
-            alert(response.message); 
-        },
-        error: function(xhr) {
-            if (xhr.status === 401) {
-                alert(xhr.responseJSON.message); 
-            } else {
-                alert('Failed to add item to cart');
+                if (data.success) {
+                    // Show appropriate message based on whether item was added or already exists
+                    Swal.fire({
+                        title: data.isExisting ? 'Notice!' : 'Success!',
+                        text: data.message,
+                        icon: data.isExisting ? 'info' : 'success',
+                        timer: data.isExisting ? null : 2000,
+                        showConfirmButton: data.isExisting
+                    });
+                    
+                    if (!data.isExisting) {
+                        // Update cart count only if it's a new item
+                        const cartCountElement = document.querySelector('.cart-count');
+                        if (cartCountElement) {
+                            cartCountElement.textContent = data.cartCount;
+                        }
+                    }
+                    
+                    // Update stock display if it exists
+                    if (data.remainingStock !== undefined) {
+                        const stockElement = document.querySelector(`[data-stock-id="${productId}"]`);
+                        if (stockElement) {
+                            stockElement.textContent = `Stock: ${data.remainingStock}`;
+                        }
+                    }
+                }
+            } catch (error) {
+                let errorMessage = error.message;
+                
+                if (response?.status === 401) {
+                    errorMessage = 'Please login to add items to cart';
+                    // Redirect to login page after error message
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 2000);
+                }
+                
+                Swal.fire({
+                    title: 'Error!',
+                    text: errorMessage,
+                    icon: 'error'
+                });
+            } finally {
+                // Re-enable button after request
+                button.disabled = false;
             }
         }
     });
 });
-
-
 </script>
+
+
+
 <%-include ("../../views/partials/user/footer.ejs")%>

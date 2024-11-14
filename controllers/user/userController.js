@@ -54,7 +54,11 @@ const loadSignUp=async(req,res)=>{
 
 const loadShopping=async(req,res)=>{
     try {
-        const user= req.session.user;
+        const userId= req.session.user;
+        let userData=null;
+        if(userId){
+            userData= await User.findById(userId);
+        }
         const categories=await Category.find({isListed:true});
         const productData= await Product.find({
             category:{$in:categories.map(category=>category._id)},quantity:{$gt:0},
@@ -62,9 +66,21 @@ const loadShopping=async(req,res)=>{
         
         productData.sort((a,b)=>new Date(b.createdOn)-new Date(a.createdOn));
         
+        if(userData){
+            return res.render('shop',{
+                user:userData,
+                products:productData,
+                categories:categories
+            })
+        }else{
+            return  res.render('shop',{
+                 products:productData,
+                 categories:categories
+                })
+        }
 
 
-        return  res.render('shop',{ products:productData})
+       
     } catch (error) {
         console.log("shopping Page not loading:",error);
         res.status(500).send('Server error');

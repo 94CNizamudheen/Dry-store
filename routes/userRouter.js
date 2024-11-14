@@ -61,6 +61,7 @@ router.get('/delete-address',userAuth,profileController.deleteAddess);
 
 router.get('/cart',userAuth,cartController.loadCart);
 router.post('/add-to-cart',userAuth,cartController.addToCart);
-
+router.post('/update-quantity',userAuth,cartController.updateQuantity);
+router.post('/remove-item',userAuth,cartController.removeItem);
 
 module.exports=router;
