@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #ffe2f2;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .confirmation-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+        }
+        .check-icon {
+            width: 60px;
+            height: 60px;
+            background-color: #28a745;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+        .check-icon svg {
+            width: 30px;
+            height: 30px;
+            color: white;
+        }
+        .btn-primary {
+            background-color: #4f0a27 !important;
+            border-color: #4f0a27 !important;
+        }
+        .btn-primary:hover {
+            background-color: #3d0820 !important;
+            border-color: #3d0820 !important;
+        }
+        .btn-primary a {
+            color: white !important;
+            text-decoration: none;
+        }
+        /* Center the main container */
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="confirmation-card">
+            <div class="text-end mb-3">
+                <button class="btn btn-primary btn-sm"><a href="/user-profile">View order</a></button>
+            </div>
+            
+            <div class="text-center">
+                <h4 class="text-dark mb-2">Order Completed</h4>
+                <p class="text-muted small mb-4">Arriving soon..</p>
+                
+                <div class="check-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                
+                <h5 class="mb-3">Your order is Completed</h5>
+                <p class="text-muted mb-4">
+                    Thank You for your order. Sit tight we are processing your order<br>
+                    we will update you with your order in email
+                </p>
+                
+                <button class="btn btn-primary px-4"><a href="/shop">Continue Shopping</a></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

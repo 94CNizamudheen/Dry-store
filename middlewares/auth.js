@@ -8,12 +8,11 @@ const userAuth = async (req, res, next) => {
 
         const userData = await User.findById(req.session.user);
         
+        
         if (userData && !userData.isBlocked) {
-            req.user = userData; // Attach user to request
+            req.user = userData; 
             return next();
         }
-
-        // Clear invalid session
         req.session.destroy((err) => {
             if (err) console.error('Session destruction error:', err);
         });
@@ -43,6 +42,9 @@ const adminAuth = async (req, res, next) => {
     res.redirect("/admin/logIn");
   }
 };
+
+
+
 
 module.exports = {
   userAuth,

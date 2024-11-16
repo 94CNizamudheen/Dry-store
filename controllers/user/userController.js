@@ -23,7 +23,7 @@ const  loadHomepage= async(req,res)=>{
         const user= req.session.user;
         const categories= await Category.find({isListed:true});
         let productData= await Product.find({
-            category:{$in:categories.map(category=>category._id)},quantity:{$gt:0}
+            category:{$in:categories.map(category=>category._id)},quantity:{$gte:0}
         }).populate('category').populate("brand").sort({createdAt:-1});
         productData.sort((a,b)=>new Date(b.createdOn)- new Date(a.createdOn));
         productData=productData.slice(0,4);
@@ -61,7 +61,7 @@ const loadShopping=async(req,res)=>{
         }
         const categories=await Category.find({isListed:true});
         const productData= await Product.find({
-            category:{$in:categories.map(category=>category._id)},quantity:{$gt:0},
+            category:{$in:categories.map(category=>category._id)},quantity:{$gte:0},
         }).populate('category').populate('brand').sort({createdAt:-1});
         
         productData.sort((a,b)=>new Date(b.createdOn)-new Date(a.createdOn));
@@ -268,9 +268,11 @@ const logOut= async(req,res)=>{
 const getProductDetials = async (req,res) => {
     try {
         const productId=req.query.id;
+        const user= req.session.user;
+        console.log(user)
         const productData = await Product.findById(productId).populate("category").populate('brand');
         if(productData){
-            return res.render("productDetials",{data:productData})
+            return res.render("productDetials",{data:productData,user:user})
         }
     } catch (error) {
         console.log("error in product detilas page",error)

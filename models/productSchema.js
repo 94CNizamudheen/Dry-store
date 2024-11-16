@@ -52,6 +52,7 @@ const productSchema= new Schema({
         required:true,
         default:"Available",
     },
+   
 
 
 },{timestamps:true});

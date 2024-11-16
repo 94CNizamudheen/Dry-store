@@ -36,10 +36,16 @@ const orderSchema= new Schema({
         type:Number,
         required:true,
     },
-    address:{
-        type:Schema.Types.ObjectId,
-        ref:"User",
-        required:true,
+    shippingAddress:{
+        addressType: { type: String, required: true },
+        name: { type: String, required: true },
+        pincode: { type: Number, required: true },
+        city: { type: String, required: true },
+        state: { type: String, required: true },
+        landmark: { type: String },
+        phone: { type: Array, required: true },
+        altPhone: {type: Array, required: true },
+       
     },
     invoiceDate:{
         type:Date,
@@ -59,6 +65,11 @@ const orderSchema= new Schema({
         default:false,
         
     },
+    user:{
+        type:Schema.Types.ObjectId,
+        ref:"User",
+        required:true
+    }
 })
 const Order = mongoose.model ("Order",orderSchema);
 module.exports = Order;

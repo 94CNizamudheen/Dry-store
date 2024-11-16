@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 const User = require("../../models/userSchema");
-const Address= require('../../models/addressSchema')
+const Address= require('../../models/addressSchema');
+const Order= require('../../models/orderSchema');
 const bcrypt= require('bcrypt');
 const env= require('dotenv').config();
 const session= require('express-session');
@@ -157,11 +158,16 @@ const userProfilePage= async(req,res)=>{
     try {
         const userId= req.session.user; 
         const userData= await User.findById(userId);
-        const addressData= await Address.findOne({userId:userId})
+        const addressData= await Address.findOne({userId:userId});
+        const orders = await Order.find({ user: userId }).populate({
+            path: 'orderedItems.product',
+            select: 'productName productImage price',
+        }).sort({ createdOn: -1 });
         
         res.render('user-profile',{
             user:userData,
             userAddress:addressData,
+            userOrders:orders
         })
         
     } catch (error) {

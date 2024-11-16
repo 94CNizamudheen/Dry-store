@@ -1,5 +1,5 @@
 
-<%-include ("../../views/partials/user/header.ejs")%>
+<%-include ("../partials/user/header.ejs")%>
  
     <!-- <main class="main">        -->
         <section class="home-slider position-relative pt-50">
@@ -156,11 +156,11 @@
                                             </div>
                                             <h2><a href="shop-product-right.html"><%= products[i].productName %></a></h2>
                                             <div class="rating-result" title="90%">
-                                                <span><span>90%</span></span>
+                                                <span><span><%= products[i].productOffer %></span></span>
                                             </div>
                                             <div class="product-price">
                                                 <span>₹<%= products[i].salePrice %> </span>
-                                                <span class="old-price">$<%= products[i].regularPrice %></span>
+                                                <span class="old-price">₹<%= products[i].regularPrice %></span>
                                             </div>
                                             <div class="product-action-1 show">
                                                 <a aria-label="Add To Cart" class="action-btn hover-up" href="#" id="addToCartButton"
@@ -215,7 +215,7 @@
         </section>
         <section class="banners mb-15">
             <div class="container">
-                <div class="row">
+                <!-- <div class="row">
                     <div class="col-lg-4 col-md-6">
                         <div class="banner-img wow fadeIn animated">
                             <img src="evara-frontend/assets/imgs/banner/banner-1.png" alt="">
@@ -246,7 +246,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </section>
         <section class="section-padding">
@@ -524,4 +524,4 @@
             });
         });
         </script>
-   <%-include ("../../views/partials/user/footer.ejs")%>
+   <%-include ("../partials/user/footer.ejs")%>

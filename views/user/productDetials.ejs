@@ -68,7 +68,9 @@
                                     </div>
                                     <div class="product_sort_info font-xs mb-30">
                                         <ul>
-                                            <li>Availability:<span class="in-stock text-success ml-5"><%= data.quantity %>gm Stock Available</span></li>
+                                            <li>Availability: <span class="<%= data.quantity > 10 ? 'in-stock text-success ml-5' : 'text-danger ml-5' %>">
+                                                <%= data.quantity > 0 ? `Stock left: ${data.quantity}` : 'Out of stock' %>
+                                            </span></li>
                                             <!-- <li class="mb-10"><i class="fi-rs-crown mr-5"></i> 1 Year AL Jazeera Brand Warranty</li> -->
                                             <li class="mb-10"><i class="fi-rs-refresh mr-5"></i> 30 Day Return Policy</li>
                                             <li><i class="fi-rs-credit-card mr-5"></i> Cash on Delivery available</li>
@@ -98,13 +100,16 @@
                                     </div>
                                     <div class="bt-1 border-color-1 mt-30 mb-30"></div>
                                     <div class="detail-extralink">
-                                        <div class="detail-qty border radius">
+                                        <!-- <div class="detail-qty border radius">
                                             <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
                                             <span class="qty-val">1</span>
                                             <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
-                                        </div>
+                                        </div> -->
                                         <div class="product-extra-link2">
-                                            <button type="submit" class="button button-add-to-cart">Add to cart</button>
+                                            <a aria-label="Add To Cart" class="action-btn hover-up" href="#" id="addToCartButton"
+                                            data-product-id="<%= data._id %>">
+                                            <i class="fi-rs-shopping-bag-add"></i>
+                                         </a>
                                             <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
                                             <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
                                         </div>
@@ -546,4 +551,112 @@
         </div>
     </section>
 </main>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+   document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('click', async function (e) {
+        if (e.target && e.target.id === 'addToCartButton') {
+            e.preventDefault();
+
+            const button = e.target;
+            const productId = button.dataset.productId;
+
+            // Get stock element
+            const stockElement = document.querySelector(`[data-stock-id="${productId}"]`);
+            let stock = null;
+
+            if (stockElement) {
+                const stockText = stockElement.textContent.match(/Stock left:\s*(\d+)/);
+                stock = stockText ? parseInt(stockText[1], 10) : null;
+            }
+
+            console.log(`Stock for product ${productId}:`, stock);
+
+            if (stock === 0) {
+                console.log('Product is out of stock');
+                Swal.fire({
+                    title: 'Out of Stock',
+                    text: 'This product is currently out of stock.',
+                    icon: 'warning',
+                    confirmButtonText: 'Okay',
+                });
+                return; // Stop further execution
+            }
+
+            // Disable button during request
+            button.disabled = true;
+
+            try {
+                const response = await fetch('/add-to-cart', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ productId, quantity: 1 }),
+                });
+
+                console.log('Response status:', response.status);
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    console.error('Response not OK:', data);
+                    throw new Error(data.message || 'Failed to add item to cart');
+                }
+
+                if (data.success) {
+                    console.log('Product added to cart:', data);
+                    Swal.fire({
+                        title: data.isExisting ? 'Notice!' : 'Success!',
+                        text: data.message,
+                        icon: data.isExisting ? 'info' : 'success',
+                        timer: data.isExisting ? null : 2000,
+                        showConfirmButton: data.isExisting,
+                    });
+
+                    // Update cart count if new item
+                    if (!data.isExisting) {
+                        const cartCountElement = document.querySelector('.cart-count');
+                        if (cartCountElement) {
+                            cartCountElement.textContent = data.cartCount;
+                        }
+                    }
+
+                    // Update stock display
+                    if (data.remainingStock !== undefined && stockElement) {
+                        stockElement.textContent = `Stock left: ${data.remainingStock}`;
+                    }
+                }
+            } catch (error) {
+                console.error('Error occurred:', error.message);
+
+                const errorMessage = response?.status === 401
+                    ? 'Please login to add items to cart'
+                    : error.message;
+
+                Swal.fire({
+                    title: 'Error!',
+                    text: errorMessage,
+                    icon: 'error',
+                });
+
+                if (response?.status === 401) {
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 2000);
+                }
+            } finally {
+                // Re-enable button after request
+                button.disabled = false;
+            }
+        }
+    });
+});
+
+
+</script>
+    
+
 <%-include ("../../views/partials/user/footer.ejs")%>

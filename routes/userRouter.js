@@ -4,6 +4,7 @@ const router= express.Router();
 const userController= require('../controllers/user/userController');
 const profileController= require('../controllers/user/profileController');
 const cartController= require('../controllers/user/cartController');
+const orderController= require('../controllers/user/userOrderController')
 const path= require("path");
 const passport = require('passport');
 const { profile } = require('console');
@@ -63,5 +64,16 @@ router.get('/cart',userAuth,cartController.loadCart);
 router.post('/add-to-cart',userAuth,cartController.addToCart);
 router.post('/update-quantity',userAuth,cartController.updateQuantity);
 router.post('/remove-item',userAuth,cartController.removeItem);
+
+//ckeck out and order
+
+router.get('/check-out',userAuth,orderController.loadCheckOutPage);
+router.post('/check-out-add-address',userAuth,orderController.postAddAddress);
+router.get('/select-address',userAuth,orderController.selectAddress);
+router.post('/handle-payment',userAuth,orderController.handlePaymentMethod);
+router.post('/place-order',userAuth,orderController.placeOrder);
+router.get('/order-success-page',userAuth,orderController.loadOrderSuccessPage);
+
+
 
 module.exports=router;
