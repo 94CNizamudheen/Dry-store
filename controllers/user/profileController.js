@@ -154,27 +154,27 @@ const postNewPassword=async(req,res)=>{
     }
 };
 
-const userProfilePage= async(req,res)=>{
-    try {
-        const userId= req.session.user; 
-        const userData= await User.findById(userId);
-        const addressData= await Address.findOne({userId:userId});
-        const orders = await Order.find({ user: userId }).populate({
-            path: 'orderedItems.product',
-            select: 'productName productImage price',
-        }).sort({ createdOn: -1 });
-        
-        res.render('user-profile',{
-            user:userData,
-            userAddress:addressData,
-            userOrders:orders
-        })
-        
-    } catch (error) {
-        console.error('Error for retrive profile Data. ',error);
-        res.redirect('/pageNotFound')
+    const userProfilePage= async(req,res)=>{
+        try {
+            const userId= req.session.user; 
+            const userData= await User.findById(userId);
+            const addressData= await Address.findOne({userId:userId});
+            const orders = await Order.find({ user: userId }).populate({
+                path: 'orderedItems.product',
+                select: 'productName productImage price',
+            }).sort({ createdOn: -1 });
+            
+            res.render('user-profile',{
+                user:userData,
+                userAddress:addressData,
+                userOrders:orders
+            })
+            
+        } catch (error) {
+            console.error('Error for retrive profile Data. ',error);
+            res.redirect('/pageNotFound')
+        }
     }
-}
 const changeEmail=async(req,res)=>{
     try {
         res.render('change-email')

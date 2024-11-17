@@ -73,6 +73,7 @@ router.get('/select-address',userAuth,orderController.selectAddress);
 router.post('/handle-payment',userAuth,orderController.handlePaymentMethod);
 router.post('/place-order',userAuth,orderController.placeOrder);
 router.get('/order-success-page',userAuth,orderController.loadOrderSuccessPage);
+router.get('/cancel-order',userAuth,orderController.cancelOrder);
 
 
 

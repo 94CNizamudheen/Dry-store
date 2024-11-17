@@ -6,6 +6,7 @@ const env = require('dotenv').config()
 const Category= require('../../models/categorySchema');
 const Brand= require('../../models/brandSchema');
 const Product = require("../../models/productSchema");
+const { name } = require("ejs");
 
 
 
@@ -55,32 +56,95 @@ const loadSignUp=async(req,res)=>{
 const loadShopping=async(req,res)=>{
     try {
         const userId= req.session.user;
+        const {sort='newest',category,minPrice,maxPrice} =req.query;
         let userData=null;
         if(userId){
             userData= await User.findById(userId);
         }
         const categories=await Category.find({isListed:true});
-        const productData= await Product.find({
-            category:{$in:categories.map(category=>category._id)},quantity:{$gte:0},
-        }).populate('category').populate('brand').sort({createdAt:-1});
         
-        productData.sort((a,b)=>new Date(b.createdOn)-new Date(a.createdOn));
+        // Building filter query
+        const filterQuery={
+            category:{$in:categories.map(category=>category._id)},
+            quantity:{$gte:0}
+        }
+        // all category filter if specified
+        if(category){
+            filterQuery.category=category;
+        }
+        // all price Range if specified
+        if(minPrice!==undefined && maxPrice!==undefined){
+            filterQuery.salePrice={
+                $gte:Number(minPrice),
+                $lte:Number(maxPrice),
+            }
+        };
+        let sortQuery={};
+        switch(sort){
+            case 'price-asc':sortQuery.salePrice=1;break;
+            case 'price-desc':sortQuery.salePrice=-1;break;
+            case 'popularity':sortQuery.totalSales=-1;break;
+            case 'rating':sortQuery.averageRating=-1;break;
+            case 'name-asc':sortQuery.productName=1;break;
+            case 'name-desc':sortQuery.productName=-1;break;
+
+            default:sortQuery.createdAt=-1
+
+        }
+        const productData= await Product.find(filterQuery).populate('category').populate('brand').sort(sortQuery);
         
+        //calculating the price ranges for the filter UI
+            const priceRanges=[
+                {min:0, max:200},
+                {min:200, max:400},
+                {min:400, max:600},
+                {min:600, max:800},
+                {min:800, max:Infinity},
+            ]
+
+        const categoryGroups= await Product.aggregate([
+            {$match:{quantity:{$gte:0}}},
+            {$group:{
+                _id:'$category',
+                count:{$sum:1}
+            }},
+            {$lookup:{
+                from: 'categories',
+                localField: '_id',
+                foreignField: '_id',
+                as: 'categoryInfo',
+            }},
+            {$unwind:'$categoryInfo'},
+            {$project:{
+                name:'$categoryInfo.name',
+                count:1
+            }}
+
+        ]);
+
         if(userData){
             return res.render('shop',{
-                user:userData,
                 products:productData,
-                categories:categories
+            categories:categories,
+            categoryGroups,
+            priceRanges,
+            currentSort:sort,
+            currentCategory: category,
+            currentPriceRange:{min:minPrice, max:maxPrice},
+            user:userData,
             })
         }else{
             return  res.render('shop',{
-                 products:productData,
-                 categories:categories
+            products:productData,
+            categories:categories,
+            categoryGroups,
+            priceRanges,
+            currentSort:sort,
+            currentCategory: category,
+            currentPriceRange:{min:minPrice, max:maxPrice},
+            
                 })
         }
-
-
-       
     } catch (error) {
         console.log("shopping Page not loading:",error);
         res.status(500).send('Server error');

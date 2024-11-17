@@ -16,37 +16,66 @@
     }
     .progress-tracker {
         position: relative;
-        margin: 2rem 0;
+        margin: 30px 0;
     }
+
     .progress-line {
-        height: 2px;
-        background: #5d0451;
         position: absolute;
-        width: 100%;
         top: 50%;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #f3ebeb;
         transform: translateY(-50%);
     }
+
     .progress-steps {
+        position: relative;
         display: flex;
         justify-content: space-between;
-        position: relative;
-    }
+    }   
     .step {
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
+        position: relative;
+        width: 25px;
+        height: 25px;
         background: #fff;
-        border: 2px solid #6f0531;
+        border: 2px solid #e9ecef;
+        border-radius: 50%;
         z-index: 1;
     }
+    .step.placed {
+  background-color: rgb(158, 230, 95);
+}
+
+.step.packaging {
+  background-color: rgb(225, 180, 0);
+  color: white; 
+}
+
+.step.ontheRoad {
+  background-color: rgb(60, 90, 237);
+}
+
+.step.orderDelivered {
+  background-color: green;
+  color: white;
+}
     .step.active {
-        background: #5d0451;
+        border-color: #28a745;
+        background: #8fd8a0;
     }
+    .step.cancelled {
+        border-color: #dc3545;
+        background: #dc3545;
+    }
+
     .step-label {
         position: absolute;
         top: 30px;
+        left: 50%;
         transform: translateX(-50%);
-        font-size: 0.8rem;
+        white-space: nowrap;
+        font-size: 12px;
         color: #5d0451;
     }
     .activity-feed {
@@ -55,17 +84,22 @@
     .activity-item {
         display: flex;
         align-items: start;
-        margin-bottom: 1rem;
-        padding: 0.5rem;
+        padding: 15px;
         border-radius: 8px;
+        margin-bottom: 10px;
     }
+
     .activity-icon {
         width: 24px;
         height: 24px;
-        margin-right: 1rem;
         display: flex;
         align-items: center;
         justify-content: center;
+        border-radius: 50%;
+        margin-right: 15px;
+    }
+    .activity-icon.text-danger {
+        background-color: rgba(220, 53, 69, 0.1);
     }
     .order-items {
         margin: 2rem 0;
@@ -214,23 +248,34 @@
                                             <div class="progress-tracker">
                                                 <div class="progress-line"></div>
                                                 <div class="progress-steps">
-                                                    <div class="step <%= order.status === 'Pending' || order.status === 'Processing' || order.status === 'Shipped' || order.status === 'Delivered' ? 'active' : '' %>">
-                                                        <span class="step-label">Order Placed</span>
-                                                    </div>
-                                                    <div class="step <%= order.status === 'Processing' || order.status === 'Shipped' || order.status === 'Delivered' ? 'active' : '' %>">
-                                                        <span class="step-label">Packaging</span>
-                                                    </div>
-                                                    <div class="step <%= order.status === 'Shipped' || order.status === 'Delivered' ? 'active' : '' %>">
-                                                        <span class="step-label">On The Road</span>
-                                                    </div>
-                                                    <div class="step <%= order.status === 'Delivered' ? 'active' : '' %>">
-                                                        <span class="step-label">Delivered</span>
-                                                    </div>
+                                                    <% if (order.status === 'Cancelled') { %>
+                                                        <!-- Show only cancelled status when order is cancelled -->
+                                                        <div class="step active " >
+                                                            <span class="step-label text-success">Order Placed</span>
+                                                        </div>
+                                                        <div class="step active cancelled"  >
+                                                            <span class="step-label text-danger" >Cancelled</span>
+                                                        </div>
+                                                    <% } else { %>
+                                                        <!-- Show normal progress steps for active orders -->
+                                                        <div class="step <%= order.status === 'Pending' || order.status === 'Processing' || order.status === 'Shipped' || order.status === 'Delivered' ? 'placed' : '' %>"  >
+                                                            <span class="step-label">Order Placed</span>
+                                                        </div>
+                                                        <div class="step <%= order.status === 'Processing' || order.status === 'Shipped' || order.status === 'Delivered' ? 'packaging' : '' %>">
+                                                            <span class="step-label">Packaging</span>
+                                                        </div>
+                                                        <div class="step <%= order.status === 'Shipped' || order.status === 'Delivered' ? 'ontheRoad' : '' %>">
+                                                            <span class="step-label">On The Road</span>
+                                                        </div>
+                                                        <div class="step <%= order.status === 'Delivered' ? 'orderDelivered' : '' %>">
+                                                            <span class="step-label">Delivered</span>
+                                                        </div>
+                                                    <% } %>
                                                 </div>
                                             </div>
                                 
-                                            <!-- Activity Feed -->
-                                            <div class="activity-feed">
+                                             <!-- Activity Feed -->
+                                             <div class="activity-feed">
                                                 <h6 class="mb-3">Order Activity</h6>
                                                 <% if (order.status === 'Delivered') { %>
                                                     <div class="activity-item bg-light">
@@ -240,13 +285,20 @@
                                                             <small class="text-muted"><%= new Date(order.invoiceDate).toLocaleString() %></small>
                                                         </div>
                                                     </div>
+                                                <% } else if (order.status === 'Cancelled') { %>
+                                                    <div class="activity-item bg-light">
+                                                        <div class="activity-icon text-danger">✕</div>
+                                                        <div>
+                                                            <p class="mb-0">Your order has been cancelled.</p>
+                                                            <small class="text-muted"><%= new Date(order.createdOn).toLocaleString() %></small>
+                                                        </div>
+                                                    </div>
                                                 <% } %>
-                                                <!-- Add additional activities based on order data -->
-                                                </div>
+                                            </div>
                                 
-                                            <!-- Order Items -->
-                                            <div class="order-items">
-                                                <% order.orderedItems.forEach(item=> {%>
+                                             <!-- Order Items -->
+                                             <div class="order-items">
+                                                 <% order.orderedItems.forEach(item=> {%>
                                                 <div class="item-row">
                                                     <img src="/uploads/images/<%= item.product.productImage[0] %>" alt="Product" class="item-image">
                                                     <div class="flex-grow-1">
@@ -305,10 +357,15 @@
                                                         <%= order.notes || 'No special instructions.' %>
                                                     </p>
                                                 </div>
+                                               
                                             </div>
-                                            
-                                           
+                                            <% if (!['Cancelled', 'Delivered',].includes(order.status)) { %>
+                                                <br>
+                                                <p>orderId: <%= order.orderId %></p>
+                                                <a class="btn btn-secondary btn-sm" href="#" onclick="cancelOrder('<%= order.orderId %>')">Cancel Order</a>
+                                            <% } %>
                                         </div>
+                                        <br>
                                         <% }) %>
                                         <% }else {%>
                                             <h3>NO orders</h3>
@@ -363,7 +420,8 @@
                                                          Alternative Phone:<%= address.altPhone %></address><br>
                                                     
                                                     <a class="btn btn-primary btn-sm" href="/edit-address/?id=<%= address._id %>" >Edit</a>
-                                                    <a class="btn btn-secondary btn-sm"  href="delete-address?id=<%= address._id %>" onclick="return confirm('Are sure for Delete this address')">Delete</a>
+                                                    <a class="btn btn-secondary btn-sm" href="#" 
+                                                    onclick="confirmDelete('<%= address._id %>')">Delete</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -433,4 +491,71 @@
         </div>
     </section>
 </main>
+
+<script>
+    function confirmDelete(addressId) {
+        console.log('Cancelling order:', orderId);
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you really want to delete this address? This action cannot be undone.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                console.log(`Redirecting to: /cancel-order?orderId=${orderId}`);
+                window.location.href = `delete-address?id=${addressId}`;
+            }
+        });
+    }
+</script>
+<script>
+    function cancelOrder(orderId) {
+    console.log('Cancelling order:', orderId);
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "Do you really want to cancel this order?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, cancel it!',
+        cancelButtonText: 'No, keep it'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            
+            fetch(`/cancel-order?orderId=${orderId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire(
+                            'Cancelled!',
+                            data.message,
+                            'success'
+                        ).then(() => {
+                            window.location.href = data.redirectUrl;
+                        });
+                    } else {
+                        Swal.fire(
+                            'Error!',
+                            data.message,
+                            'error'
+                        );
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire(
+                        'Error!',
+                        'Failed to cancel order',
+                        'error'
+                    );
+                });
+        }
+    });
+}
+</script>
 <%- include('../partials/user/footer.ejs') %>

@@ -1,0 +1,331 @@
+<%- include('../partials/admin/header.ejs') %>
+
+
+    <style>
+        :root {
+            --primary-bg: #f8f9fa;
+            --sidebar-width: 250px;
+        }
+
+
+
+        .card {
+            border: none;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .table th {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .action-buttons .btn {
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+
+        .search-box {
+            max-width: 300px;
+        }
+    </style>
+</head>
+
+<section>
+    <br><br><br>
+<!-- Main Content -->
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Order Management</h3>
+                    <div class="float-start">
+                        <input type="text" id="orderSearch" class="form-control" placeholder="Search orders...">
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Total Amount</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% orders.forEach(order => { %>
+                                <tr>
+                                    <td><%= order.orderId %></td>
+                                    <td>
+                                        <%= order.customerName %><br>
+                                        <small class="text-muted"><%= order.customerEmail %></small>
+                                    </td>
+                                    <td><%= order.createdOn %></td>
+                                    <td>
+                                        ₹<%= order.finalAmount.toFixed(2) %>
+                                        <% if (order.discount > 0) { %>
+                                            <br><small class="text-success">Saved ₹<%= order.discount.toFixed(2) %></small>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <select class="form-select form-select-sm status-select" 
+                                                data-order-id="<%= order.orderId %>">
+                                            <% statusOptions.forEach(status => { %>
+                                                <option value="<%= status %>" 
+                                                        <%= order.status === status ? 'selected' : '' %>>
+                                                    <%= status %>
+                                                </option>
+                                            <% }); %>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary view-details" 
+                                                data-order-id="<%= order.orderId %>">
+                                            <i class="fas fa-eye"></i> View
+                                        </button>
+                                        <% if (order.status === 'Pending') { %>
+                                            <button class="btn btn-sm btn-danger cancel-order"
+                                                    data-order-id="<%= order.orderId %>">
+                                                <i class="fas fa-times"></i> Cancel Order
+                                            </button>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Order Details Modal -->
+<div class="modal fade" id="orderDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Order Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="orderDetailsContent">
+                <!-- Content will be loaded dynamically -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<script>
+    window.onload = function () {
+        // Status update handler
+        document.querySelectorAll('.status-select').forEach(select => {
+            select.addEventListener('change', async function () {
+                const orderId = this.dataset.orderId;
+                const newStatus = this.value;
+
+                try {
+                    const response = await fetch('/admin/orderList/update-status', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            orderId: orderId,
+                            status: newStatus
+                        })
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        await Swal.fire({
+                            title: 'Success!',
+                            text: 'Status updated successfully',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
+                        window.location.reload();
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: `Failed to update status: ${data.message}`,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error updating status:', error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Failed to update status due to a network error',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        });
+
+        // View details handler
+        document.querySelectorAll('.view-details').forEach(button => {
+            button.addEventListener('click', async function () {
+                const orderId = this.dataset.orderId;
+
+                try {
+                    const response = await fetch(`/admin/orderList/${orderId}`);
+                    const orderDetails = await response.json();
+
+                    document.getElementById('orderDetailsContent').innerHTML = `
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <h6>Customer Information</h6>
+                                <p>
+                                    Name: ${orderDetails.customer.name}<br>
+                                    Email: ${orderDetails.customer.email}
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Shipping Address</h6>
+                                <p>
+                                    ${orderDetails.shipping.name}<br>
+                                    ${orderDetails.shipping.landmark || ''}<br>
+                                    ${orderDetails.shipping.city}, ${orderDetails.shipping.state}<br>
+                                    PIN: ${orderDetails.shipping.pincode}<br>
+                                    Phone: ${orderDetails.shipping.phone[0]}
+                                </p>
+                            </div>
+                        </div>
+                        <h6>Order Items</h6>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${orderDetails.items.map(item => `
+                                    <tr>
+                                        <td>${item.product}</td>
+                                        <td>${item.quantity}</td>
+                                        <td>₹${item.price.toFixed(2)}</td>
+                                        <td>₹${item.subtotal.toFixed(2)}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Subtotal:</strong></td>
+                                    <td>₹${orderDetails.pricing.totalPrice.toFixed(2)}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Discount:</strong></td>
+                                    <td>₹${orderDetails.pricing.discount.toFixed(2)}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Final Amount:</strong></td>
+                                    <td><strong>₹${orderDetails.pricing.finalAmount.toFixed(2)}</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    `;
+
+                    // Show the modal
+                    new bootstrap.Modal(document.getElementById('orderDetailsModal')).show();
+                } catch (error) {
+                    console.error('Error fetching order details:', error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Failed to load order details',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        });
+
+        // Search functionality
+        document.getElementById('orderSearch').addEventListener('input', function () {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('tbody tr');
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+    };
+</script>
+<script>
+    document.querySelectorAll('.cancel-order').forEach(link => {
+        link.addEventListener('click', async function (event) {
+            event.preventDefault(); // Prevent default link action
+
+            const orderId = this.dataset.orderId;
+            const confirmation = await Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you really want to cancel this order?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, cancel it!',
+                cancelButtonText: 'No, keep it'
+            });
+
+            if (confirmation.isConfirmed) {
+                try {
+                    const response = await fetch(`/admin/cancelOrder/${orderId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        await Swal.fire({
+                            title: 'Cancelled!',
+                            text: 'The order has been cancelled successfully.',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
+                        window.location.reload();
+                    } else {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: `Failed to cancel order: ${data.message}`,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error cancelling order:', error);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Failed to cancel the order due to a network error.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            }
+        });
+    });
+</script>
+
+
+
+
+<%- include('../partials/admin/footer.ejs') %>

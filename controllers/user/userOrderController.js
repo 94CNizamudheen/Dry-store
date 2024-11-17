@@ -139,7 +139,13 @@ const placeOrder = async (req, res) => {
         if (!cart || cart.items.length === 0) {
             return res.status(400).json({ error: "Cart is empty" });
         }
-
+        for (const item of cart.items) {
+            if (item.productId.quantity < item.quantity) {
+                return res.status(400).json({ 
+                    error: `${item.productId.productName} has insufficient stock. Available: ${item.productId.quantity}`
+                });
+            }
+        }
         const subtotal = cart.items.reduce((acc, item) => acc + item.totalPrice, 0);
         const shipping = 0;
         const finalAmount = subtotal + shipping;
@@ -176,8 +182,13 @@ const placeOrder = async (req, res) => {
         console.log("Order saved successfully:", newOrder);
 
         for (const item of cart.items) {
-            await Product.findByIdAndUpdate(item.productId._id, { $inc: { quantity: -item.quantity } });
+            const product= await Product.findById(item.productId._id);
+            const newQuantity= product.quantity - item.quantity;
+            await Product.findByIdAndUpdate(item.productId._id,{
+                $set:{quantity: newQuantity, status: newQuantity<1 ? "Out of stock" : "Available" }, },{new:true});
         }
+
+        
 
         delete req.session.selectedAddress;
         delete req.session.paymentMethod;
@@ -199,7 +210,77 @@ const loadOrderSuccessPage=async(req,res)=>{
         console.error('error for load order success page');
         res.status(500).json({error:"Internal server error"});
     }
-}
+};
+
+const cancelOrder = async (req, res) => {
+    try {
+
+        const { orderId } = req.query;  
+        
+
+        if (!orderId) {
+            return res.status(400).json({
+                success: false,
+                message: "Order ID is required"
+            });
+        }
+
+        console.log('Attempting to cancel order:', orderId);
+        
+        const order = await Order.findOne({ orderId: orderId }).populate('orderedItems.product');
+        
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: "Order not found"
+            });
+        }
+        if (order.status === 'Cancelled') {
+            return res.status(400).json({
+                success: false,
+                message: "Order is already cancelled"
+            });
+        }
+
+        const allowedStatusForCancel = ['Pending', 'Processing'];
+        if (!allowedStatusForCancel.includes(order.status)) {
+            return res.status(400).json({
+                success: false,
+                message: `Cannot cancel order in ${order.status} status`
+            });
+        }
+        for (const item of order.orderedItems) {
+            const product = item.product;
+            if (product) {
+                product.quantity += item.quantity;
+                if (product.status === 'Out of stock' && product.quantity > 0) {
+                    product.status = 'Available';
+                }
+                await product.save();
+            }
+        }
+
+        order.status = 'Cancelled';
+        await order.save();
+
+        console.log(`Order ${orderId} cancelled and products restocked`);
+
+        
+        return res.status(200).json({
+            success: true,
+            message: "Order cancelled successfully",
+            redirectUrl: '/user-profile'  
+        });
+
+    } catch (error) {
+        console.error('Error cancelling order:', error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to cancel order",
+            error: error.message
+        });
+    }
+};
 
 
 module.exports={
@@ -208,6 +289,7 @@ module.exports={
     selectAddress,
     handlePaymentMethod,
     placeOrder,
-   loadOrderSuccessPage
+   loadOrderSuccessPage,
+   cancelOrder
 
 }
