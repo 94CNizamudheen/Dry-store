@@ -52,6 +52,14 @@ const productSchema= new Schema({
         required:true,
         default:"Available",
     },
+    stockHistory: [
+        {
+            date: { type: Date, default: Date.now },
+            quantity: { type: Number, required: true },
+            reason: { type: String, required: true },
+            notes: { type: String },
+        }
+    ],
    
 
 

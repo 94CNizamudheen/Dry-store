@@ -11,6 +11,7 @@ const Brand = require('../../models/brandSchema');
 
 
 
+
 const getProductaddPage=async(req,res)=>{
     try {
         const category= await Category.find({isListed:true});
@@ -251,7 +252,56 @@ const deleteSingleImage= async(req,res)=>{
     } catch (error) {
         res.redirect('/pageError');
     }
-}
+};
+ const loadInventoryManagment= async(req,res)=>{
+    try {
+        const products= await Product.find({}).populate('category');
+        if(!products){
+            return res.status(400).json({message:"No products"});
+        }
+        res.render('inventoryManagement',{
+            products:products,
+        })
+        
+    } catch (error) {
+        console.error("error for loading invetory");
+        res.redirect('/pageError');
+    }
+ };
+
+ const updateInventory = async(req,res)=>{
+    try {
+        console.log("Inventory updation Invoked");
+        const {productId}= req.params;
+        const {quantityChange,reason,notes}= req.body;
+        if(!quantityChange ||!reason){
+            return res.status(400).json({message:"Quantity and Reason are required"});
+        }
+        const product= await Product.findById(productId);
+        if(!product){
+            return res.status(400).json({message:"Product not Found"});
+        }
+        const newQuantity= product.quantity +=quantityChange;
+        if (newQuantity<0){
+            return res.status(400).json({message:"Insufficient Stock"});
+        }
+
+        product.quantity= newQuantity;
+        product.status= newQuantity>0 ? "Available" :"Out of stock";
+
+        product.stockHistory.push({
+            quantity:quantityChange,
+            reason,
+            notes,
+        });
+        await product.save();
+        res.status(200).json({message:"Inventory updated SuccessFully.",product});
+
+    } catch (error) {
+        console.error('Error for stock updation',error);
+        res.status(500).json({error:"Internal server error while updating product inventory"});
+    }
+ };
 
 
 module.exports={
@@ -264,5 +314,7 @@ module.exports={
     unBlockProduct,
     getEditProduct,
     editProduct,
-    deleteSingleImage
+    deleteSingleImage,
+    loadInventoryManagment,
+    updateInventory
 }

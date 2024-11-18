@@ -11,6 +11,7 @@ const userAuth = async (req, res, next) => {
         
         if (userData && !userData.isBlocked) {
             req.user = userData; 
+            req.session.user = userData;
             return next();
         }
         req.session.destroy((err) => {

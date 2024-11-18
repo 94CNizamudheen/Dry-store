@@ -276,10 +276,11 @@ const verifyOtp=async(req,res)=>{
                 name: user.name,
                 email:user.email,
                 phone:user.phone,
-                password:user.password,
+                password:user.password
             });
             await saveUserData.save();
-            req.session.user=saveUserData._id;
+            // req.session.user=saveUserData._id;
+            req.session.user = saveUserData;
             res.json({success:true,redirectUrl:"/"});
         }else{
             res.status(400).json({success:false,message:"Invalid OTP please try again"});

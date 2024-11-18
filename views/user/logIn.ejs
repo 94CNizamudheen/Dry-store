@@ -1,130 +1,59 @@
 <%-include ("../../views/partials/user/header.ejs")%>
 
 <style>
-/* Center and card styling */
-.content-main {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #f7f8fa;
-    padding: 20px;
-}
+    /* Body background */
+    body {
+        background-color: #ffe2f2;
+    }
 
-.card-login {
-    width: 100%;
-    max-width: 400px;
-    border: none;
-    border-radius: 8px;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    background-color: #fff;
-}
+    /* Form container */
+    .card-login {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+    }
 
-/* Heading */
-.card-title {
-    font-weight: 600;
-    color: #333;
-    text-align: center;
-}
+    /* Form fields */
+    .form-control {
+        background-color: #f2f2f2;
+        border: none;
+        border-radius: 5px;
+        padding: 12px 16px;
+        font-size: 16px;
+        color: #333;
+    }
 
-/* Input styling */
-.form-control {
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    font-size: 15px;
-    padding: 10px;
-}
+    .form-control:focus {
+        outline: none;
+        box-shadow: 0 0 5px rgba(29, 161, 242, 0.5);
+    }
 
-.form-control:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-    outline: none;
-}
+    /* Submit button */
+    .btn-primary {
+      
+        color: #fff;
+        font-size: 16px;
+        padding: 12px 24px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
 
-/* Error message */
-.text-danger {
-    font-size: 13px;
-    margin-top: 5px;
-}
+ 
 
-/* Remember checkbox */
-.form-check-label {
-    font-size: 14px;
-    color: #666;
-}
 
-/* Button styling */
-.btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
-    font-weight: 500;
-    transition: background-color 0.3s ease;
-}
+  
 
-.btn-primary:hover {
-    background-color: #0056b3;
-    border-color: #0056b3;
-}
-
-.btn-light {
-    background-color: #f1f3f5;
-    color: #666;
-    border: 1px solid #ddd;
-}
-
-.btn-light:hover {
-    background-color: #e2e6ea;
-}
-
-/* SVG icon */
-.icon-svg {
-    vertical-align: middle;
-    margin-right: 8px;
-}
-
-/* Additional text */
-.text-muted {
-    font-size: 14px;
-}
-
-.font-sm {
-    font-size: 14px;
-}
-
-.d-grid .btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 15px;
-    font-weight: 500;
-}
-
-/* Sign-up link */
-.mb-4 a {
-    color: #007bff;
-    text-decoration: none;
-}
-
-.mb-4 a:hover {
-    text-decoration: underline;
-}
-
-/* Margin adjustments */
-.mb-3,
-.mb-4 {
-    margin-bottom: 1rem !important;
-}
-
-.mb-15 {
-    margin-bottom: 15px;
-}
+ 
+    .font-sm {
+        font-size: 14px;
+    }
 </style>
 
 <section class="content-main mt-80 mb-80">
     <div class="card mx-auto card-login">
         <div class="card-body">
-            <h4 class="card-title mb-4">Sign in</h4>
+            <h4 class="card-title mb-4 text-primary">Sign in</h4>
             <% if (message) { %>
                 <div class="alert alert-danger text-center">
                     <%= message %>
@@ -151,23 +80,22 @@
             </form>
             <p class="text-center small text-muted mb-15">or sign up with</p>
             <div class="d-grid gap-3 mb-4">
-                <a href="/auth/google" class="btn w-100 btn-light font-sm">
-                    
-                         <svg aria-hidden="true" class="icon-svg" style="vertical-align: bottom; margin-top:-4px;" width="20" height="20" viewBox="0 0 20 20">
-                                <path d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 002.38-5.88c0-.57-.05-.66-.15-1.18z" fill="#4285F4"></path>
-                                <path d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 01-7.18-2.54H1.83v2.07A8 8 0 008.98 17z" fill="#34A853"></path>
-                                <path d="M4.5 10.52a4.8 4.8 0 010-3.04V5.41H1.83a8 8 0 000 7.18l2.67-2.07z" fill="#FBBC05"></path>
-                                <path d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 001.83 5.4L4.5 7.49a4.77 4.77 0 014.48-3.3z" fill="#EA4335"></path>
-                            </svg>
-                     Sign in using Google
+                <a href="/auth/google" class="btn w-100 btn-outline-primary font-sm">
+                    <svg aria-hidden="true" class="icon-svg" style="vertical-align: bottom; margin-top:-4px;" width="20" height="20" viewBox="0 0 20 20">
+                        <path d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 002.38-5.88c0-.57-.05-.66-.15-1.18z" fill="#4285F4"></path>
+                        <path d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 01-7.18-2.54H1.83v2.07A8 8 0 008.98 17z" fill="#34A853"></path>
+                        <path d="M4.5 10.52a4.8 4.8 0 010-3.04V5.41H1.83a8 8 0 000 7.18l2.67-2.07z" fill="#FBBC05"></path>
+                        <path d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 001.83 5.4L4.5 7.49a4.77 4.77 0 014.48-3.3z" fill="#EA4335"></path>
+                    </svg>
+                    Sign in using Google
                 </a>
-                <a href="#" class="btn w-100 btn-light font-sm">
+                <a href="#" class="btn w-100 btn-outline-primary font-sm">
                     <svg aria-hidden="true" class="icon-svg" width="20" height="20" viewBox="0 0 20 20">
                         <!-- Facebook icon SVG paths -->
                     </svg> Sign in using Facebook
                 </a>
             </div>
-            <p class="text-center mb-4">Don't have an account? <a href="/signUp">Sign up</a></p>
+            <p class="text-center mb-4">Don't have an account? <a href="/signUp" class="text-primary">Sign up</a></p>
         </div>
     </div>
 </section>
@@ -186,4 +114,4 @@ function validateEmail() {
 }
 </script>
 
-<%-include ("../../views/partials/user/footer.ejs")%>
+

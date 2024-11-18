@@ -60,6 +60,8 @@ router.get('/unBlockProduct',adminAuth,productController.unBlockProduct);
 router.get('/editProduct',adminAuth,productController.getEditProduct);
 router.post('/editProduct',adminAuth,uploads.array("images",3),productController.editProduct);
 router.post('/deleteSingleImage',adminAuth,productController.deleteSingleImage);
+router.get('/inventoryManagement',adminAuth,productController.loadInventoryManagment);
+router.patch('/updateInventory/:productId',adminAuth,productController.updateInventory);
 
 // order managment 
 router.get('/orderList',adminAuth,orderController.loadOrderDetails);

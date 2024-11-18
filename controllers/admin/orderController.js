@@ -130,9 +130,15 @@ const cancelOrder=async(req,res)=>{
     try {
         console.log("cancel order initiated");
         const {orderId}= req.params;
-        const order= await Order.findOne({orderId:orderId}).populate('orderItems.product');
+        const order= await Order.findOne({orderId:orderId}).populate('orderedItems.product');
         if(!order){
             return res.status(404).json({message:"Order not fount",success:false});
+        }
+        if (order.status !== 'Pending') {
+            return res.status(400).json({
+                success: false,
+                message: "Only pending orders can be cancelled"
+            });
         }
         for (const item of order.orderedItems) {
             const product = item.product;

@@ -162,6 +162,74 @@
             margin-right: 8px;
             opacity: 0.7;
         }
+        .container.position-relative {
+    padding: 0 50px;
+}
+
+.nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 100;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.nav-arrow:hover {
+    background: #f8f9fa;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+.nav-arrow:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.nav-arrow-left {
+    left: 10px;
+}
+
+.nav-arrow-right {
+    right: 10px;
+}
+
+.order-card {
+    transition: opacity 0.3s ease;
+    margin: 0 auto;
+    max-width: 900px;
+    opacity: 1;
+}
+
+#ordersContainer {
+    position: relative;
+    min-height: 200px;
+}
+.order-card {
+    transition: opacity 0.3s ease;
+    margin: 0 auto;
+    max-width: 900px;
+    opacity: 0;
+    display: none;
+}
+
+.order-card.active {
+    display: block;
+    opacity: 1;
+}
+
+.order-card.inactive {
+    display: none;
+    opacity: 0;
+}
 </style>
 
 
@@ -226,152 +294,165 @@
                                         </div>
                                 </div>
                                 </div>
-                                <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
-                                    <div class="container">
-                                        <% if(userOrders && userOrders.length > 0) {%>
-
-                                            <% userOrders.forEach(order=>  {%>
-                                        <div class="order-card">                                            
-                                            <!-- Header -->
-
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <div>
-                                                    <h5 class="mb-1"><%= order.orderId %></h5>
-                                                    <p class="text-muted small"><%= order.orderedItems.length %> • Order Placed on <%= order.createdOn.toLocaleDateString() %></p>
-                                                </div>
-                                                <div>
-                                                    <h5><%= order.finalAmount.toFixed(2) %></h5>
-                                                </div>
-                                            </div>
+                                <div class="tab-pane fade " id="orders" role="tabpanel" aria-labelledby="orders-tab">
+                                    <div class="container position-relative">
+                                        <% if(userOrders && userOrders.length > 0) { %>
+                                            <!-- Side Navigation Arrows -->
+                                            <button class="nav-arrow nav-arrow-left" onclick="navigateOrders('prev')" id="prevBtn">
+                                                <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                                            </button>
+                                            <button class="nav-arrow nav-arrow-right" onclick="navigateOrders('next')" id="nextBtn">
+                                                <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                            </button>
                                 
-                                            <!-- Progress Tracker -->
-                                            <div class="progress-tracker">
-                                                <div class="progress-line"></div>
-                                                <div class="progress-steps">
-                                                    <% if (order.status === 'Cancelled') { %>
-                                                        <!-- Show only cancelled status when order is cancelled -->
-                                                        <div class="step active " >
-                                                            <span class="step-label text-success">Order Placed</span>
+                                            <!-- Orders container -->
+                                            <div id="ordersContainer">
+                                                <% userOrders.forEach((order, index) => { %>
+                                                    <div class="order-card <%= index === 0 ? 'active' : 'inactive' %>" data-order-index="<%= index %>">
+                                                        <!-- Rest of your existing order card content stays exactly the same -->
+                                                        <!-- Header -->
+                                                       
+                                                        <div class="d-flex justify-content-between align-items-start">
+                                                            <div>
+                                                                <h5 class="mb-1"><%= order.orderId %></h5>
+                                                                <p class="text-muted small"><%= order.orderedItems.length %> • Order Placed on <%= order.createdOn.toLocaleDateString() %></p>
+                                                            </div>
+                                                            <div>
+                                                                <h5><%= order.finalAmount.toFixed(2) %></h5>
+                                                            </div>
                                                         </div>
-                                                        <div class="step active cancelled"  >
-                                                            <span class="step-label text-danger" >Cancelled</span>
-                                                        </div>
-                                                    <% } else { %>
-                                                        <!-- Show normal progress steps for active orders -->
-                                                        <div class="step <%= order.status === 'Pending' || order.status === 'Processing' || order.status === 'Shipped' || order.status === 'Delivered' ? 'placed' : '' %>"  >
-                                                            <span class="step-label">Order Placed</span>
-                                                        </div>
-                                                        <div class="step <%= order.status === 'Processing' || order.status === 'Shipped' || order.status === 'Delivered' ? 'packaging' : '' %>">
-                                                            <span class="step-label">Packaging</span>
-                                                        </div>
-                                                        <div class="step <%= order.status === 'Shipped' || order.status === 'Delivered' ? 'ontheRoad' : '' %>">
-                                                            <span class="step-label">On The Road</span>
-                                                        </div>
-                                                        <div class="step <%= order.status === 'Delivered' ? 'orderDelivered' : '' %>">
-                                                            <span class="step-label">Delivered</span>
-                                                        </div>
-                                                    <% } %>
-                                                </div>
-                                            </div>
-                                
-                                             <!-- Activity Feed -->
-                                             <div class="activity-feed">
-                                                <h6 class="mb-3">Order Activity</h6>
-                                                <% if (order.status === 'Delivered') { %>
-                                                    <div class="activity-item bg-light">
-                                                        <div class="activity-icon text-success">✓</div>
-                                                        <div>
-                                                            <p class="mb-0">Your order has been delivered. Thank you for shopping!</p>
-                                                            <small class="text-muted"><%= new Date(order.invoiceDate).toLocaleString() %></small>
-                                                        </div>
-                                                    </div>
-                                                <% } else if (order.status === 'Cancelled') { %>
-                                                    <div class="activity-item bg-light">
-                                                        <div class="activity-icon text-danger">✕</div>
-                                                        <div>
-                                                            <p class="mb-0">Your order has been cancelled.</p>
-                                                            <small class="text-muted"><%= new Date(order.createdOn).toLocaleString() %></small>
-                                                        </div>
-                                                    </div>
-                                                <% } %>
-                                            </div>
-                                
-                                             <!-- Order Items -->
-                                             <div class="order-items">
-                                                 <% order.orderedItems.forEach(item=> {%>
-                                                <div class="item-row">
-                                                    <img src="/uploads/images/<%= item.product.productImage[0] %>" alt="Product" class="item-image">
-                                                    <div class="flex-grow-1">
-                                                        <h6 class="mb-1"><%= item.product.productName %></h6>
-                                                        <p class="mb-0 text-muted"><%= item.quantity %></p>
-                                                    </div>
-                                                    <div class="text-end">
-                                                        <h6>₹<%= item.price.toFixed(2) %></h6>
-                                                    </div>
-                                                </div>
-
-                                                 <% }) %>
-                                            </div>
-                                            
-                                
-                                            <!-- Address Information -->
-                                            <div class="row mt-4">
-                                               
-                                            
-                                                <!-- Shipping Address -->
-                                                <div class="col-md-4">
-                                                    <div class="address-card">
-                                                        <h6 class="mb-3">Shipping Address</h6>
-                                                        <span class="address-type">
-                                                            <%= order.shippingAddress.addressType %>
-                                                        </span>
                                                         
-                                                        <div class="address-details">
-                                                            <div class="name">
-                                                                <%= user.name %>
+                                                        <!-- Progress Tracker -->
+                                                        <div class="progress-tracker">
+                                                            <div class="progress-line"></div>
+                                                            <div class="progress-steps">
+                                                                <% if (order.status === 'Cancelled') { %>
+                                                                    <!-- Show only cancelled status when order is cancelled -->
+                                                                    <div class="step active " >
+                                                                        <span class="step-label text-success">Order Placed</span>
+                                                                    </div>
+                                                                    <div class="step active cancelled"  >
+                                                                        <span class="step-label text-danger" >Cancelled</span>
+                                                                    </div>
+                                                                <% } else { %>
+                                                                    <!-- Show normal progress steps for active orders -->
+                                                                    <div class="step <%= order.status === 'Pending' || order.status === 'Processing' || order.status === 'Shipped' || order.status === 'Delivered' ? 'placed' : '' %>"  >
+                                                                        <span class="step-label">Order Placed</span>
+                                                                    </div>
+                                                                    <div class="step <%= order.status === 'Processing' || order.status === 'Shipped' || order.status === 'Delivered' ? 'packaging' : '' %>">
+                                                                        <span class="step-label">Packaging</span>
+                                                                    </div>
+                                                                    <div class="step <%= order.status === 'Shipped' || order.status === 'Delivered' ? 'ontheRoad' : '' %>">
+                                                                        <span class="step-label">On The Road</span>
+                                                                    </div>
+                                                                    <div class="step <%= order.status === 'Delivered' ? 'orderDelivered' : '' %>">
+                                                                        <span class="step-label">Delivered</span>
+                                                                    </div>
+                                                                <% } %>
                                                             </div>
-                                                            
-                                                            <div class="location">
-                                                                <div><%= order.shippingAddress.name %></div>
-                                                                <div><%= order.shippingAddress.landmark %></div>
-                                                                <div><%= order.shippingAddress.city %></div>
-                                                                <div><%= order.shippingAddress.state %> - <%= order.shippingAddress.pincode %></div>
-                                                            </div>
-                                                            
-                                                            <div class="contact">
-                                                                <div class="d-flex align-items-center mb-1">
-                                                                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                                                    </svg>
-                                                                    <%= user.email %>
+                                                        </div>
+                                                        <!-- Activity Feed -->
+                                                        <div class="activity-feed">
+                                                            <h6 class="mb-3">Order Activity</h6>
+                                                            <% if (order.status === 'Delivered') { %>
+                                                                <div class="activity-item bg-light">
+                                                                    <div class="activity-icon text-success">✓</div>
+                                                                    <div>
+                                                                        <p class="mb-0">Your order has been delivered. Thank you for shopping!</p>
+                                                                        <small class="text-muted"><%= new Date(order.invoiceDate).toLocaleString() %></small>
+                                                                    </div>
+                                                                </div>
+                                                            <% } else if (order.status === 'Cancelled') { %>
+                                                                <div class="activity-item bg-light">
+                                                                    <div class="activity-icon text-danger">✕</div>
+                                                                    <div>
+                                                                        <p class="mb-0">Your order has been cancelled.</p>
+                                                                        <small class="text-muted"><%= new Date(order.createdOn).toLocaleString() %></small>
+                                                                    </div>
+                                                                </div>
+                                                            <% } %>
+                                                        </div>
+                                                        
+                                                        <!-- Order Items -->
+                                                        <div class="order-items">
+                                                            <% order.orderedItems.forEach(item=> {%>
+                                                           <div class="item-row">
+                                                               <img src="/uploads/images/<%= item.product.productImage[0] %>" alt="Product" class="item-image">
+                                                               <div class="flex-grow-1">
+                                                                   <h6 class="mb-1"><%= item.product.productName %></h6>
+                                                                   <p class="mb-0 text-muted"><%= item.quantity %></p>
+                                                               </div>
+                                                               <div class="text-end">
+                                                                   <h6>₹<%= (item.price* item.quantity).toFixed(2) %></h6>
+                                                               </div>
+                                                           </div>
+                                                            <% }) %>
+                                                            <br>
+                                                            <div class="text-end " >
+                                                                <h6>Total:<%= order.finalAmount.toFixed(2) %></h6>
+                                                               </div>
+                                                       </div>
+                                                        
+                                                        <!-- Address Information -->
+                                                        <div class="row mt-4">
+                                                                               
+                                                                            
+                                                            <!-- Shipping Address -->
+                                                            <div class="col-md-4">
+                                                                <div class="address-card">
+                                                                    <h6 class="mb-3">Shipping Address</h6>
+                                                                    <span class="address-type">
+                                                                        <%= order.shippingAddress.addressType %>
+                                                                    </span>
+                                                                    
+                                                                    <div class="address-details">
+                                                                        <div class="name">
+                                                                            <%= user.name %>
+                                                                        </div>
+                                                                        
+                                                                        <div class="location">
+                                                                            <div><%= order.shippingAddress.name %></div>
+                                                                            <div><%= order.shippingAddress.landmark %></div>
+                                                                            <div><%= order.shippingAddress.city %></div>
+                                                                            <div><%= order.shippingAddress.state %> - <%= order.shippingAddress.pincode %></div>
+                                                                        </div>
+                                                                        
+                                                                        <div class="contact">
+                                                                            <div class="d-flex align-items-center mb-1">
+                                                                                <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                                                                </svg>
+                                                                                <%= user.email %>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
                                                             </div>
+                                                        
+                                                            <!-- Order Notes -->
+                                                            <div class="col-md-4">
+                                                                <h6>Order Notes</h6>
+                                                                <p class="mb-0">
+                                                                    <%= order.notes || 'No special instructions.' %>
+                                                                </p>
+                                                            </div>
+                                                           
                                                         </div>
+                                                        
+                                                        <% if (!['Cancelled', 'Delivered'].includes(order.status)) { %>
+                                                            <br>
+                                                            <p>orderId: <%= order.orderId %></p>
+                                                            <a class="btn btn-secondary btn-sm" href="#" onclick="cancelOrder('<%= order.orderId %>')">Cancel Order</a>
+                                                        <% } %>
                                                     </div>
-                                                </div>
-                                            
-                                                <!-- Order Notes -->
-                                                <div class="col-md-4">
-                                                    <h6>Order Notes</h6>
-                                                    <p class="mb-0">
-                                                        <%= order.notes || 'No special instructions.' %>
-                                                    </p>
-                                                </div>
-                                               
+                                                <% }); %>
                                             </div>
-                                            <% if (!['Cancelled', 'Delivered',].includes(order.status)) { %>
-                                                <br>
-                                                <p>orderId: <%= order.orderId %></p>
-                                                <a class="btn btn-secondary btn-sm" href="#" onclick="cancelOrder('<%= order.orderId %>')">Cancel Order</a>
-                                            <% } %>
-                                        </div>
-                                        <br>
-                                        <% }) %>
-                                        <% }else {%>
+                                        <% } else { %>
                                             <h3>NO orders</h3>
-                                            <% } %>
+                                        <% } %>
                                     </div>
                                 </div>
+                                
                                 <div class="tab-pane fade" id="track-orders" role="tabpanel" aria-labelledby="track-orders-tab">
                                     <div class="card">
                                         <div class="card-header">
@@ -558,4 +639,53 @@
     });
 }
 </script>
+<script>
+    let currentOrderIndex = 0;
+    const totalOrders = '<%= userOrders ? userOrders.length : 0 %>';
+    
+    function navigateOrders(direction) {
+        // Hide current order with fade effect
+        const currentOrder = document.querySelector(`[data-order-index="${currentOrderIndex}"]`);
+        currentOrder.style.opacity = '0';
+        
+        setTimeout(() => {
+            currentOrder.style.display = 'none';
+            
+            // Update index
+            if (direction === 'next' && currentOrderIndex < totalOrders - 1) {
+                currentOrderIndex++;
+            } else if (direction === 'prev' && currentOrderIndex > 0) {
+                currentOrderIndex--;
+            }
+            
+            // Show new current order with fade effect
+            const nextOrder = document.querySelector(`[data-order-index="${currentOrderIndex}"]`);
+            nextOrder.style.display = 'block';
+            setTimeout(() => {
+                nextOrder.style.opacity = '1';
+            }, 50);
+            
+            // Update button states
+            updateNavigationState();
+        }, 300);
+    }
+    
+    function updateNavigationState() {
+        document.getElementById('prevBtn').disabled = currentOrderIndex === 0;
+        document.getElementById('nextBtn').disabled = currentOrderIndex === totalOrders - 1;
+    }
+    
+    // Initialize navigation on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set initial states
+        updateNavigationState();
+        
+        // Show first order
+        const firstOrder = document.querySelector('[data-order-index="0"]');
+        if (firstOrder) {
+            firstOrder.style.display = 'block';
+            firstOrder.style.opacity = '1';
+        }
+    });
+    </script>
 <%- include('../partials/user/footer.ejs') %>
