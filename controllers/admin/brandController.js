@@ -37,7 +37,10 @@ const addBrands= async(req,res)=>{
         const brand=req.body.name;
         const findBrand= await Brand.findOne({brandName:brand});
         if(findBrand){
-            return res.status(400).json({ error: "Brand already exists. Please choose a different name." });
+            return res.render('add-brands',{
+                error:{name:"Brand already exists. Please choose a different name."},
+               
+            })
         }  
         if(brand && req.file){
             const image=req.file.filename;
@@ -48,7 +51,10 @@ const addBrands= async(req,res)=>{
             await newBrand.save();
             res.redirect('/admin/addBrands')
         }else{
-            return res.status(400).json({ error: "Brand name or image is missing." });
+            return res.render('add-brands',{
+                error:{image:"Brand name or image is missing."},
+              
+            }) 
         }
           
         

@@ -31,13 +31,19 @@ const addProducts = async (req, res) => {
         const products = req.body;
         const images = [];
         if (req.files && req.files.length > 0) {
-            for (let i = 0; i < req.files.length; i++) {
-                const originalImagePath = req.files[i].path;
-                const resizedImagePath = path.join("public", "uploads", "product-images", req.files[i].filename);
+            const validImageTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+            for (let file of req.files) {
+                if (!validImageTypes.includes(file.mimetype)) {
+                    return res.status(400).json("Only image files (PNG, JPEG, JPG) are allowed.");
+                }
+                const originalImagePath = file.path;
+                const resizedImagePath = path.join("public", "uploads", "product-images", file.filename);
                 await sharp(originalImagePath).resize({ width: 440, height: 440 }).toFile(resizedImagePath);
-                images.push(req.files[i].filename);
+                images.push(file.filename);
             }
         }
+        
+      
         // Checking if category exists
         const categoryId = await Category.findOne({ name: products.category });
         if (!categoryId) {

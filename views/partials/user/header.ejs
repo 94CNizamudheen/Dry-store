@@ -88,17 +88,18 @@
                             </form>
                         </div>
                         <div class="header-action-right">
+                            <% if(locals.user) {%>
                             <div class="header-action-2">
                                 <div class="header-action-icon-2">
                                     <a href="shop-wishlist.html">
                                         <img class="svgInject" alt="Evara" src="/evara-frontend/assets/imgs/theme/icons/icon-heart.svg">
-                                        <span class="pro-count blue">4</span>
+                                        <span class="pro-count blue">0</span>
                                     </a>
                                 </div>
                                 <div class="header-action-icon-2">
                                     <a class="mini-cart-icon" href="cart">
                                         <img alt="Evara" src="/evara-frontend/assets/imgs/theme/icons/icon-cart.svg">
-                                        <span class="pro-count blue">2</span>
+                                        <span class="pro-count blue"><%= items %></span>
                                     </a>
                                     <div class="cart-dropdown-wrap cart-dropdown-hm2">
                                       
@@ -112,6 +113,33 @@
                                     </div>
                                 </div>
                             </div>
+                            <% }else{ %>
+                                <div class="header-action-2">
+                                    <div class="header-action-icon-2">
+                                        <a href="shop-wishlist.html">
+                                            <img class="svgInject" alt="Evara" src="/evara-frontend/assets/imgs/theme/icons/icon-heart.svg">
+                                            <span class="pro-count blue">0</span>
+                                        </a>
+                                    </div>
+                                    <div class="header-action-icon-2">
+                                        <a class="mini-cart-icon" href="cart">
+                                            <img alt="Evara" src="/evara-frontend/assets/imgs/theme/icons/icon-cart.svg">
+                                            <span class="pro-count blue">0</span>
+                                        </a>
+                                        <div class="cart-dropdown-wrap cart-dropdown-hm2">
+                                          
+                                            <div class="shopping-cart-footer">
+                                             
+                                                <div class="shopping-cart-button">
+                                                    <a href="/cart" class="outline">View cart</a>
+                                                    <a href="/check-out">Checkout</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <% } %>
                         </div>
                     </div>
                 </div>

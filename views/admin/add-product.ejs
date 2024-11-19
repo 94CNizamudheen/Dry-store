@@ -338,8 +338,7 @@
 
     function validateForm() {
     clearErrorMessages(); 
-
-   
+  
     const name = document.getElementsByName('productName')[0].value.trim();
     const description = document.getElementById('descriptionid').value.trim();
     const brand = document.getElementsByName('brand')[0].value;
@@ -354,7 +353,7 @@
     if (name === "") {
         displayErrorMessage('productName-error', 'Please enter a product name.');
         isValid = false;
-    } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+    } else if (!/^[a-zA-Z][a-zA-Z0-9\s]*$/.test(name)) {
         displayErrorMessage('productName-error', 'Product name should contain only alphabetic characters.');
         isValid = false;
     }

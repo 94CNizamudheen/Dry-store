@@ -7,6 +7,7 @@ const Category= require('../../models/categorySchema');
 const Brand= require('../../models/brandSchema');
 const Product = require("../../models/productSchema");
 const { name } = require("ejs");
+const Cart= require ('../../models/cartScema')
 
 
 
@@ -22,20 +23,28 @@ const pageNotFound= async(req,res)=>{
 const  loadHomepage= async(req,res)=>{
     try {
         const user= req.session.user;
+        
         const categories= await Category.find({isListed:true});
         let productData= await Product.find({
             category:{$in:categories.map(category=>category._id)},quantity:{$gte:0}
         }).populate('category').populate("brand").sort({createdAt:-1});
         productData.sort((a,b)=>new Date(b.createdOn)- new Date(a.createdOn));
         productData=productData.slice(0,4);
+        const cart= await Cart.find({});
         
 
         if(user){
             const userData= await User.findOne({_id:user._id});
-            return res.render("home",{user:userData,products:productData});     
+            return res.render("home",{user:userData,
+                products:productData,
+                
+            });     
         }
         else{
-            return res.render('home',{products:productData})    
+            return res.render('home',{
+                products:productData,
+                
+            })    
         }
     } catch (error) {
         console.log("Home page not Found");

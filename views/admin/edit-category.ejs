@@ -40,6 +40,10 @@
     async function handleEditFormSubmit(event) {
         event.preventDefault();
 
+        if (!validateForm()) {
+            return;
+        }
+
         const form = event.target;
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
@@ -63,8 +67,7 @@
                     window.location.href = result.redirectUrl;
                 });
             } else {
-                document.getElementById('name-error').innerText = result.error || '';
-                document.getElementById('name-error').style.display = 'block';
+                displayErrorMessages('name-error', result.error || 'An error occurred.');
             }
         } catch (error) {
             Swal.fire({
@@ -74,6 +77,35 @@
             });
         }
     }
+    function validateForm() {
+    clearErrorMessages();
+    const name = document.getElementById('category_name').value.trim(); 
+    const description = document.getElementById('category_description').value.trim(); 
+    let isValid = true;
+
+    if (name === '') {
+        displayErrorMessages('name-error', "Please enter a name.");
+        isValid = false;
+    } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+        displayErrorMessages('name-error', "Category name should contain only alphabetic characters.");
+        isValid = false;
+    }
+    if (description === '') {
+        displayErrorMessages('description-error', "Please enter a description.");
+        isValid = false;
+    }
+    return isValid;
+}
+function clearErrorMessages() {
+    document.getElementById('name-error').style.display = 'none';
+    document.getElementById('description-error').style.display = 'none';
+}
+function displayErrorMessages(id, message) {
+    const errorElement = document.getElementById(id);
+    errorElement.textContent = message;
+    errorElement.style.display = 'block';
+}
+
 </script>
 
 <%- include('../partials/admin/footer.ejs') %>

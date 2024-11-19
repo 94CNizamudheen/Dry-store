@@ -9,7 +9,7 @@ const categoryInfo = async (req, res) => {
         const skip = (page - 1) * limit;
         
         const categoryData = await Category.find({})
-                                           .sort({ mfg: -1 })
+                                           .sort({ createdOn: -1 })
                                            .skip(skip)
                                            .limit(limit);
                                            

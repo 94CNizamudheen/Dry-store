@@ -19,7 +19,7 @@ const catogorySchema= new Schema({
         type:Number,
         default:0
     },
-    mfg:{
+    createdOn:{
         type:Date,
         default:Date.now,
     },
