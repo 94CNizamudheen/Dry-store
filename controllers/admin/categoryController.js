@@ -124,6 +124,7 @@ const getListCategory=async(req,res)=>{
         res.redirect('/pageError');
     }
 };
+
 const getUnListCategory=async(req,res)=>{
     try {
         let id=req.query.id;

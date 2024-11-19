@@ -150,11 +150,11 @@
                                                         <%= product.quantity > 0 ? `Stock left: ${product.quantity}` : 'Out of Stock' %>
                                                     </div>
                                                     <% if (product.quantity > 0) { %>
-                                                        <!-- Updated the add to cart button to match original styling -->
+                                                        
                                                         <div class="product-action-1 show">
                                                             <a aria-label="Add To Cart" 
                                                                class="action-btn hover-up" 
-                                                               href="#" 
+                                                               href="javascript:void(0);" 
                                                                id="addToCartButton"
                                                                data-product-id="<%= product._id %>">
                                                                 <i class="fi-rs-shopping-bag-add"></i>
@@ -513,87 +513,89 @@
     </main>
 
 
-
     <script>
-        // Frontend JavaScript
-        document.addEventListener('DOMContentLoaded', function() {
-            document.addEventListener('click', async function(e) {
-                if (e.target && e.target.id === 'addToCartButton') {
+        document.addEventListener('DOMContentLoaded', () => {
+            document.addEventListener('click', async (e) => {
+                if (e.target && e.target.closest('#addToCartButton')) {
                     e.preventDefault();
-                    
-                    const button = e.target;
+    
+                    const button = e.target.closest('#addToCartButton');
                     const productId = button.dataset.productId;
-                    const quantity = 1;
-                    
-                    // Disable button during request
+                    const quantity = 1; // Default quantity for adding to cart
+    
+                    // Disable button while processing
                     button.disabled = true;
-                    
+    
                     try {
+                        // Send add-to-cart request
                         const response = await fetch('/add-to-cart', {
                             method: 'POST',
                             headers: {
-                                'Content-Type': 'application/json'
+                                'Content-Type': 'application/json',
                             },
-                            body: JSON.stringify({ productId, quantity })
+                            body: JSON.stringify({ productId, quantity }),
                         });
-                        
+    
                         const data = await response.json();
-                        
+    
                         if (!response.ok) {
-                            throw new Error(data.message || 'Failed to add item to cart');
+                            throw new Error(data.message || "Failed to add item to cart");
                         }
-        
+    
+                        // Display success message
                         if (data.success) {
-                            // Show appropriate message based on whether item was added or already exists
                             Swal.fire({
                                 title: data.isExisting ? 'Notice!' : 'Success!',
                                 text: data.message,
                                 icon: data.isExisting ? 'info' : 'success',
-                                timer: data.isExisting ? null : 2000,
-                                showConfirmButton: data.isExisting
+                                timer: 2000,
+                                showConfirmButton: false,
                             });
-                            
+    
+                            // Update cart count
                             if (!data.isExisting) {
-                                // Update cart count only if it's a new item
                                 const cartCountElement = document.querySelector('.cart-count');
                                 if (cartCountElement) {
                                     cartCountElement.textContent = data.cartCount;
                                 }
                             }
-                            
-                            // Update stock display if it exists
-                            if (data.remainingStock !== undefined) {
-                                const stockElement = document.querySelector(`[data-stock-id="${productId}"]`);
-                                if (stockElement) {
-                                    stockElement.textContent = `Stock: ${data.remainingStock}`;
-                                }
+    
+                            // Update stock display
+                            const stockElement = document.querySelector(`[data-stock-id="${productId}"]`);
+                            if (stockElement && data.remainingStock !== undefined) {
+                                stockElement.textContent = `Stock: ${data.remainingStock}`;
                             }
                         }
                     } catch (error) {
                         let errorMessage = error.message;
-                        
+    
+                        // Handle unauthorized errors
                         if (response?.status === 401) {
-                            errorMessage = 'Please login to add items to cart';
-                            // Redirect to login page after error message
+                            errorMessage = "Please login to add items to the cart.";
+                            Swal.fire({
+                                title: 'Login Required!',
+                                text: errorMessage,
+                                icon: 'warning',
+                            });
                             setTimeout(() => {
                                 window.location.href = '/login';
                             }, 2000);
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: errorMessage,
+                                icon: 'error',
+                            });
                         }
-                        
-                        Swal.fire({
-                            title: 'Error!',
-                            text: errorMessage,
-                            icon: 'error'
-                        });
                     } finally {
-                        // Re-enable button after request
+                        // Re-enable button
                         button.disabled = false;
                     }
                 }
             });
         });
-        </script>
-
+    </script>
+    
 <script>
        
 

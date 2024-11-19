@@ -427,13 +427,15 @@ const postEditAddress=async(req,res)=>{
 
 const deleteAddess=async(req,res)=>{
     try {
+  
         const addressId=req.query.id;
         const findAddress= await Address.findOne({"address._id":addressId});
+
         if(!findAddress){
             return res.status(404).send("Address not Found")
         }
         await Address.updateOne({"address._id":addressId},{$pull:{address:{_id:addressId}}})
-        res.redirect('/user-profile')
+        res.status(200).json({ message: "Address deleted successfully" });
     } catch (error) {
         console.error('error for delete address',error);
         res.redirect('/pageNotFound');

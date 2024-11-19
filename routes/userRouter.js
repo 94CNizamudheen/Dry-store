@@ -56,7 +56,7 @@ router.get('/add-address',userAuth,profileController.addAddressPage);
 router.post('/add-address',userAuth,profileController.postAddAddress);
 router.get('/edit-address',userAuth,profileController.editAddress);
 router.post('/edit-address',userAuth,profileController.postEditAddress);
-router.get('/delete-address',userAuth,profileController.deleteAddess);
+router.delete('/delete-address',userAuth,profileController.deleteAddess);
 
 //cart mgt
 

@@ -52,12 +52,12 @@
                                 <ul class="list-unstyled mb-0">
                                     <li>
                                         <% if(locals.user) { %>
-                                            <a class="language-dropdown-active text-decoration-none" href="#" style="font-size: large;">
+                                            <a class="language-dropdown-active text-decoration-none " href="#" style="font-size: large;">
                                                 <%= user.name %> <i class="fi-rs-angle-small-down"></i>
                                             </a>
-                                            <ul class="language-dropdown list-unstyled mt-2">
-                                                <li><a href="/user-profile" class="text-decoration-none">Profile</a></li>
-                                                <li><a href="/logOut" class="text-decoration-none">Logout</a></li>
+                                            <ul class="language-dropdown list-unstyled mt-2  rounded-3" >
+                                                <li><a href="/user-profile" class="text-decoration-none bg-1 rounded-3 m-1 p-1">Profile</a></li>
+                                                <li><a href="/logOut" class="text-decoration-none bg-3 text-danger rounded m-1">Logout</a></li>
                                             </ul>
                                         <% } else { %>
                                             <i class="fi-rs-user"></i>
@@ -143,17 +143,17 @@
                         <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block">
                             <nav>
                                 <ul>
-                                    <li><a class="home" href="/">Home </a></li>
-                                    <li> <a href="/about">About</a></li>
-                                    <li><a href="/shop">Shop </a>
-                                    <li><a href="/contact">Contact </a>
+                                    <li><a class="home action-btn hover-up" href="/">Home </a></li>
+                                    <li> <a class="home action-btn hover-up"  href="/about">About</a></li>
+                                    <li><a class="home action-btn hover-up"  href="/shop">Shop </a>
+                                    <li><a class="home action-btn hover-up"  href="/contact">Contact </a>
                                  
                                 </ul>
                             </nav>
                         </div>
                     </div>
                     <div class="hotline d-none d-lg-block">
-                        <p><i class="fi-rs-headset"></i><span>Hotline</span> 1900 - 888 </p>
+                        <p><i class="fi-rs-headset action-btn hover-up"></i><span class="home action-btn hover-up"  >Hotline</span> 1900 - 888 </p>
                     </div>
                     
                     <div class="header-action-right d-block d-lg-none">

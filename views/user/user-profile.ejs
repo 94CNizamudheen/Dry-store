@@ -575,7 +575,6 @@
 
 <script>
     function confirmDelete(addressId) {
-        console.log('Cancelling order:', orderId);
         Swal.fire({
             title: 'Are you sure?',
             text: "Do you really want to delete this address? This action cannot be undone.",
@@ -587,8 +586,35 @@
             cancelButtonText: 'Cancel'
         }).then((result) => {
             if (result.isConfirmed) {
-                console.log(`Redirecting to: /cancel-order?orderId=${orderId}`);
-                window.location.href = `delete-address?id=${addressId}`;
+                fetch(`/delete-address?id=${addressId}`, {
+                    method: 'DELETE',
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            Swal.fire(
+                                'Deleted!',
+                                'The address has been deleted.',
+                                'success'
+                            ).then(() => {
+
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                'Failed to delete the address. Please try again later.',
+                                'error'
+                            );
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error deleting address:', error);
+                        Swal.fire(
+                            'Error!',
+                            'An unexpected error occurred.',
+                            'error'
+                        );
+                    });
             }
         });
     }
