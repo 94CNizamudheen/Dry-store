@@ -74,6 +74,8 @@ router.post('/handle-payment',userAuth,orderController.handlePaymentMethod);
 router.post('/place-order',userAuth,orderController.placeOrder);
 router.get('/order-success-page',userAuth,orderController.loadOrderSuccessPage);
 router.get('/cancel-order',userAuth,orderController.cancelOrder);
+router.post('/create-razorpay-order',userAuth,orderController.createRazorpayOrder);
+router.post('/verify-payment',userAuth,orderController.verifyPayment);
 
 
 

@@ -1,6 +1,8 @@
 const Brand= require('../../models/brandSchema');
 const Product= require('../../models/productSchema');
 const { countDocuments } = require('../../models/userSchema');
+const fs= require('fs');
+const path= require('path');
 
 
 const getBrandPage=async(req,res)=>{
@@ -24,8 +26,8 @@ const getBrandPage=async(req,res)=>{
 };
 const getAddBrands = async (req, res) => {
     try {
-        const brands = await Brand.find(); // Fetch existing brands
-        return res.render('add-brands', { data: brands, error: null }); // Pass brands to template
+        const brands = await Brand.find(); 
+        return res.render('add-brands', { data: brands, error: null }); 
     } catch (error) {
         console.error("Error fetching brands:", error);
         res.redirect('/pageError');
@@ -36,8 +38,10 @@ const addBrands= async(req,res)=>{
     try {
         const brand=req.body.name;
         const findBrand= await Brand.findOne({brandName:brand});
+        const brands= await Brand.find({})
         if(findBrand){
             return res.render('add-brands',{
+                data:brands,
                 error:{name:"Brand already exists. Please choose a different name."},
                
             })
@@ -52,6 +56,7 @@ const addBrands= async(req,res)=>{
             res.redirect('/admin/addBrands')
         }else{
             return res.render('add-brands',{
+                data:brands,
                 error:{image:"Brand name or image is missing."},
               
             }) 
@@ -84,19 +89,44 @@ const unBlockBrands= async(req,res)=>{
     }
 }
 
-const deleteBrands= async(req,res)=>{
+const deleteBrands = async (req, res) => {
     try {
-        const {id}= req.params;
-        if(!id){
-            return res.status(400).redirect("/pageError")
+        const { id } = req.params;
+        if (!id) {
+            return res.status(400).redirect("/pageError");
         }
-        await Brand.deleteOne({_id:id});
+
+        const brand = await Brand.findById(id);
+        if (!brand) {
+            return res.status(404).redirect("/pageError");
+        }
+
+        
+        const brandImage = Array.isArray(brand.brandImage) ? brand.brandImage[0] : brand.brandImage;
+
+        if (brandImage) {
+            const imagePath = path.join(__dirname, "/uploads/images", brandImage); 
+            console.log("Image path:", imagePath);
+
+            if (fs.existsSync(imagePath)) {
+                await fs.unlinkSync(imagePath);
+                console.log(`Brand image ${brandImage} successfully deleted`);
+            } else {
+                console.log(`Brand image ${brandImage} not found`);
+            }
+        } else {
+            console.log("No brand image found");
+        }
+
+        await Brand.deleteOne({ _id: id });
         res.redirect("/admin/addBrands");
+
     } catch (error) {
-        console.error("error for deleting brands",error);
-        res.status(500).redirect("/pageError")
+        console.error("Error deleting brand:", error);
+        res.status(500).redirect("/pageError");
     }
-}
+};
+
 
 
 

@@ -47,6 +47,22 @@ const orderSchema= new Schema({
         altPhone: {type: Array, required: true },
        
     },
+    paymentDetails: {
+        method: {
+            type: String,
+            required: true,
+            enum: ['COD', 'CARD', 'UPI', 'NET_BANKING']
+        },
+        transactionId: { type: String },
+        paymentStatus: {
+            type: String,
+            required: true,
+            enum: ['Pending', 'Completed', 'Failed', 'Refunded'],
+            default: 'Pending'
+        },
+        paidAmount: { type: Number },
+        paidAt: { type: Date }
+    },
     invoiceDate:{
         type:Date,
     },
@@ -65,6 +81,26 @@ const orderSchema= new Schema({
         default:false,
         
     },
+    expectedDeliveryDate: {
+        type: Date
+    },
+    deliveredOn: {
+        type: Date
+    },
+    cancelledOn: {
+        type: Date
+    },
+    cancellationReason: {
+        type: String
+    },
+    shippingProvider: {
+        name: { type: String },
+        trackingId: { type: String }
+    },
+    notes: { 
+        type: String
+    }, 
+
     user:{
         type:Schema.Types.ObjectId,
         ref:"User",

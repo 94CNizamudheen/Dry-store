@@ -279,7 +279,7 @@
                                                         <tr>
                                                             <th>SubTotal</th>
                                                             <td class="product-subtotal" colspan="2">
-                                                                ₹<%= subtotal %>
+                                                                ₹<%= subtotal.toFixed(2) %>
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -289,8 +289,11 @@
                                                         <tr>
                                                             <th>Total</th>
                                                             <td colspan="2" class="product-subtotal">
-                                                                <span class="font-xl text-brand fw-900">₹<%= total %>
+                                                                <input type="hidden" id="total" value="<%=total.toFixed(2) %>">
+                                                                <span id="totalAmount"
+                                                                    class="font-xl text-brand fw-900">₹<%= total.toFixed(2) %>
                                                                 </span>
+                                                                
                                                             </td>
                                                         </tr>
                                             </tbody>
@@ -315,22 +318,12 @@
                                                 </div>
                                                 <div class="custome-radio">
                                                     <input class="form-check-input" type="radio" name="paymentOption"
-                                                        id="exampleRadios4" value="CARD"
-                                                        onchange="handlePaymentChange(this)" />
-                                                    <label class="form-check-label" for="exampleRadios4"
-                                                        data-bs-toggle="collapse" data-target="#cardPayment"
-                                                        aria-controls="cardPayment">
-                                                        Credit/Debit card payments
-                                                    </label>
-                                                </div>
-                                                <div class="custome-radio">
-                                                    <input class="form-check-input" type="radio" name="paymentOption"
-                                                        id="exampleRadios5" value="UPI"
+                                                        id="exampleRadios5" value="ONLINE"
                                                         onchange="handlePaymentChange(this)" />
                                                     <label class="form-check-label" for="exampleRadios5"
                                                         data-bs-toggle="collapse" data-target="#upiPayment"
                                                         aria-controls="upiPayment">
-                                                        UPI payment
+                                                        Online Payments
                                                     </label>
                                                 </div>
                                             </div>
@@ -350,6 +343,9 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+
     <script>
         // Get all payment method radio buttons and the Place Order button
         const paymentOptions = document.querySelectorAll('input[name="paymentOption"]');
@@ -362,50 +358,53 @@
             });
         });
     </script>
-  <script>
+    <script>
+       
+        document.addEventListener('DOMContentLoaded', () => {
+            // Handle address selection
+            const selectButtons = document.querySelectorAll('.select-btn');
+            selectButtons.forEach(button => {
+                button.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    const addressId = button.getAttribute('data-id');
 
-    document.addEventListener('DOMContentLoaded', () => {
-        // Handle address selection
-        const selectButtons = document.querySelectorAll('.select-btn');
-        selectButtons.forEach(button => {
-            button.addEventListener('click', (event) => {
-                event.preventDefault();
-                const addressId = button.getAttribute('data-id');
-
-                fetch(`/select-address/?id=${addressId}`, { method: 'GET' })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            document.querySelectorAll('.card').forEach(card => {
-                                card.classList.remove('border-success');
-                            });
-                            const selectedCard = document.querySelector(`#address-${addressId}`);
-                            selectedCard.classList.add('border-success');
-                            Swal.fire({
-                                title: "Success!",
-                                text: "Address selected successfully.",
-                                icon: "success",
-                            });
-                        } else {
+                    fetch(`/select-address/?id=${addressId}`, { method: 'GET' })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                document.querySelectorAll('.card').forEach(card => {
+                                    card.classList.remove('border-success');
+                                });
+                                const selectedCard = document.querySelector(`#address-${addressId}`);
+                                selectedCard.classList.add('border-success');
+                                // Swal.fire({
+                                //     title: "Success!",
+                                //     text: "Address selected successfully.",
+                                //     icon: "success",
+                                // });
+                            } else {
+                                Swal.fire({
+                                    title: "Error",
+                                    text: data.error || "Failed to select the address. Please try again.",
+                                    icon: "error",
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error selecting address:', error);
                             Swal.fire({
                                 title: "Error",
-                                text: data.error || "Failed to select the address. Please try again.",
+                                text: "An error occurred while selecting the address. Please try again.",
                                 icon: "error",
                             });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error selecting address:', error);
-                        Swal.fire({
-                            title: "Error",
-                            text: "An error occurred while selecting the address. Please try again.",
-                            icon: "error",
                         });
-                    });
+                });
             });
         });
 
+
         // Handle payment option change
+
         async function handlePaymentChange(radio) {
             const paymentOption = radio.value;
             console.log("Selected payment option:", paymentOption);
@@ -419,12 +418,20 @@
 
                 const result = await response.json();
                 if (result.success) {
-                    Swal.fire({
-                        title: "Payment Option Selected",
-                        text: `You selected ${paymentOption} as your payment method.`,
-                        icon: "success",
-                    });
-                    document.getElementById('placeOrderButton').style.display = 'block';
+                    if (paymentOption === "COD") {
+                        Swal.fire({
+                            title: "Payment Option Selected",
+                            text: `You selected ${paymentOption} as your payment method.`,
+                            icon: "success",
+                        });
+                        document.getElementById('placeOrderButton').style.display = 'block';
+                    } else if (paymentOption === "ONLINE") {
+                        const amount = parseFloat(document.getElementById('total').value);
+                        console.log(document.getElementById('totalAmount').innerHTML);
+                        initializeRazorpay(amount, paymentOption);
+                    }
+
+
                 } else {
                     Swal.fire({
                         title: "Error",
@@ -440,48 +447,125 @@
                     icon: "error",
                 });
             }
+        };
+
+        async function initializeRazorpay(amount, paymentOption) {
+            try {
+                
+                    console.log(amount)
+                const response = await fetch('/create-razorpay-order', {
+                    method: "POST",
+                    headers: { 'content-type': 'application/json' },
+                    body: JSON.stringify({ amount, paymentOption })
+                });
+                const data = await response.json();
+                console.log(data)
+                if (!data.success) {
+                    throw new Error(data.error || "Failed to create order");
+                }
+                const options = {
+                    key: rzp_test_ZOhN3ZFy8RT4rn,
+                    amount: data.order.amount,
+                    currency: data.order.currency,
+                    name: "Henza's Dry Store",
+                    description: `Payment For Order`,
+                    orderId: data.order.id,
+                    handler: async function (response) {
+                        try {
+                            const verifyResponse = await fetch('/verify-payment', {
+                                method: "POST",
+                                headers: { 'content-type': 'application/json' },
+                                body: JSON.stringify({
+                                    razorpay_payment_id: response.razorpay_payment_id,
+                                    razorpay_order_id: response.razorpay_order_id,
+                                    razorpay_signature: response.razorpay_signature
+                                })
+                            });
+                            const verifyResult = await verifyResponse.json();
+                            if (verifyResult.success) {
+                                Swal.fire({
+                                    title: "Payment Success",
+                                    text: "Your payment has been processed successfully.",
+                                    icon: "success",
+                                }).then(() => {
+                                    window.location.href = verifyResult.redirectURL;
+                                })
+                            } else {
+                                throw new Error("Payment veryfication Failed");
+                            }
+
+                        } catch (error) {
+                            Swal.fire({
+                                title: "Payment Failed",
+                                text: "Payment verification Failed. Please try again",
+                                icon: "error"
+                            })
+                        }
+                    },
+                    prefill: {
+                        name: data.customerName,
+                        email: data.customerEmail,
+                        contact: data.customerPhone,
+                    },
+                    theme: {
+                        color: "#3399cc"
+                    }
+                }
+                const rzp = new Razorpay(options);
+                rzp.open();
+            } catch (error) {
+                console.error('Razorpay initialization Error', error);
+                Swal.fire({
+                    title: "Error",
+                    text: "Failed to initialize payment. plese try again",
+                    icon: "error"
+
+                });
+            }
         }
 
-        window.handlePaymentChange = handlePaymentChange;
 
         // Handle order placement
         document.getElementById('placeOrderButton').addEventListener('click', async (e) => {
             e.preventDefault();
-
-            try {
-                const response = await fetch('/place-order', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                });
-
-                const data = await response.json();
-                if (data.success) {
-                    window.location.href = data.redirectURL;
-                    Swal.fire({
-                        title: "Order Placed",
-                        text: "Your order has been placed successfully!",
-                        icon: "success",
-                    }).then(() => {
-                        window.location.href = data.redirectURL;
+            const paymentMethod = document.querySelector('input[name="paymentOption"]:checked').value;
+            if (paymentMethod === "COD") {
+                try {
+                    const response = await fetch('/place-order', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
                     });
-                } else {
+
+                    const data = await response.json();
+                    if (data.success) {
+                        window.location.href = data.redirectURL;
+                        Swal.fire({
+                            title: "Order Placed",
+                            text: "Your order has been placed successfully!",
+                            icon: "success",
+                        }).then(() => {
+                            window.location.href = data.redirectURL;
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Error",
+                            text: data.error || "An error occurred while placing your order.",
+                            icon: "error",
+                        });
+                    }
+                } catch (error) {
+                    console.error("Error placing order:", error);
                     Swal.fire({
                         title: "Error",
-                        text: data.error || "An error occurred while placing your order.",
+                        text: "An error occurred. Please try again.",
                         icon: "error",
                     });
                 }
-            } catch (error) {
-                console.error("Error placing order:", error);
-                Swal.fire({
-                    title: "Error",
-                    text: "An error occurred. Please try again.",
-                    icon: "error",
-                });
             }
+
         });
-    });
-</script>
+
+    </script>
 
 
     <script>

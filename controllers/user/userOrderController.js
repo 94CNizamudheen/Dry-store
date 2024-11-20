@@ -4,7 +4,17 @@ const Order = require('../../models/orderSchema');
 const Address= require('../../models/addressSchema');
 const Cart =require('../../models/cartScema');
 const { closeDelimiter } = require('ejs');
+const Razorpay= require('razorpay');
+const crypto= require('crypto');
+const env = require('dotenv').config();
+const { error } = require('console');
 
+
+const razorpay= new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret:process.env.RAZORPAY_KEY_SECRET,
+
+})
 
 
 
@@ -73,7 +83,7 @@ const selectAddress = async (req, res) => {
         const addressId = req.query.id;
 
         req.session.selectedAddress = addressId;
-        console.log(req.session.selectedAddress)
+        console.log("selected AddressId: ",req.session.selectedAddress)
         if (!addressId) {
             return res.status(400).json({ success: false, error: "Address ID is required." });
         }
@@ -93,9 +103,9 @@ const handlePaymentMethod = async (req, res) => {
         const userId = req.session.user;
         const { paymentOption } = req.body;
         
-        console.log(paymentOption);
+        console.log("paymentOption selected:",paymentOption);
 
-        const validPaymentOption = ['COD', 'CARD', 'UPI'];
+        const validPaymentOption = ['COD', 'ONLINE'];
         if (!validPaymentOption.includes(paymentOption)) {
             return res.status(400).json({ error: "Invalid Payment Option" });
         }
@@ -131,9 +141,7 @@ const placeOrder = async (req, res) => {
         }
 
          
-        console.log("selectedAddressId",shippingAddress);
-        console.log("selectedAddressId",shippingAddress._id);
-        console.log("selectedAddressId",shippingAddress[0].address[0]);
+        
 
         const cart = await Cart.findOne({ userId }).populate('items.productId');
         if (!cart || cart.items.length === 0) {
@@ -170,6 +178,10 @@ const placeOrder = async (req, res) => {
                 landmark: shippingAddress[0].address[0].landmark || "",
                 phone: shippingAddress[0].address[0].phone || [],
                 altPhone: shippingAddress[0].address[0].altPhone || [],
+            },
+            paymentDetails:{
+                method:paymentMethod,
+                paymentStatus:"Pending",
             },
             status: 'Pending',
             invoiceDate: new Date(),
@@ -282,6 +294,85 @@ const cancelOrder = async (req, res) => {
     }
 };
 
+const createRazorpayOrder=async(req,res)=>{
+    try {
+    
+        const {amount,paymentOption}=req.body;
+        console.log('amount:',amount)
+        if(!amount||isNaN(amount)||amount<=0){
+            return res.status(400).json({error:"Invalid amount",success:false})
+        }
+
+        const order=  razorpay.orders.create({
+            amount:Math.round(amount*100),
+            currency:'INR',
+            receipt:`order_${Date.now()}`,
+            payment_capture:1
+        });
+        
+        const userId=req.session.user;
+        const user= await User.findOne(userId)
+        res.json({
+            success:true,
+            key_id:process.env.RAZORPAY_KEY_ID,
+            order,
+            customerName:user.name,
+            customerEmail:user.email,
+            customerPhone:user.phone
+
+        });
+        
+    } catch (error) {
+        console.error("Error for creating Razorpay order:",error);
+        res.status(500).json({
+            success:false,
+            error:"Failed to create payment order"
+        })
+    }
+};
+const verifyPayment= async(req,res)=>{
+    try {
+        const {
+            razorpay_order_id,
+            razorpay_payment_id,
+            razorpay_signature
+        }=req.body;
+        const sign=razorpay_order_id +'|'+ razorpay_order_id;
+        const expectedSign=crypto
+                                .createHmac("sha256",process.env.RAZORPAY_KEY_SECRET)
+                                .update(sign)
+                                .digest("hex")
+
+        if(razorpay_signature===expectedSign){
+            await Order.findByIdAndUpdate(
+                {orderId:razorpay_order_id},
+                {
+                    'paymentDetails.paymentStatus':'Completed',
+                    'paymentDetails.paymentId':razorpay_payment_id,
+                    
+                },{returnDocument:'after'}
+            );
+            res.json({
+                success:true,
+                redirectURL:'/order-success-page'
+            });
+        }else{
+            res.status(400).json({
+                success:false,
+                error:"Payment veryfication Failed"
+            });
+        }
+        
+    } catch (error) {
+        console.error('Payment verification Failed error : ',error);
+        res.status(500).json({
+            success:false,
+            error:"Payment verification Failed"
+        })
+    }
+}
+
+
 
 module.exports={
     loadCheckOutPage,
@@ -290,6 +381,8 @@ module.exports={
     handlePaymentMethod,
     placeOrder,
    loadOrderSuccessPage,
-   cancelOrder
+   cancelOrder,
+   createRazorpayOrder,
+   verifyPayment
 
 }
