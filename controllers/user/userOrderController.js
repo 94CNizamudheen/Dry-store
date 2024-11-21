@@ -10,14 +10,6 @@ const env = require('dotenv').config();
 const { error } = require('console');
 
 
-const razorpay= new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID,
-    key_secret:process.env.RAZORPAY_KEY_SECRET,
-
-})
-
-
-
 const loadCheckOutPage = async (req, res) => {
     try {
         const userId = req.session.user;
@@ -296,7 +288,18 @@ const cancelOrder = async (req, res) => {
 
 const createRazorpayOrder=async(req,res)=>{
     try {
-    
+        if(!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET){
+            return res.status(500).json({
+                success:false,
+                error:"Razor pay Credentials are not Configured"
+            })
+        }
+        const razorpay= new Razorpay({
+            key_id: process.env.RAZORPAY_KEY_ID,
+            key_secret:process.env.RAZORPAY_KEY_SECRET,
+        
+        })
+        
         const {amount,paymentOption}=req.body;
         console.log('amount:',amount)
         if(!amount||isNaN(amount)||amount<=0){
@@ -315,7 +318,11 @@ const createRazorpayOrder=async(req,res)=>{
         res.json({
             success:true,
             key_id:process.env.RAZORPAY_KEY_ID,
-            order,
+            order: {
+                id: order.id,
+                amount: order.amount,
+                currency: order.currency,
+            },
             customerName:user.name,
             customerEmail:user.email,
             customerPhone:user.phone
@@ -326,24 +333,34 @@ const createRazorpayOrder=async(req,res)=>{
         console.error("Error for creating Razorpay order:",error);
         res.status(500).json({
             success:false,
-            error:"Failed to create payment order"
+            error:"Failed to create Razorpay order"
         })
     }
 };
 const verifyPayment= async(req,res)=>{
     try {
+        console.log('verify payment controller invoked');
         const {
             razorpay_order_id,
             razorpay_payment_id,
             razorpay_signature
         }=req.body;
-        const sign=razorpay_order_id +'|'+ razorpay_order_id;
-        const expectedSign=crypto
-                                .createHmac("sha256",process.env.RAZORPAY_KEY_SECRET)
-                                .update(sign)
-                                .digest("hex")
 
-        if(razorpay_signature===expectedSign){
+        
+        const hmac= crypto.createHmac('sha256',process.env.RAZORPAY_KEY_SECRET);
+        hmac.update(`${razorpay_order_id}|${razorpay_payment_id}`);
+        const generateSignature=hmac.digest('hex');
+
+        console.log("generateSignature :",generateSignature);
+        console.log("razorpay_signature :",razorpay_signature);
+
+        if(generateSignature!==razorpay_signature){
+            return res.status(400).json({
+                success:false,
+                error:"Payment verification failed"
+            })
+          
+        }else{
             await Order.findByIdAndUpdate(
                 {orderId:razorpay_order_id},
                 {
@@ -355,11 +372,6 @@ const verifyPayment= async(req,res)=>{
             res.json({
                 success:true,
                 redirectURL:'/order-success-page'
-            });
-        }else{
-            res.status(400).json({
-                success:false,
-                error:"Payment veryfication Failed"
             });
         }
         

@@ -545,7 +545,9 @@
                                 text: data.message,
                                 icon: data.isExisting ? 'info' : 'success',
                                 timer: data.isExisting ? null : 2000,
-                                showConfirmButton: data.isExisting
+                                showConfirmButton: data.isExisting,
+                                position: 'center',
+                                toast: true,
                             });
                             
                             if (!data.isExisting) {
@@ -578,7 +580,9 @@
                         Swal.fire({
                             title: 'Error!',
                             text: errorMessage,
-                            icon: 'error'
+                            icon: 'error',
+                            position: 'center',
+                            toast: true,
                         });
                     } finally {
                         // Re-enable button after request

@@ -581,6 +581,8 @@
                     text: 'This product is currently out of stock.',
                     icon: 'warning',
                     confirmButtonText: 'Okay',
+                    position: 'center',
+                    toast: true,
                 });
                 return; // Stop further execution
             }
@@ -614,6 +616,8 @@
                         icon: data.isExisting ? 'info' : 'success',
                         timer: data.isExisting ? null : 2000,
                         showConfirmButton: data.isExisting,
+                        position: 'center',
+                        toast: true,
                     });
 
                     // Update cart count if new item
@@ -640,6 +644,8 @@
                     title: 'Error!',
                     text: errorMessage,
                     icon: 'error',
+                    position: 'center',
+                    toast: true,
                 });
 
                 if (response?.status === 401) {

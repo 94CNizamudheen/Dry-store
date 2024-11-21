@@ -247,6 +247,8 @@
                         icon: "error",
                         title: error.message,
                         showConfirmButton: true,
+                        position: 'center',
+                        toast: true,
                     });
                 }
             };
@@ -277,6 +279,8 @@
                             title: data.message,
                             timer: 1500,
                             showConfirmButton: false,
+                            position: 'center',
+                            toast: true,
                         });
                         const cartItems = document.querySelectorAll('[id^="item-"]');
                         if (cartItems.length === 0) {
@@ -291,6 +295,8 @@
                         title: "Error removing item",
                         timer: 1500,
                         showConfirmButton: false,
+                        position: 'center',
+                        toast: true,
                     });
                 }
             }
