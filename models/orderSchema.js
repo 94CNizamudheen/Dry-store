@@ -51,7 +51,7 @@ const orderSchema= new Schema({
         method: {
             type: String,
             required: true,
-            enum: ['COD', 'CARD', 'UPI', 'NET_BANKING']
+            enum: ['COD', 'ONLINE']
         },
         transactionId: { type: String },
         paymentStatus: {
