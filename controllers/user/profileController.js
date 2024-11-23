@@ -167,7 +167,7 @@ const postNewPassword=async(req,res)=>{
             res.render('user-profile',{
                 user:userData,
                 userAddress:addressData,
-                userOrders:orders
+                userOrders:orders,
             })
             
         } catch (error) {

@@ -80,12 +80,29 @@
     </div> <!-- card end// -->
     <div class="pagination-area mt-15 mb-50">
         <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-start">
+            <ul class="pagination justify-content-center">
+                <!-- Previous Arrow -->
+                <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                    <a class="page-link" href="?page=<%= currentPage - 1 %>" tabindex="-1" aria-disabled="true">
+                        &laquo;
+                    </a>
+                </li>
+    
+                <!-- Page Numbers -->
                 <% for (let i = 1; i <= totalPages; i++) { %>
-                    <li class="page-item <%= (i === currentPage) ? 'active' : '' %>">
-                        <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                    <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                        <a class="page-link" href="?page=<%= i %>">
+                            <%= i %>
+                        </a>
                     </li>
                 <% } %>
+    
+                <!-- Next Arrow -->
+                <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                    <a class="page-link" href="?page=<%= currentPage + 1 %>">
+                        &raquo;
+                    </a>
+                </li>
             </ul>
         </nav>
     </div>

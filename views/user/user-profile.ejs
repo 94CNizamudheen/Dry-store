@@ -466,7 +466,12 @@
                                                                     <% }) %>
                                                                         <br>
                                                                         <div class="text-end ">
-                                                                            <h6>Total:<%= order.finalAmount.toFixed(2)
+                                                                            <h6>Total:<%= order.totalPrice.toFixed(2)
+                                                                                    %>
+                                                                            </h6>
+                                                                        </div><br>
+                                                                        <div class="text-end ">
+                                                                            <h6>Discounted Price:<%= order.finalAmount.toFixed(2)
                                                                                     %>
                                                                             </h6>
                                                                         </div>

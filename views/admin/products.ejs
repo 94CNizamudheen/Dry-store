@@ -131,17 +131,33 @@
             </div> <!-- card end// -->
             <div class="pagination-area mt-15 mb-50">
                 <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-start">
+                    <ul class="pagination justify-content-center">
+                        <!-- Previous Arrow -->
+                        <li class="page-item <%= currentpage === 1 ? 'disabled' : '' %>">
+                            <a class="page-link" href="?page=<%= currentpage - 1 %>" tabindex="-1" aria-disabled="true">
+                                &laquo; 
+                            </a>
+                        </li>
+            
+                        <!-- Page Numbers -->
                         <% for (let i = 1; i <= totalPages; i++) { %>
-                            <li class="page-item <%= (i === currentpage) ? 'active' : '' %>">
-                                <a class="page-link" href="?page=<%= i %>&search=<%= search %>">
+                            <li class="page-item <%= i === currentpage ? 'active' : '' %>">
+                                <a class="page-link" href="?page=<%= i %>">
                                     <%= i %>
                                 </a>
                             </li>
                         <% } %>
+            
+                        <!-- Next Arrow -->
+                        <li class="page-item <%= currentpage === totalPages ? 'disabled' : '' %>">
+                            <a class="page-link" href="?page=<%= currentpage + 1 %>">
+                             &raquo;
+                            </a>
+                        </li>
                     </ul>
                 </nav>
             </div>
+
             
         </section> <!-- content-main end// -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

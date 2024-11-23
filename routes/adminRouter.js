@@ -8,9 +8,11 @@ const {userAuth,adminAuth} = require('../middlewares/auth');
 const brandController= require('../controllers/admin/brandController');
 const productController= require("../controllers/admin/productController")
 const orderController= require('../controllers/admin/orderController');
+const coupenController=require('../controllers/admin/coupenController');
 const multer= require('multer');
 const storage= require('../helpers/multer');
 const uploads= multer({storage:storage});
+
 
 router.use(express.static('public'))
 router.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
@@ -68,5 +70,11 @@ router.get('/orderList',adminAuth,orderController.loadOrderDetails);
 router.post('/orderList/update-status', adminAuth, orderController.updateOrderStatus);
 router.get('/orderList/:orderId',adminAuth,orderController.getOrderDetails);
 router.post('/cancelOrder/:orderId',adminAuth,orderController.cancelOrder);
+
+//coupon managment 
+router.get('/coupon',adminAuth,coupenController.loadCouponPage);
+router.post('/coupon',adminAuth,coupenController.createCoupon);
+router.put('/coupon/:id',adminAuth,coupenController.updateCoupon);
+router.delete('/coupon/:id',adminAuth,coupenController.removeCoupon);
 
 module.exports = router;        

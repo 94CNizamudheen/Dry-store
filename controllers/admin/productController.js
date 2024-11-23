@@ -261,12 +261,18 @@ const deleteSingleImage= async(req,res)=>{
 };
  const loadInventoryManagment= async(req,res)=>{
     try {
-        const products= await Product.find({}).populate('category');
+        const page= parseInt(req.query.page)||1;
+        const limit= parseInt(req.query.limit)||8;
+        const skip= (page-1)*limit;
+        const totalProducts= await Product.countDocuments();
+        const products= await Product.find({}).populate('category').skip(skip).limit(limit).sort({createdAt:-1});
         if(!products){
             return res.status(400).json({message:"No products"});
         }
         res.render('inventoryManagement',{
             products:products,
+            totalPages:Math.ceil(totalProducts/limit),
+            currentPage:page,
         })
         
     } catch (error) {

@@ -19,7 +19,6 @@ const pageNotFound= async(req,res)=>{
     }
 }
 
-
 const  loadHomepage= async(req,res)=>{
     try {
         const user= req.session.user;
@@ -51,7 +50,6 @@ const  loadHomepage= async(req,res)=>{
         res.status(500).send("server error");
     }
 };
-
 
 const loadSignUp=async(req,res)=>{
     try {
@@ -102,7 +100,6 @@ const loadShopping=async(req,res)=>{
         }
         const productData= await Product.find(filterQuery).populate('category').populate('brand').sort(sortQuery);
         
-        //calculating the price ranges for the filter UI
             const priceRanges=[
                 {min:0, max:200},
                 {min:200, max:400},
@@ -247,8 +244,6 @@ const logIn= async(req,res)=>{
 
     }
 };
-
-
 
 const loadLogIn= async(req,res)=>{
     try {

@@ -5,9 +5,11 @@ const userController= require('../controllers/user/userController');
 const profileController= require('../controllers/user/profileController');
 const cartController= require('../controllers/user/cartController');
 const orderController= require('../controllers/user/userOrderController')
+
 const path= require("path");
 const passport = require('passport');
 const { profile } = require('console');
+
 
 const { userAuth } = require('../middlewares/auth');
 
@@ -76,6 +78,12 @@ router.get('/order-success-page',userAuth,orderController.loadOrderSuccessPage);
 router.get('/cancel-order',userAuth,orderController.cancelOrder);
 router.post('/create-razorpay-order',userAuth,orderController.createRazorpayOrder);
 router.post('/verify-payment',userAuth,orderController.verifyPayment);
+
+// coupon mgt
+
+router.post('/apply-coupon',userAuth,cartController.applyCoupon);
+router.post('/remove-coupon',userAuth,cartController.removeCoupon);
+
 
 
 

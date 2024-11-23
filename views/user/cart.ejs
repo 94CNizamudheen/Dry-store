@@ -42,7 +42,7 @@
                                                 <!-- Product Price -->
                                                 <td class="price text-center">
                                                     <span class="text-primary fw-bold">₹<%= item.price.toFixed(2) %>
-                                                            </span>
+                                                    </span>
                                                 </td>
 
                                                 <!-- Quantity Control -->
@@ -126,64 +126,104 @@
                                             </div>
                                         </div>
                                     </form> -->
-                                    
+                                    <div class="mb-30 mt-50">
+                                        <div class="heading_s1 mb-3">
+                                            <!-- <h4>Apply Coupon</h4> -->
+                                        </div>
+                                        <div class="total-amount">
+                                            <div class="left">
+                                                <!-- <div class="coupon">
+                                                    <form id="couponForm" action="#" target="_blank">
+                                                        <div class="form-row row justify-content-center">
+                                                            <div class="form-group col-lg-6">
+                                                                <input id="couponInput" class="font-medium"
+                                                                    name="Coupon" placeholder="Enter Your Coupon" />
+                                                            </div>
+                                                            <div class="form-group col-lg-6">
+                                                                <button id="applyBtn" type="button" class="btn btn-sm">
+                                                                    <i class="fi-rs-label mr-10"></i>Apply
+                                                                </button>
+                                                                <button id="removeBtn" type="button" class="btn btn-sm"
+                                                                    style="display: none;">
+                                                                    <i class="fi-rs-close mr-10"></i>Remove
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+
+                                                </div> -->
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-lg-6 col-md-12">
-                                    
+
+
                                     <div class="border p-md-4 p-30 border-radius cart-totals">
                                         <div class="heading_s1 mb-3">
                                             <h4>Cart Totals</h4>
                                         </div>
                                         <div class="table-responsive">
+                                            <!-- Cart Totals Table -->
                                             <table class="table">
                                                 <tbody>
-                                                    <tr>
-                                                        <td class="cart_total_label">Cart Subtotal</td>
-                                                        <td class="cart_total_amount">
-                                                            <span class="font-lg fw-900 text-brand">₹<%= subtotal %>
-                                                                    </span>
+                                                    <!-- Normal Total Row -->
+                                                    <tr id="normalTotalRow" class="<%= discount > 0 ? 'd-none' : '' %>">
+                                                        <td class="fw-bold">Total</td>
+                                                        <td class="text-end">
+                                                            ₹<span id="total" class="ms-2">
+                                                                <%= total.toFixed(2) %>
+                                                            </span>
                                                         </td>
                                                     </tr>
-                                                    <tr>
-                                                        <td class="cart_total_label">Shipping</td>
-                                                        <td class="cart_total_amount">
-                                                            <i class="ti-gift mr-5"></i> Free Shipping
+
+                                                    <!-- Discount Row -->
+                                                    <tr id="discountRow" class="<%= discount > 0 ? '' : 'd-none' %>">
+                                                        <td class="fw-bold">Discount</td>
+                                                        <td class="text-end text-success">
+                                                            <i class="ti-gift me-2"></i>
+                                                            -₹<span id="discountAmount" class="ms-2">
+                                                                <%= discount %>
+                                                            </span>
                                                         </td>
                                                     </tr>
-                                                    <tr>
-                                                        <td class="cart_total_label">Total</td>
-                                                        <td class="cart_total_amount">
-                                                            <strong><span class="font-xl fw-900 text-brand">₹<%= total
-                                                                        %></span></strong>
+
+                                                    <!-- Discounted Total Row -->
+                                                    <tr id="discountedTotalRow"
+                                                        class="<%= discount > 0 ? '' : 'd-none' %>">
+                                                        <td class="fw-bold">Total After Discount</td>
+                                                        <td class="text-end fw-bold">
+                                                            ₹<span id="discountedTotal" class="ms-2">
+                                                                <%= discountedTotal%>
+                                                            </span>
                                                         </td>
                                                     </tr>
                                                 </tbody>
                                             </table>
-                                        </div>
-                                        <div class="mb-30 mt-50">
-                                            <div class="heading_s1 mb-3">
-                                                <h4>Apply Coupon</h4>
-                                            </div>
-                                            <div class="total-amount">
-                                                <div class="left">
-                                                    <div class="coupon">
-                                                        <form action="#" target="_blank">
-                                                            <div class="form-row row justify-content-center">
-                                                                <div class="form-group col-lg-6">
-                                                                    <input class="font-medium" name="Coupon"
-                                                                        placeholder="Enter Your Coupon" />
-                                                                </div>
-                                                                <div class="form-group col-lg-6">
-                                                                    <button class="btn btn-sm">
-                                                                        <i class="fi-rs-label mr-10"></i>Apply
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                    </div>
+
+                                            Coupon Section
+                                            <div class="coupon-section mt-3">
+                                                <div class="input-group">
+                                                    <input type="text" id="couponInput" class="form-control"
+                                                        placeholder="Enter coupon code" aria-label="Coupon code">
+                                                    <button id="applyBtn"
+                                                        class="btn btn-primary <%= discount > 0 ? 'd-none' : '' %>">
+                                                        Apply Coupon
+                                                    </button>
+                                                    <button id="removeBtn"
+                                                        class="btn btn-danger <%= discount > 0 ? '' : 'd-none' %>">
+                                                        Remove Coupon
+                                                    </button>
                                                 </div>
                                             </div>
+
+                                            <div id="loadingSpinner" class="d-none text-center mt-2">
+                                                <div class="spinner-border text-primary" role="status">
+                                                    <span class="visually-hidden">Loading...</span>
+                                                </div>
+                                            </div><br>
                                         </div>
+
                                         <a href="/check-out" class="btn">
                                             <i class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut</a>
                                     </div>
@@ -195,29 +235,158 @@
         </div>
     </section>
 
- 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.getElementById('applyBtn').addEventListener("click", function () {
+            const couponInput = document.getElementById('couponInput').value.trim();
+            const totalAmount = parseFloat(document.getElementById('total').textContent || '0');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+
+            if (!couponInput) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Please enter a coupon code",
+                    position: "center",
+                    toast: true,
+                });
+                return;
+            }
+
+            // Show loading spinner
+            loadingSpinner.classList.remove('d-none');
+
+            fetch('/apply-coupon', {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    code: couponInput,
+                    totalAmount: totalAmount
+                }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        // Update UI values
+                        document.getElementById('discountAmount').textContent = data.discount.toFixed(2);
+                        document.getElementById('discountedTotal').textContent = data.discountedTotal.toFixed(2);
+
+                        document.getElementById('normalTotalRow').classList.add('d-none');
+                        document.getElementById('discountRow').classList.remove('d-none');
+                        document.getElementById('discountedTotalRow').classList.remove('d-none');
+                        document.getElementById('applyBtn').classList.add('d-none');
+                        document.getElementById('removeBtn').classList.remove('d-none');
+
+                        Swal.fire({
+                            icon: "success",
+                            title: 'Success',
+                            text: "Coupon applied successfully",
+                            position: "center",
+                            toast: true
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: data.message || "Invalid Coupon",
+                            position: "center",
+                            toast: true,
+                        });
+                    }
+                })
+                .catch((error) => {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "An error occurred. Please try again",
+                        position: "center",
+                        toast: true,
+                    });
+                })
+                .finally(() => {
+                    // Hide loading spinner
+                    loadingSpinner.classList.add('d-none');
+                });
+        });
+
+        document.getElementById('removeBtn').addEventListener("click", function () {
+            const loadingSpinner = document.getElementById('loadingSpinner');
+
+
+            loadingSpinner.classList.remove('d-none');
+
+            fetch('/remove-coupon', {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Reset UI
+                        document.getElementById('couponInput').value = "";
+
+                        document.getElementById('normalTotalRow').classList.remove('d-none');
+                        document.getElementById('discountRow').classList.add('d-none');
+                        document.getElementById('discountedTotalRow').classList.add('d-none');
+                        document.getElementById('applyBtn').classList.remove('d-none');
+                        document.getElementById('removeBtn').classList.add('d-none');
+
+                        Swal.fire({
+                            icon: "success",
+                            title: 'Success',
+                            text: "Coupon removed successfully",
+                            position: "center",
+                            toast: true
+                        });
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "An error occurred while removing the coupon",
+                        position: "center",
+                        toast: true,
+                    });
+                })
+                .finally(() => {
+                    // Hide loading spinner
+                    loadingSpinner.classList.add('d-none');
+                });
+        });
+    </script>
+
 
     <script>
-       
+
         document.addEventListener("DOMContentLoaded", function () {
-          
+
             function updateCartTotals() {
+            
                 const itemTotals = Array.from(
                     document.querySelectorAll('[id^="total-"]')
                 ).map((el) => parseFloat(el.textContent) || 0);
 
                 const subtotal = itemTotals.reduce((sum, price) => sum + price, 0);
-                const shipping = 0; 
+                const shipping = 0;
                 const total = subtotal + shipping;
 
-             
-                document.querySelector(
-                    ".cart_total_amount .text-brand"
-                ).textContent = `₹${subtotal.toFixed(2)}`;
-                document.querySelector(
-                    ".cart_total_amount .font-xl"
-                ).textContent = `₹${total.toFixed(2)}`;
+      
+                const totalElement = document.getElementById('total');
+                if (totalElement) {
+                    totalElement.textContent = total.toFixed(2);
+                }
+
+          
+                const cartTotalAmount = document.querySelector(".cart_total_amount .text-brand");
+                const cartTotalFinal = document.querySelector(".cart_total_amount .font-xl");
+
+                if (cartTotalAmount) {
+                    cartTotalAmount.textContent = `₹${subtotal.toFixed(2)}`;
+                }
+                if (cartTotalFinal) {
+                    cartTotalFinal.textContent = `₹${total.toFixed(2)}`;
+                }
             }
 
             async function updateQuantity(productId, action) {
@@ -237,7 +406,7 @@
                     }
 
                     if (data.success) {
-                      
+
                         document.getElementById(`qty-${productId}`).textContent =
                             data.newQuantity;
                         document.getElementById(`total-${productId}`).textContent =
@@ -271,9 +440,9 @@
                     }
 
                     if (data.success) {
-                  
+
                         document.getElementById(`item-${productId}`).remove();
-                     
+
                         updateCartTotals();
 
                         Swal.fire({
@@ -307,9 +476,10 @@
             window.updateQuantity = updateQuantity;
             window.removeItem = removeItem;
 
-            // Initial calculation of cart totals
+
             updateCartTotals();
         });
     </script>
+
 
     <%- include('../partials/user/footer.ejs') %>

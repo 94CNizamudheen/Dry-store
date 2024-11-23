@@ -7,6 +7,11 @@ const Address= require('../../models/addressSchema');
 
 const loadOrderDetails = async (req, res) => {
     try {
+        const page= parseInt(req.query.page)||1;
+        const limit= parseInt(req.query.limit)||5;
+        const skip= (page-1)*limit;
+        const totalOrders= await Order.countDocuments();
+
         const orders = await Order.find()
             .populate({
                 path: 'orderedItems.product',
@@ -16,7 +21,7 @@ const loadOrderDetails = async (req, res) => {
                 path: 'user',
                 select: 'name email' 
             })
-            .sort({ createdOn: -1 }); 
+            .sort({ createdOn: -1 }).skip(skip).limit(limit); 
 
         const formattedOrders = orders.map(order => ({
             orderId: order.orderId,
@@ -35,10 +40,13 @@ const loadOrderDetails = async (req, res) => {
             })),
             couponApplied: order.coupenApplid
         }));
+     
 
         res.render('orderList', { 
             orders: formattedOrders,
-            statusOptions: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Retern Request', 'Returned']
+            statusOptions: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Retern Request', 'Returned'],
+            totalPages:Math.ceil(totalOrders/limit),
+            currentPage:page,
         });
 
     } catch (error) {

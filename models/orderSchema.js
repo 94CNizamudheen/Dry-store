@@ -1,6 +1,7 @@
 const mongoose= require("mongoose");
 const {Schema}= mongoose;
 const {v4:uuidv4}=require("uuid");
+const Coupon = require("./couponSchema");
 
 
 const orderSchema= new Schema({
@@ -79,7 +80,9 @@ const orderSchema= new Schema({
     coupenApplid:{
         type:Boolean,
         default:false,
-        
+    },
+    couponCode:{
+        type:String,
     },
     expectedDeliveryDate: {
         type: Date

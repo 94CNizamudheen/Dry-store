@@ -298,6 +298,30 @@
 
                                                             </td>
                                                         </tr>
+                                                        <tr>
+                                                            <th>Discount</th>
+                                                            <td colspan="2" >
+                                                                <input type="hidden" id="discount"
+                                                                    value="<%=discount.toFixed(2) %>">
+                                                                <span id="totalAmount"
+                                                                    class="font-xl text-brand fw-900">₹<%=
+                                                                        discount.toFixed(2) %>
+                                                                </span>
+
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Discounted Total</th>
+                                                            <td colspan="2" class="">
+                                                                <input type="hidden" id="discountedTotal"
+                                                                    value="<%=discountedTotal.toFixed(2) %>">
+                                                                <span id="totalAmount"
+                                                                    class="font-xl text-brand fw-900">₹<%=
+                                                                        discountedTotal.toFixed(2) %>
+                                                                </span>
+
+                                                            </td>
+                                                        </tr>
                                             </tbody>
                                         </table>
                                     </div>
