@@ -287,16 +287,7 @@
                                                             <td colspan="2"><em>Free Shipping</em></td>
                                                         </tr>
                                                         <tr>
-                                                            <th>Total</th>
-                                                            <td colspan="2" class="product-subtotal">
-                                                                <input type="hidden" id="total"
-                                                                    value="<%=total.toFixed(2) %>">
-                                                                <span id="totalAmount"
-                                                                    class="font-xl text-brand fw-900">₹<%=
-                                                                        total.toFixed(2) %>
-                                                                </span>
-
-                                                            </td>
+                                                            
                                                         </tr>
                                                         <tr>
                                                             <th>Discount</th>
@@ -311,16 +302,30 @@
                                                             </td>
                                                         </tr>
                                                         <tr>
-                                                            <th>Discounted Total</th>
-                                                            <td colspan="2" class="">
-                                                                <input type="hidden" id="discountedTotal"
-                                                                    value="<%=discountedTotal.toFixed(2) %>">
+                                                            <% if(discount===0) {%>
+                                                                <th>Total</th>
+                                                            <td colspan="2" class="product-subtotal">
+                                                                <input type="hidden" id="total"
+                                                                    value="<%=total.toFixed(2) %>">
                                                                 <span id="totalAmount"
                                                                     class="font-xl text-brand fw-900">₹<%=
-                                                                        discountedTotal.toFixed(2) %>
+                                                                        total.toFixed(2) %>
                                                                 </span>
 
                                                             </td>
+                                                                <% }else {%>
+                                                                    <th>Total</th>
+                                                                    <td colspan="2" class="product-subtotal">
+                                                                        <input type="hidden" id="total"
+                                                                            value="<%= discountedTotal.toFixed(2) %>">
+                                                                        <span id="totalAmount"
+                                                                            class="font-xl text-brand fw-900">₹<%=
+                                                                                discountedTotal.toFixed(2) %>
+                                                                        </span>
+        
+                                                                    </td>
+                                                                    <% } %>
+
                                                         </tr>
                                             </tbody>
                                         </table>

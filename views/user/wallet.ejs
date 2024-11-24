@@ -1,0 +1,203 @@
+<%- include('../partials/user/header.ejs') %>
+
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <!-- Main Wallet Card -->
+            <div class="col-md-8">
+                
+                <!-- Balance and Rewards Section -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4 class="card-title">My Shopping Wallet</h4>
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-wallet fs-1 text-primary me-3"></i>
+                                    <div>
+                                        <p class="text-muted mb-1">Available Balance</p>
+                                        <h2 class="mb-0">₹<%= userData.wallet.balance.toFixed(2) %></h2>
+                                    </div>
+                                </div>
+                                <div class="alert alert-success d-flex align-items-center" role="alert">
+                                    <i class="fas fa-coins me-2"></i>
+                                    <div>
+                                        <strong>250 Reward Points</strong>
+                                        <br>Worth ₹25 on your next purchase
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h5 class="card-title mb-3">Quick Actions</h5>
+                                        <div class="d-grid gap-2">
+                                            <button class="btn btn-primary">
+                                                <i class="fas fa-plus-circle me-2"></i>Add Money
+                                            </button>
+                                            <button class="btn btn-outline-primary">
+                                                <i class="fas fa-shopping-cart me-2"></i>Use in Shopping
+                                            </button>
+                                            <button class="btn btn-outline-primary">
+                                                <i class="fas fa-gift me-2"></i>Redeem Points
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Money Section -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Add Money to Wallet</h5>
+                        <form>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="amount" class="form-label">Amount</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">₹</span>
+                                        <input type="number" class="form-control" id="amount" placeholder="Enter amount">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Payment Method</label>
+                                    <select class="form-select">
+                                        <option value="card">Credit/Debit Card</option>
+                                        <option value="bank">Bank Transfer</option>
+                                        <option value="upi">UPI</option>
+                                        <option value="paypal">PayPal</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Money</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Transactions and Shopping History -->
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#transactions">Wallet Transactions</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#shopping">Shopping History</button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <!-- Wallet Transactions -->
+                            <div class="tab-pane fade show active" id="transactions">
+                                <% userData.wallet.transaction.forEach(trans => {%>
+                                <div class="list-group list-group-flush">
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        
+                                        <div>
+                                            <h6 class="mb-1"><%= trans.type %></h6>
+                                            <small class="text-muted"><%= trans.description %></small>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="text-success"><%= trans.type === "credit" ? "+" : "-" %>₹<%= trans.amount.toFixed(2) %></span>
+                                            <br>
+                                            <small class="text-muted"><%= new Date(trans.date).toLocaleString('en-US', {
+                                                day: 'numeric',
+                                                month: 'short',
+                                                year: 'numeric',
+                                                hour: 'numeric',
+                                                minute: 'numeric',
+                                                hour12: true
+                                            }) %></small>
+                                        </div>
+                                    </div>
+                                  
+                                </div>
+                                <% }) %>
+                            </div>
+
+                            <!-- Shopping History -->
+                            <div class="tab-pane fade" id="shopping">
+                                <div class="list-group list-group-flush">
+                                    <div class="list-group-item">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h6 class="mb-0">Order #12345</h6>
+                                            <span class="badge bg-success">Delivered</span>
+                                        </div>
+                                        <p class="mb-1">Smartphone Case + Screen Protector</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-muted">Paid via Wallet</small>
+                                            <span>₹299.99</span>
+                                        </div>
+                                        <small class="text-muted">Yesterday, 2:45 PM</small>
+                                    </div>
+                                    <div class="list-group-item">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h6 class="mb-0">Order #12344</h6>
+                                            <span class="badge bg-success">Delivered</span>
+                                        </div>
+                                        <p class="mb-1">Wireless Earbuds</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-muted">Paid via Wallet</small>
+                                            <span>₹149.99</span>
+                                        </div>
+                                        <small class="text-muted">Nov 22, 5:30 PM</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rewards and Offers Sidebar -->
+            <div class="col-md-4">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Special Wallet Offers</h5>
+                        <div class="alert alert-info mb-3">
+                            <i class="fas fa-percentage me-2"></i>
+                            <strong>10% Extra</strong>
+                            <p class="mb-0">Add ₹1000 or more, get 10% extra balance!</p>
+                        </div>
+                        <div class="alert alert-warning mb-3">
+                            <i class="fas fa-tags me-2"></i>
+                            <strong>Cashback Offer</strong>
+                            <p class="mb-0">Get 5% cashback on all purchases using wallet balance</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Rewards Program</h5>
+                        <div class="progress mb-3">
+                            <div class="progress-bar bg-success" style="width: 60%">60%</div>
+                        </div>
+                        <p class="text-muted">Spend ₹400 more to reach Gold tier</p>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="fas fa-circle text-success me-2"></i>
+                                Current Tier: Silver
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-circle text-warning me-2"></i>
+                                Next Tier: Gold
+                            </li>
+                            <li>
+                                <i class="fas fa-gift text-primary me-2"></i>
+                                Benefits: Free Shipping, Priority Support
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+
+
+<%- include('../partials/user/footer.ejs') %>

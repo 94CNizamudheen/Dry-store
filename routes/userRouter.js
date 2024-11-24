@@ -26,11 +26,16 @@ router.get('/logIn',userController.loadLogIn);
 router.post('/logIn',userController.logIn);
 router.post('/verifyOtp',userController.verifyOtp);
 router.get('/resendOtp',userController.resendOtp);
-
 router.get('/auth/google',passport.authenticate('google',{scope:["profile","email"]}));
 router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:"/signUp"}),(req,res)=>{res.redirect('/')});
 router.get('/logOut',userController.logOut);
 router.get("/productDetails",userController.getProductDetials)
+//wallet
+router.get('/wallet',userAuth,userController.loadWalletPage)
+//wishlist
+router.get('/wishlist',userAuth,userController.loadWishlist)
+router.patch('/addToWishlist',userAuth,userController.addToWishlist);
+router.delete('/removeFromWishlist',userAuth,userController.removeFromWishlistPage);
 
 //profile management
 
@@ -66,6 +71,9 @@ router.get('/cart',userAuth,cartController.loadCart);
 router.post('/add-to-cart',userAuth,cartController.addToCart);
 router.post('/update-quantity',userAuth,cartController.updateQuantity);
 router.post('/remove-item',userAuth,cartController.removeItem);
+// coupon mgt
+router.post('/apply-coupon',userAuth,cartController.applyCoupon);
+router.post('/remove-coupon',userAuth,cartController.removeCoupon);
 
 //ckeck out and order
 
@@ -76,13 +84,20 @@ router.post('/handle-payment',userAuth,orderController.handlePaymentMethod);
 router.post('/place-order',userAuth,orderController.placeOrder);
 router.get('/order-success-page',userAuth,orderController.loadOrderSuccessPage);
 router.get('/cancel-order',userAuth,orderController.cancelOrder);
+router.get('/check-order-payment', userAuth, orderController.checkOrderPayment);
 router.post('/create-razorpay-order',userAuth,orderController.createRazorpayOrder);
 router.post('/verify-payment',userAuth,orderController.verifyPayment);
 
-// coupon mgt
 
-router.post('/apply-coupon',userAuth,cartController.applyCoupon);
-router.post('/remove-coupon',userAuth,cartController.removeCoupon);
+
+
+
+
+
+
+
+
+
 
 
 

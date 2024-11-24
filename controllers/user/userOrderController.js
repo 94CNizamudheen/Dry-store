@@ -13,6 +13,7 @@ const { session } = require('passport');
 
 
 
+
 const loadCheckOutPage = async (req, res) => {
     try {
         const userId = req.session.user;
@@ -216,7 +217,6 @@ const placeOrder = async (req, res) => {
 
 const loadOrderSuccessPage=async(req,res)=>{
     try {
-        console.log("object");
         res.render('order-success-page')
     } catch (error) {
         console.error('error for load order success page');
@@ -226,20 +226,16 @@ const loadOrderSuccessPage=async(req,res)=>{
 
 const cancelOrder = async (req, res) => {
     try {
-
-        const { orderId } = req.query;  
-        
-
+        const { orderId ,refundMethod} = req.query;  
         if (!orderId) {
             return res.status(400).json({
                 success: false,
                 message: "Order ID is required"
             });
         }
-
         console.log('Attempting to cancel order:', orderId);
         
-        const order = await Order.findOne({ orderId: orderId }).populate('orderedItems.product');
+        const order = await Order.findOne({ orderId: orderId }).populate('orderedItems.product user');
         
         if (!order) {
             return res.status(404).json({
@@ -253,7 +249,6 @@ const cancelOrder = async (req, res) => {
                 message: "Order is already cancelled"
             });
         }
-
         const allowedStatusForCancel = ['Pending', 'Processing'];
         if (!allowedStatusForCancel.includes(order.status)) {
             return res.status(400).json({
@@ -271,13 +266,44 @@ const cancelOrder = async (req, res) => {
                 await product.save();
             }
         }
+        if(order.paymentDetails.method==='ONLINE' && order.paymentDetails.paymentStatus==="Completed"){
+            console.log(`Processing refund for Order ${orderId}`);
 
+            const user = await User.findById(order.user._id);
+
+            if(!user){
+                return res.status(404).json({
+                    success:false,
+                    message:"User not found"
+                });
+            }
+
+            if (!user.wallet || typeof user.wallet !== 'object') {
+                user.wallet = { balance: 0, transaction: [] };
+            }
+
+            if(refundMethod==="Wallet"){
+                user.wallet.balance+=order.paymentDetails.paidAmount;
+                user.wallet.transaction.push({
+                    type:'credit',
+                    amount:order.finalAmount,
+                    description:`Refunded for cancelled order ${orderId}`,
+                });
+                await user.save();
+                console.log(`Refund of ₹${order.finalAmount} added to user's Wallet  `);
+            }else if(refundMethod==="Bank"){
+                return res.status(500).json({
+                    success:false,
+                    message:"Bank transfer Currently un available. Sorry for the inconvenience "
+                });
+            }
+          
+        };
+        
         order.status = 'Cancelled';
         await order.save();
 
         console.log(`Order ${orderId} cancelled and products restocked`);
-
-        
         return res.status(200).json({
             success: true,
             message: "Order cancelled successfully",
@@ -291,6 +317,30 @@ const cancelOrder = async (req, res) => {
             message: "Failed to cancel order",
             error: error.message
         });
+    }
+};
+const checkOrderPayment=async(req,res)=>{
+    try {
+        const {orderId}=req.query;
+        const order = await Order.findOne({orderId});
+        if(!order){
+            return res.status(404).json({
+                success:false,
+                message:"Order not found",
+            });
+        }
+        return res.status(200).json({
+            success:true,
+            isOnlinePayment:order.paymentDetails.method==="ONLINE" && order.paymentDetails.paymentStatus==="Completed"
+        });
+
+        
+    } catch (error) {
+        console.error("error for checking the order payment",error);
+        res.status(500).json({
+            success:false,
+            message: "Failed to check payment status"
+        })
     }
 };
 
@@ -308,27 +358,27 @@ const createRazorpayOrder=async(req,res)=>{
         
         })
         
-        const {amount,paymentOption}=req.body;
-        console.log('amount:',amount)
+        const {amount}=req.body;
         if(!amount||isNaN(amount)||amount<=0){
             return res.status(400).json({error:"Invalid amount",success:false})
         }
 
         const order=  razorpay.orders.create({
-            amount:Math.round(amount*100),
+            amount:amount*100,
             currency:'INR',
             receipt:`order_${Date.now()}`,
-            payment_capture:1
+            
         });
         
         const userId=req.session.user;
-        const user= await User.findOne(userId)
+        const user= await User.findOne(userId);
+        console.log( order.amount)
         res.json({
             success:true,
             key_id:process.env.RAZORPAY_KEY_ID,
             order: {
                 id: order.id,
-                amount: order.amount,
+                amount: Math.round(amount*100),
                 currency: order.currency,
             },
             customerName:user.name,
@@ -456,7 +506,8 @@ const verifyPayment= async(req,res)=>{
             error:"Payment verification Failed"
         })
     }
-}
+};
+
 
 module.exports={
     loadCheckOutPage,
@@ -468,6 +519,7 @@ module.exports={
    cancelOrder,
    createRazorpayOrder,
    verifyPayment,
+   checkOrderPayment
   
    
 
