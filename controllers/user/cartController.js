@@ -1,8 +1,8 @@
 const User = require("../../models/userSchema");
 const Product = require("../../models/productSchema");
 const Cart = require("../../models/cartScema");
-const { CommandSucceededEvent } = require('mongodb');
-const Coupon= require('../../models/couponSchema');
+const { CommandSucceededEvent } = require("mongodb");
+const Coupon = require("../../models/couponSchema");
 
 const loadCart = async (req, res) => {
     try {
@@ -17,24 +17,25 @@ const loadCart = async (req, res) => {
         });
         const cart = await Cart.findOne({ userId }).populate("items.productId");
         if (!cart) {
-            return res.render('cart',{
+            return res.render("cart", {
                 isEmpty: !cartedProducts || cartedProducts.items.length === 0,
-            })
+            });
         }
 
         let cartTotal = 0;
         if (cartedProducts && cartedProducts.items.length > 0) {
             cartTotal = cartedProducts.items.reduce((total, item) => {
-                return total + (item.price * item.quantity);
+                return total + item.price * item.quantity;
             }, 0);
         }
-       
-        const subtotal =parseFloat(cartTotal.toFixed(2))
+
+        const subtotal = parseFloat(cartTotal.toFixed(2));
 
         const shipping = 0;
         const total = subtotal + shipping;
-        const discount= parseFloat(req.session.discount)||0;
-        const discountedTotal=parseFloat(req.session.discountedTotal )||cartTotal;
+        const discount = parseFloat(req.session.discount) || 0;
+        const discountedTotal =
+            parseFloat(req.session.discountedTotal) || cartTotal;
         res.render("cart", {
             cart: cartedProducts,
             isEmpty: !cartedProducts || cartedProducts.items.length === 0,
@@ -42,8 +43,8 @@ const loadCart = async (req, res) => {
             user: req.user,
             total: total,
             subtotal: subtotal,
-            discountedTotal:discountedTotal.toFixed(2),
-            discount:discount.toFixed(2)
+            discountedTotal: discountedTotal.toFixed(2),
+            discount: discount.toFixed(2),
         });
     } catch (error) {
         console.error("Error loading cart page:", error);
@@ -81,7 +82,7 @@ const addToCart = async (req, res) => {
 
         if (cart) {
             const existingItem = cart.items.find(
-                item => item.productId.toString() === productId.toString()
+                (item) => item.productId.toString() === productId.toString()
             );
 
             if (existingItem) {
@@ -136,12 +137,12 @@ const updateQuantity = async (req, res) => {
         const userId = req.session.user;
         const cart = await Cart.findOne({ userId });
         const code = req.session.couponCode;
-        const coupon= await Coupon.findOne({code});
-        if(coupon){
+        const coupon = await Coupon.findOne({ code });
+        if (coupon) {
             return res.status(400).json({
-                success:false,
-                error:"you can't update the cart. Remove coupon for update cart",
-            })
+                success: false,
+                error: "you can't update the cart. Remove coupon for update cart",
+            });
         }
         if (!cart) {
             return res.status(404).json({ error: "Cart not found" });
@@ -151,35 +152,31 @@ const updateQuantity = async (req, res) => {
             (item) => item.productId.toString() === productId
         );
         if (item) {
-            // Find the product in the database
             const product = await Product.findById(productId);
-        
-            if (action === "increase" && item.quantity < 5 && item.quantity < product.quantity) {
+
+            if (
+                action === "increase" &&
+                item.quantity < 5 &&
+                item.quantity < product.quantity
+            ) {
                 item.quantity += 1;
             } else if (action === "decrease" && item.quantity > 1) {
                 item.quantity -= 1;
             } else if (action === "increase" && item.quantity >= 5) {
-                
                 return res.status(400).json({
                     error: "Maximum cart limit reached (5 items per product)",
                 });
             } else if (action === "increase" && item.quantity >= product.quantity) {
-                
                 return res.status(400).json({
                     error: `Insufficient stock. Only ${product.quantity} available in stock.`,
                 });
             } else if (action === "decrease" && item.quantity <= 1) {
-                
                 return res.status(400).json({
                     error: "Minimum quantity reached (1)",
                 });
             }
-        
-            // Update item total price
             item.totalPrice = item.price * item.quantity;
             await cart.save();
-
-            // Calculate new cart totals
             const subtotal = cart.items.reduce(
                 (acc, item) => acc + item.totalPrice,
                 0
@@ -198,11 +195,10 @@ const updateQuantity = async (req, res) => {
         } else {
             res.status(404).json({ error: "Product not found in cart" });
         }
-     } catch (error) {
+    } catch (error) {
         console.error("Error updating quantity:", error);
-         res.status(500).json({ error: "Server error" });
-     }
-
+        res.status(500).json({ error: "Server error" });
+    }
 };
 
 const removeItem = async (req, res) => {
@@ -244,70 +240,85 @@ const removeItem = async (req, res) => {
         res.status(500).json({ error: "Server error" });
     }
 };
-const applyCoupon=async(req,res)=>{
+const applyCoupon = async (req, res) => {
     try {
-        console.log('apply copon invoked');
-        const{code,totalAmount}= req.body;
-        const userId= req.session.user; 
-        
-        const coupon= await Coupon.findOne({ code,userId:{$ne:userId}});
-        if(!coupon){
-            return res.status(404).json({success:false,message:"Invalid Coupen code. Or You are already used this coupon "});
-        };
-        const currentDate= new Date();
-        if(currentDate>coupon.expiryOn){
-            return res.status(400).json({message:"This Coupen has expired",success:false});
-        };
-        if(coupon.minimumPrice && totalAmount<coupon.minimumPrice){
-           return res.status(400).json({
-                success:false,
-                message:`Minimum purchase amount of ${coupon.minimumPrice} required for this coupon `
+        console.log("apply copon invoked");
+        const { code, totalAmount } = req.body;
+        const userId = req.session.user;
+
+        const coupon = await Coupon.findOne({ code, userId: { $ne: userId } });
+        if (!coupon) {
+            return res
+                .status(404)
+                .json({
+                    success: false,
+                    message: "Invalid Coupen code. Or You are already used this coupon ",
+                });
+        }
+        const currentDate = new Date();
+        if (currentDate > coupon.expiryOn) {
+            return res
+                .status(400)
+                .json({ message: "This Coupen has expired", success: false });
+        }
+        if (coupon.minimumPrice && totalAmount < coupon.minimumPrice) {
+            return res.status(400).json({
+                success: false,
+                message: `Minimum purchase amount of ${coupon.minimumPrice} required for this coupon `,
             });
         }
-
-
 
         // if(coupon.usageLimit<=0){
         //     return res.status(400).json({message:"coupon usage limit Exceeded",success:false});
         // };
-        let discount=0;
-        if(coupon.discountType==="percentage"){
-            discount=(coupon.discountValue/100)*totalAmount;
-        }else{
-            discount=coupon.discountValue;
+        let discount = 0;
+        if (coupon.discountType === "percentage") {
+            discount = (coupon.discountValue / 100) * totalAmount;
+        } else {
+            discount = coupon.discountValue;
         }
-        const discountedTotal=totalAmount-discount; 
+        const discountedTotal = totalAmount - discount;
         req.session.discountedTotal = discountedTotal;
         req.session.discount = discount;
-        req.session.couponCode=code;
-        res.status(200).json({success:true,discountedTotal,discount ,message:"Coupen applied successfully"});
-       
-            
+        req.session.couponCode = code;
+        res
+            .status(200)
+            .json({
+                success: true,
+                discountedTotal,
+                discount,
+                message: "Coupen applied successfully",
+            });
     } catch (error) {
-        console.error('Error for appling coupon',error);
-        res.status(500).json({message:"Internal server Error.Please try again",success:false})
+        console.error("Error for appling coupon", error);
+        res
+            .status(500)
+            .json({
+                message: "Internal server Error.Please try again",
+                success: false,
+            });
     }
 };
-const removeCoupon=async(req,res)=>{
+const removeCoupon = async (req, res) => {
     try {
-        req.session.discount=0;
-        req.session.discountedTotal=0;
+        req.session.discount = 0;
+        req.session.discountedTotal = 0;
         delete req.session.couponCode;
 
-        req.session.save((err)=>{
-            if(err){
-                console.error('session save error',err);
-                return res.status(500).json({success:false,message:"Error remove coupen"});
+        req.session.save((err) => {
+            if (err) {
+                console.error("session save error", err);
+                return res
+                    .status(500)
+                    .json({ success: false, message: "Error remove coupen" });
             }
-            res.json({success:true,message:"Coupon removed Successfully"});
-        })
-        
+            res.json({ success: true, message: "Coupon removed Successfully" });
+        });
     } catch (error) {
-        console.error('Error for remove coupon',error);
-        res.json({success:false,message:"Internal server Error"})
+        console.error("Error for remove coupon", error);
+        res.json({ success: false, message: "Internal server Error" });
     }
-}
-
+};
 
 module.exports = {
     loadCart,
@@ -315,5 +326,5 @@ module.exports = {
     updateQuantity,
     removeItem,
     removeCoupon,
-    applyCoupon
+    applyCoupon,
 };

@@ -9,6 +9,7 @@ const brandController= require('../controllers/admin/brandController');
 const productController= require("../controllers/admin/productController")
 const orderController= require('../controllers/admin/orderController');
 const coupenController=require('../controllers/admin/coupenController');
+const statiticsController=require('../controllers/admin/statiticsController');
 const multer= require('multer');
 const storage= require('../helpers/multer');
 const uploads= multer({storage:storage});
@@ -76,5 +77,8 @@ router.get('/coupon',adminAuth,coupenController.loadCouponPage);
 router.post('/coupon',adminAuth,coupenController.createCoupon);
 router.put('/coupon/:id',adminAuth,coupenController.updateCoupon);
 router.delete('/coupon/:id',adminAuth,coupenController.removeCoupon);
+
+//reports
+router.get('/reports',adminAuth,statiticsController.LoadReportsPage);
 
 module.exports = router;        

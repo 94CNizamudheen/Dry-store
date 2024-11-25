@@ -22,7 +22,6 @@
 
 <body>
 
- 
     
     <header class="header-area header-style-1 header-height-2">
         <div class="header-top header-top-ptb-1 d-none d-lg-block">
@@ -93,20 +92,22 @@
                                 <div class="header-action-icon-2">
                                     <a href="/wallet">
                                         <img class="svgInject" alt="Evara" src="/uploads/sample-images/wallet.png">
-                                        <span class="pro-count blue">0</span>
+                                       
                                     </a>
+                                    <h6><%= walletBalance %></h6>
                                 </div>
                                 <div class="header-action-icon-2">
                                     <a href="/wishlist">
                                         <img class="svgInject" alt="Evara" src="/evara-frontend/assets/imgs/theme/icons/icon-heart.svg">
-                                        <span class="pro-count blue">0</span>
+                                       
                                     </a>
+                                    <h6><%= wishlistCount %></h6>
                                 </div>
                                 <div class="header-action-icon-2">
                                     <a class="mini-cart-icon" href="cart">
-                                        <img alt="Evara" src="/evara-frontend/assets/imgs/theme/icons/icon-cart.svg">
-                                        <span class="pro-count blue"><%=  %></span>
+                                        <img alt="Evara" src="/evara-frontend/assets/imgs/theme/icons/icon-cart.svg"> 
                                     </a>
+                                    <h6 ><%= cartCount %></h6>
                                     <div class="cart-dropdown-wrap cart-dropdown-hm2">
                                       
                                         <div class="shopping-cart-footer">

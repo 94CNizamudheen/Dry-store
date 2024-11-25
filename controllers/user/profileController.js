@@ -150,13 +150,14 @@ const postNewPassword=async(req,res)=>{
         }
         
     } catch (error) {
-        res.redirect('/pageNotFound');  ``
+        res.redirect('/pageNotFound');  
     }
 };
 
     const userProfilePage= async(req,res)=>{
         try {
             const userId= req.session.user; 
+           
             const userData= await User.findById(userId);
             const addressData= await Address.findOne({userId:userId});
             const orders = await Order.find({ user: userId }).populate({

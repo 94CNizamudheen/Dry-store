@@ -18,6 +18,7 @@ const loadCheckOutPage = async (req, res) => {
     try {
         const userId = req.session.user;
         const userData = await User.findById(userId);
+        const coupons= await Coupon.find();
         const addressData = await Address.findOne({ userId: userId });
         const cartedProducts = await Cart.findOne({ userId }).populate({
             path: "items.productId",
@@ -50,6 +51,7 @@ const loadCheckOutPage = async (req, res) => {
             selectedAddress: req.session.selectedAddress || null, 
             discount:discount,
             discountedTotal:discountedTotal,
+            coupons
         });
     } catch (error) {
         console.error('Error loading checkout page:', error);

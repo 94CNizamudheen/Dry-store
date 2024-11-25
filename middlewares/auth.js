@@ -1,4 +1,6 @@
 const User = require("../models/userSchema");
+const Cart =require('../models/cartScema');
+const Wishlist= require('../models/wishlistSchema');
 
 const userAuth = async (req, res, next) => {
     try {
@@ -7,8 +9,6 @@ const userAuth = async (req, res, next) => {
         }
 
         const userData = await User.findById(req.session.user);
-        
-        
         if (userData && !userData.isBlocked) {
             req.user = userData; 
             req.session.user = userData;
@@ -44,10 +44,35 @@ const adminAuth = async (req, res, next) => {
   }
 };
 
+const headerData = async (req, res, next) => {
+  try {
+    if (req.session.user) {
+      const user = await User.findById(req.session.user._id);
+      const cart = await Cart.findOne({ userId: user._id });
+      const wishlist = await Wishlist.findOne({ userId: user._id });
 
+      res.locals.user = user;
+      res.locals.cartCount = cart ? cart.items.length : 0;
+      res.locals.wishlistCount = wishlist ? wishlist.products.length : 0;
+      res.locals.walletBalance = user.wallet?.balance || 0;
+      
+    } else {
+      res.locals.user = null;
+      res.locals.walletBalance = 0;
+      res.locals.wishlistCount = 0;
+      res.locals.cartCount = 0;
+    }
+    next();
+  } catch (error) {
+    console.error("Error in header data middleware:", error);
+    next(error);
+  }
+};
 
 
 module.exports = {
   userAuth,
   adminAuth,
+  headerData
+
 };
