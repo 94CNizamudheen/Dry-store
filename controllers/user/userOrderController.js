@@ -14,7 +14,9 @@ const { session } = require('passport');
 
 
 
+
 const loadCheckOutPage = async (req, res) => {
+
     try {
         const userId = req.session.user;
         const userData = await User.findById(userId);
@@ -82,6 +84,7 @@ const postAddAddress=async(req,res)=>{
     }
 };
 
+//=============================================================================================
 
 const selectAddress = async (req, res) => {
     try {
@@ -100,18 +103,36 @@ const selectAddress = async (req, res) => {
         res.status(500).json({ success: false, error: "Internal server error" });
     }
 };
-
-
+//===============================================================================================
 const handlePaymentMethod = async (req, res) => {
     try {
         console.log("Processing payment method");
 
         const userId = req.session.user;
         const { paymentOption } = req.body;
-        
-        console.log("paymentOption selected:",paymentOption);
+        const user= await User.findById(userId);
 
-        const validPaymentOption = ['COD', 'ONLINE'];
+        const code= req.session.couponCode
+        const coupon= await Coupon.findOne({code});
+        const cart = await Cart.findOne({ userId }).populate('items.productId');
+        
+
+        const total = cart.items.reduce((acc, item) => acc + item.totalPrice, 0);
+        let finalAmount=0;
+        const shipping = 0;
+        if(coupon){
+             finalAmount = req.session.discountedTotal;
+        }else{
+            finalAmount =total+shipping;
+        } 
+        console.log("paymentOption selected:",paymentOption);
+        const validPaymentOption = ['COD', 'ONLINE',"WALLET"];
+        if (paymentOption === 'WALLET') {
+            if (user.wallet.balance < finalAmount) {
+                return res.status(400).json({ error: `Insufficient wallet balance. Balance ₹-${user.wallet.balance.toFixed(2)}`});
+            }
+        }
+
         if (!validPaymentOption.includes(paymentOption)) {
             return res.status(400).json({ error: "Invalid Payment Option" });
         }
@@ -123,16 +144,15 @@ const handlePaymentMethod = async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 };
+//================================================================================================  
 
-
-const placeOrder = async (req, res) => {
+const placeOrderForCODandWALLET = async (req, res) => {
     try {
         console.log("Place Order initiated");
 
         const userId = req.session.user;
         const selectedAddressId = req.session.selectedAddress;
         const paymentMethod = req.session.paymentMethod;
-        const shippingAddress = await Address.find({"address._id":selectedAddressId});
 
         if (!selectedAddressId) {
             return res.status(400).json({ error: "Please select a delivery address" });
@@ -141,10 +161,13 @@ const placeOrder = async (req, res) => {
         if (!paymentMethod) {
             return res.status(400).json({ error: "Please select a payment method" });
         }
+        const addressDoc = await Address.findOne({ "address._id": selectedAddressId });
+        const shippingAddress = addressDoc.address.find(addr => addr._id.toString() === selectedAddressId);
 
         const code=req.session.couponCode;
         const coupon= await Coupon.findOne({code});
         const cart = await Cart.findOne({ userId }).populate('items.productId');
+        console.log("Selected shippingAddress:",selectedAddressId);
 
         const total = cart.items.reduce((acc, item) => acc + item.totalPrice, 0);
         const discount= req.session.discount;
@@ -154,6 +177,16 @@ const placeOrder = async (req, res) => {
              finalAmount = req.session.discountedTotal;
         }else{
             finalAmount =total+shipping;
+        };
+        if (paymentMethod === 'WALLET') {
+            const user = await User.findById(userId);
+            if (user.wallet.balance < finalAmount) {
+                return res.status(400).json({ error: "Insufficient wallet balance." });
+            }
+           let points= user.rewardPoints += Math.floor(finalAmount * 0.02);
+           console.log('Revard points:',points);
+            user.wallet.balance -= finalAmount;
+            await user.save();
         }
         const orderedItems = cart.items.map(item => ({
             product: item.productId._id,
@@ -166,18 +199,18 @@ const placeOrder = async (req, res) => {
             totalPrice: total,
             finalAmount,
             shippingAddress: {
-                addressType: shippingAddress[0].address[0].addressType,
-                name: shippingAddress[0].address[0].name,
-                pincode: shippingAddress[0].address[0].pincode,
-                city: shippingAddress[0].address[0].city,
-                state: shippingAddress[0].address[0].state,
-                landmark: shippingAddress[0].address[0].landmark || "",
-                phone: shippingAddress[0].address[0].phone || [],
-                altPhone: shippingAddress[0].address[0].altPhone || [],
+                addressType: shippingAddress.addressType,
+                name: shippingAddress.name,
+                pincode: shippingAddress.pincode,
+                city: shippingAddress.city,
+                state: shippingAddress.state,
+                landmark: shippingAddress.landmark || "",
+                phone: shippingAddress.phone || [],
+                altPhone: shippingAddress.altPhone || [],
             },
             paymentDetails:{
                 method:paymentMethod,
-                paymentStatus:"Pending",
+                paymentStatus:paymentMethod==="WALLET"?'Completed':'Pending',
             },
             status: 'Pending',
             invoiceDate: new Date(),
@@ -216,7 +249,7 @@ const placeOrder = async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 };
-
+//===============================================================================================
 const loadOrderSuccessPage=async(req,res)=>{
     try {
         res.render('order-success-page')
@@ -225,6 +258,7 @@ const loadOrderSuccessPage=async(req,res)=>{
         res.status(500).json({error:"Internal server error"});
     }
 };
+//=============================================================================================
 
 const cancelOrder = async (req, res) => {
     try {
@@ -321,6 +355,7 @@ const cancelOrder = async (req, res) => {
         });
     }
 };
+//===================================================================================================
 const checkOrderPayment=async(req,res)=>{
     try {
         const {orderId}=req.query;
@@ -345,59 +380,72 @@ const checkOrderPayment=async(req,res)=>{
         })
     }
 };
-
-const createRazorpayOrder=async(req,res)=>{
+//================================================================================================
+const createRazorpayOrder = async (req, res) => {
     try {
-        if(!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET){
+        if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
             return res.status(500).json({
-                success:false,
-                error:"Razor pay Credentials are not Configured"
-            })
-        }
-        const razorpay= new Razorpay({
-            key_id: process.env.RAZORPAY_KEY_ID,
-            key_secret:process.env.RAZORPAY_KEY_SECRET,
-        
-        })
-        
-        const {amount}=req.body;
-        if(!amount||isNaN(amount)||amount<=0){
-            return res.status(400).json({error:"Invalid amount",success:false})
+                success: false,
+                error: "Razorpay credentials are not configured"
+            });
         }
 
-        const order=  razorpay.orders.create({
-            amount:amount*100,
-            currency:'INR',
-            receipt:`order_${Date.now()}`,
-            
+        const razorpay = new Razorpay({
+            key_id: process.env.RAZORPAY_KEY_ID,
+            key_secret: process.env.RAZORPAY_KEY_SECRET,
         });
         
-        const userId=req.session.user;
-        const user= await User.findOne(userId);
-        console.log( order.amount)
+        const { amount } = req.body;
+        if (!amount || isNaN(amount) || amount <= 0) {
+            return res.status(400).json({
+                error: "Invalid amount",
+                success: false
+            });
+        }
+        const userId = req.session.user;
+        if (!userId) {
+            return res.status(401).json({
+                success: false,
+                error: "User not authenticated"
+            });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                error: "User not found"
+            });
+        }
+        const order = await razorpay.orders.create({
+            amount: amount * 100,
+            currency: 'INR',
+            receipt: `order_${Date.now()}`,
+        });
+
         res.json({
-            success:true,
-            key_id:process.env.RAZORPAY_KEY_ID,
+            success: true,
+            key_id: process.env.RAZORPAY_KEY_ID,
             order: {
                 id: order.id,
-                amount: Math.round(amount*100),
+                amount: Math.round(amount * 100),
                 currency: order.currency,
             },
-            customerName:user.name,
-            customerEmail:user.email,
-            customerPhone:user.phone
-
+            customerName: user.name,
+            customerEmail: user.email,
+            customerPhone: user.phone
         });
         
     } catch (error) {
-        console.error("Error for creating Razorpay order:",error);
+        console.error("Error creating Razorpay order:", error);
         res.status(500).json({
-            success:false,
-            error:"Failed to create Razorpay order"
-        })
+            success: false,
+            error: "Failed to create Razorpay order"
+        });
     }
 };
-const verifyPayment= async(req,res)=>{
+//==============================================================================================
+const verifyRazorpayPaymentAndPlaceOrder= async(req,res)=>{
     try {
         const userId= req.session.user;
         const { razorpay_payment_id}=req.body;
@@ -418,8 +466,9 @@ const verifyPayment= async(req,res)=>{
             const placeOrderAfterPayment = async () => {
                 const selectedAddressId = req.session.selectedAddress;
                 const paymentMethod = 'ONLINE';
-    
-                const shippingAddress = await Address.find({"address._id":selectedAddressId});
+                const user = await User.findById(userId);
+                const addressDoc = await Address.findOne({ "address._id": selectedAddressId });
+                const shippingAddress = addressDoc.address.find(addr => addr._id.toString() === selectedAddressId);
                 const cart = await Cart.findOne({ userId }).populate('items.productId');
                 const code =req.session.couponCode;
                 const coupon= await Coupon.findOne({code})
@@ -433,6 +482,9 @@ const verifyPayment= async(req,res)=>{
                     finalAmount = total + shipping;
                 }
 
+                user.rewardPoints += Math.floor(finalAmount * 0.02);
+                await user.save();
+
                 const orderedItems = cart.items.map(item => ({
                     product: item.productId._id,
                     quantity: item.quantity,
@@ -443,14 +495,14 @@ const verifyPayment= async(req,res)=>{
                     totalPrice: total,
                     finalAmount,
                     shippingAddress: {
-                        addressType: shippingAddress[0].address[0].addressType,
-                        name: shippingAddress[0].address[0].name,
-                        pincode: shippingAddress[0].address[0].pincode,
-                        city: shippingAddress[0].address[0].city,
-                        state: shippingAddress[0].address[0].state,
-                        landmark: shippingAddress[0].address[0].landmark || "",
-                        phone: shippingAddress[0].address[0].phone || [],
-                        altPhone: shippingAddress[0].address[0].altPhone || [],
+                        addressType: shippingAddress.addressType,
+                        name: shippingAddress.name,
+                        pincode: shippingAddress.pincode,
+                        city: shippingAddress.city,
+                        state: shippingAddress.state,
+                        landmark: shippingAddress.landmark || "",
+                        phone: shippingAddress.phone || [],
+                        altPhone: shippingAddress.altPhone || [],
                     },
                     paymentDetails:{
                         method: paymentMethod,
@@ -516,11 +568,11 @@ module.exports={
     postAddAddress,
     selectAddress,
     handlePaymentMethod,
-    placeOrder,
+    placeOrderForCODandWALLET,
    loadOrderSuccessPage,
    cancelOrder,
    createRazorpayOrder,
-   verifyPayment,
+   verifyRazorpayPaymentAndPlaceOrder,
    checkOrderPayment
   
    

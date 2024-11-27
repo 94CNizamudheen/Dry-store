@@ -5,6 +5,7 @@ const userController= require('../controllers/user/userController');
 const profileController= require('../controllers/user/profileController');
 const cartController= require('../controllers/user/cartController');
 const orderController= require('../controllers/user/userOrderController')
+const walletController= require('../controllers/user/walletController')
 
 const path= require("path");
 const passport = require('passport');
@@ -31,10 +32,12 @@ router.get('/auth/google/callback',passport.authenticate('google',{failureRedire
 router.get('/logOut',userController.logOut);
 router.get("/productDetails",headerData,userController.getProductDetials)
 //wallet
-router.get('/wallet',headerData,userAuth,userController.loadWalletPage)
+router.get('/wallet',headerData,userAuth,walletController.loadWalletPage)
+router.post('/create-recharge-order',userAuth,walletController.createRechargeOrder);
+router.post('/verify-and-recharge',userAuth,walletController.verifyAndrecharge);
 //wishlist
 router.get('/wishlist',headerData,userAuth,userController.loadWishlist)
-router.patch('/addToWishlist',userAuth,userController.addToWishlist);
+router.patch('/addToWishlist',userController.addToWishlist);
 router.delete('/removeFromWishlist',userAuth,userController.removeFromWishlistPage);
 
 //profile management
@@ -68,7 +71,7 @@ router.delete('/delete-address',userAuth,profileController.deleteAddess);
 //cart mgt
 
 router.get('/cart',headerData,userAuth,cartController.loadCart);
-router.post('/add-to-cart',userAuth,cartController.addToCart);
+router.post('/add-to-cart',cartController.addToCart);
 router.post('/update-quantity',userAuth,cartController.updateQuantity);
 router.post('/remove-item',userAuth,cartController.removeItem);
 // coupon mgt
@@ -81,12 +84,12 @@ router.get('/check-out',headerData,userAuth,orderController.loadCheckOutPage);
 router.post('/check-out-add-address',userAuth,orderController.postAddAddress);
 router.get('/select-address',userAuth,orderController.selectAddress);
 router.post('/handle-payment',userAuth,orderController.handlePaymentMethod);
-router.post('/place-order',userAuth,orderController.placeOrder);
+router.post('/place-order',userAuth,orderController.placeOrderForCODandWALLET);
 router.get('/order-success-page',userAuth,orderController.loadOrderSuccessPage);
 router.get('/cancel-order',userAuth,orderController.cancelOrder);
 router.get('/check-order-payment', userAuth, orderController.checkOrderPayment);
 router.post('/create-razorpay-order',userAuth,orderController.createRazorpayOrder);
-router.post('/verify-payment',userAuth,orderController.verifyPayment);
+router.post('/verify-payment',userAuth,orderController.verifyRazorpayPaymentAndPlaceOrder);
 
 
 

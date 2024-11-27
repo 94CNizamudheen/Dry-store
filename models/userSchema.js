@@ -56,8 +56,13 @@ const userSchema = new Schema({
                     default: Date.now,
                 },
                 description: String,
+             
             },
         ],
+    },
+    rewardPoints:{
+        type:Number,
+        default:0,
     },
 
     wishlist: [
@@ -74,6 +79,7 @@ const userSchema = new Schema({
     ],
     referalCode: {
         type: String,
+        unique:true,
     },
     redeemed: {
         type: Boolean,

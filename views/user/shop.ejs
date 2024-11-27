@@ -546,7 +546,6 @@
     </main>
 
     <script>
-
         document.querySelectorAll('.add-to-wishlist').forEach((button) => {
             button.addEventListener('click', async (event) => {
                 event.preventDefault();
@@ -558,59 +557,72 @@
                     const response = await fetch('/addToWishlist', {
                         method: 'PATCH',
                         headers: {
-                            'content-Type': 'application/json',
+                            'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({ productId }),
                     });
 
                     const result = await response.json();
+
+                    if (response.status === 401) {
+                        
+                        Swal.fire({
+                            title: 'Login Required!',
+                            text: result.message,
+                            icon: 'warning',
+                            toast: true,
+                            position: 'center',
+                            timer: 2000,
+                            showConfirmButton: true,
+                        });
+                
+                    }
+
                     if (response.ok) {
                         Swal.fire({
                             title: result.isExisting ? 'Notice' : 'Success',
                             text: result.message,
-                            icon: result.isExisting ? "info" : "success",
+                            icon: result.isExisting ? 'info' : 'success',
                             toast: true,
-                            position: "center",
+                            position: 'center',
                             timer: 2000,
                             showConfirmButton: true,
                         });
+
                         if (!result.isExisting) {
                             button.classList.add('added');
-                            const icon = button.querySelector('i'); 
+                            const icon = button.querySelector('i');
                             if (icon) {
-                                icon.style.color = 'green'; 
+                                icon.style.color = 'green';
                             }
-                        };
+                        }
                     } else {
                         Swal.fire({
-                            title: "Error",
-                            text: result.message,
-                            icon: "error",
+                            title: 'Error',
+                            text: result.message || 'Failed to add to wishlist.',
+                            icon: 'error',
                             toast: true,
-                            position: "center",
+                            position: 'center',
                             timer: 2000,
                             showConfirmButton: true,
                         });
-                    };
-
-
+                    }
                 } catch (error) {
-                    console.error("Error adding to Wishlist:", error);
+                    console.error('Error adding to Wishlist:', error);
                     Swal.fire({
                         title: 'Error',
-                        text: 'Failed to add to wishlist.',
+                        text: 'Something went wrong. Please try again.',
                         icon: 'error',
                         toast: true,
-                        position: 'top-end',
+                        position: 'center',
                         timer: 3000,
                         showConfirmButton: false,
                     });
                 } finally {
                     button.disabled = false;
                 }
-            })
-        })
-
+            });
+        });
 
     </script>
     <script>
@@ -618,12 +630,15 @@
             document.addEventListener('click', async (e) => {
                 if (e.target && e.target.closest('#addToCartButton')) {
                     e.preventDefault();
+                   
 
                     const button = e.target.closest('#addToCartButton');
                     const productId = button.dataset.productId;
                     const quantity = 1;
 
                     button.disabled = true;
+
+
 
                     try {
                         const response = await fetch('/add-to-cart', {
@@ -635,12 +650,19 @@
                         });
 
                         const data = await response.json();
+                        console.log(data);
 
-                        if (!response.ok) {
-                            throw new Error(data.message || "Failed to add item to cart");
+                        if (response.status === 401) {
+                            Swal.fire({
+                                title: 'Login Required!',
+                                text: 'Please login to add items to your cart.',
+                                icon: 'info',
+                                toast: true,
+                                position: 'center',
+                            
+                            });
+                            
                         }
-
-
                         if (data.success) {
                             Swal.fire({
                                 title: data.isExisting ? 'Notice!' : 'Success!',
@@ -648,8 +670,8 @@
                                 icon: data.isExisting ? 'info' : 'success',
                                 timer: 2000,
                                 showConfirmButton: false,
-                                position: 'center',
                                 toast: true,
+                                position: 'center',
                             });
 
                             if (!data.isExisting) {
@@ -659,37 +681,31 @@
                                 }
                             }
 
+                            // Update stock count
                             const stockElement = document.querySelector(`[data-stock-id="${productId}"]`);
                             if (stockElement && data.remainingStock !== undefined) {
                                 stockElement.textContent = `Stock: ${data.remainingStock}`;
                             }
-                        }
-                    } catch (error) {
-                        let errorMessage = error.message;
-
-                        if (response.status === 401) {
-
-                            Swal.fire({
-                                title: 'Login Required!',
-                                text: message,
-                                icon: 'warning',
-                                position: 'center',
-                                toast: true,
-                            });
-                            setTimeout(() => {
-                                window.location.href = '/login';
-                            }, 2000);
                         } else {
                             Swal.fire({
                                 title: 'Error!',
-                                text: errorMessage,
+                                text: data.message || 'Unable to add item to cart.',
                                 icon: 'error',
-                                position: 'center',
                                 toast: true,
+                                position: 'center',
                             });
                         }
-                    } finally {
+                    } catch (error) {
+                        console.error("Fetch error:", error);
 
+                        Swal.fire({
+                            title: 'Network Error!',
+                            text: 'Something went wrong. Please try again.',
+                            icon: 'error',
+                            toast: true,
+                            position: 'center',
+                        });
+                    } finally {
                         button.disabled = false;
                     }
                 }

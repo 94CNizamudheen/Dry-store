@@ -3,6 +3,28 @@
         .card.border-success {
             border: 2px solid green;
             background-color: #f7fdf7;
+
+        }
+
+        .card {
+            box-shadow: 5px 5px 10px #ccc, -5px -5px 10px #fff;
+            padding: 10px;
+        }
+
+        .card-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .btn-outline-success {
+            padding: 5px 20px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-success:hover {
+            background-color: #28a745;
+            color: white;
         }
     </style>
     <main class="main">
@@ -256,49 +278,58 @@
                                         </button>
                                     </div>
                                 </div>
-                                
+
                                 <div class="container mt-4">
                                     <div class="row">
                                         <% if(coupons.length<=0) {%>
                                             <h3 class="text-danger">No active coupons</h3>
                                             <% }else{ %>
-                                        <div class="col-12">
-                                            <h3 class="mb-3 text-success">Active Coupons</h3>
-                                        </div>
-                                        <% coupons.forEach((coupon, index) => { %>
-                                            <div class="col-md-4 mb-3">
-                                                <div class="card <%= (new Date(coupon.expiryOn) < new Date() || coupon.usageLimit - coupon.timesUsed <= 0) 
+                                                <div class="col-12">
+                                                    <h3 class="mb-3 text-success">Active Coupons</h3>
+                                                </div>
+                                                <% coupons.forEach((coupon, index)=> { %>
+                                                    <div class="col-md-4 mb-3">
+                                                        <div
+                                                            class="card <%= (new Date(coupon.expiryOn) < new Date() || coupon.usageLimit - coupon.timesUsed <= 0) 
                                                     ? 'border-danger bg-danger text-white opacity-75' 
                                                     : (index % 2 === 0 ? 'border-success bg-light' : 'border-warning bg-light') %>">
-                                                    <div class="card-header bg-<%= (new Date(coupon.expiryOn) < new Date() || coupon.usageLimit - coupon.timesUsed <= 0) 
+                                                            <div class="card-header bg-<%= (new Date(coupon.expiryOn) < new Date() || coupon.usageLimit - coupon.timesUsed <= 0) 
                                                         ? 'danger' 
                                                         : (index % 2 === 0 ? 'success' : 'warning') %> text-white">
-                                                        <h5>
-                                                            <% if (coupon.minimumPrice) { %>
-                                                                Minimum Purchase: ₹<%= coupon.minimumPrice %>
-                                                            <% } %>
-                                                        </h5>
+                                                                <h5>
+                                                                    <% if (coupon.minimumPrice) { %>
+                                                                        Minimum Purchase: ₹<%= coupon.minimumPrice %>
+                                                                            <% } %>
+                                                                </h5>
+                                                            </div>
+                                                            <div class="card-body">
+                                                                <p class="card-text">
+                                                                    <span class="badge bg-info">
+                                                                        <%= coupon.discountType==='percentage' ?
+                                                                            coupon.discountValue + '% OFF' : '₹' +
+                                                                            coupon.discountValue + ' OFF' %>
+                                                                    </span>
+                                                                </p>
+                                                                <ul class="list-unstyled">
+                                                                    <li><strong>Code:</strong><br>
+                                                                        <%= coupon.code %>
+                                                                    </li>
+                                                                    <li><strong>Expires:</strong>
+                                                                        <%= new
+                                                                            Date(coupon.expiryOn).toLocaleDateString()
+                                                                            %>
+                                                                    </li>
+                                                                    <li><strong>Usage Limit:</strong>
+                                                                        <%= coupon.usageLimit - coupon.timesUsed %> Left
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <div class="card-body">
-                                                        <p class="card-text">
-                                                            <span class="badge bg-info">
-                                                                <%= coupon.discountType === 'percentage' 
-                                                                    ? coupon.discountValue + '% OFF' 
-                                                                    : '₹' + coupon.discountValue + ' OFF' %>
-                                                            </span>
-                                                        </p>
-                                                        <ul class="list-unstyled">
-                                                            <li><strong>Code:</strong><br><%= coupon.code %></li>
-                                                            <li><strong>Expires:</strong> <%= new Date(coupon.expiryOn).toLocaleDateString() %></li>
-                                                            <li><strong>Usage Limit:</strong> <%= coupon.usageLimit - coupon.timesUsed %> Left</li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        <% }) %>
-                                        
-                                        
-                                        <% } %>
+                                                    <% }) %>
+
+
+                                                        <% } %>
                                     </div>
                                 </div>
                                 <div id="loadingSpinner" class="d-none text-center mt-2">
@@ -399,6 +430,27 @@
                                         </table>
 
                                     </div>
+                                    <div class="container mt-4 d-flex justify-content-start">
+                                        <div class="card text-center shadow-sm p-3"
+                                            style="border-radius: 15px; max-width: 300px; background: #f8f9fa;">
+                                            <div class="card-header bg-secondary text-white"
+                                                style="border-radius: 15px 15px 0 0;">
+                                                <h5>Wallet Balance</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <h6 class="card-title" style="font-size: 1.5rem; color: #650a5c;">₹
+                                                    <span id="walletBalance">
+                                                        <%= walletBalance.toFixed(2) %>
+                                                    </span>
+                                                </h6>
+                                                <a href="/wallet" class="btn btn-sm btn-outline-success"
+                                                    style="border-radius: 20px;">Add Funds</a>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+
                                     <div class="bt-1 border-color-1 mt-30 mb-30"></div>
                                     <form id="paymentMethodForm">
                                         <div class="payment_method">
@@ -406,6 +458,13 @@
                                                 <h5>Payment</h5>
                                             </div>
                                             <div class="paymentOption">
+                                                <div class="custome-radio">
+                                                    <input class="form-check-input" type="radio" name="paymentOption"
+                                                        id="walletOption" value="WALLET" />
+                                                    <label class="form-check-label" for="walletOption">
+                                                        Wallet payment
+                                                    </label>
+                                                </div>
                                                 <div class="custome-radio">
                                                     <input class="form-check-input" type="radio" name="paymentOption"
                                                         id="codOption" value="COD" />
@@ -633,7 +692,7 @@
                                 const result = await response.json();
 
                                 if (result.success) {
-                                    if (selectedPaymentMethod.value === 'COD') {
+                                    if (selectedPaymentMethod.value === 'COD' || selectedPaymentMethod.value === "WALLET") {
 
                                         placeOrderButton.textContent = 'Place Order';
                                         placeOrderButton.style.display = 'block';
@@ -658,7 +717,9 @@
                                     Swal.fire({
                                         title: "Error",
                                         text: result.error || "Failed to set payment method",
-                                        icon: "error"
+                                        icon: "error",
+                                        toast: true,
+                                        position: 'center',
                                     });
                                 }
                             } catch (error) {
@@ -666,7 +727,9 @@
                                 Swal.fire({
                                     title: "Error",
                                     text: "An error occurred while setting payment method",
-                                    icon: "error"
+                                    icon: "error",
+                                    toast: true,
+                                    position: 'center',
                                 });
                             }
                         }
@@ -691,7 +754,7 @@
 
                     const paymentMethod = selectedPaymentMethod.value;
 
-                    if (paymentMethod === 'COD') {
+                    if (paymentMethod === 'COD' || paymentMethod === "WALLET") {
 
                         try {
                             const response = await fetch('/place-order', {
@@ -762,6 +825,7 @@
                         handler: async function (response) {
 
                             try {
+
                                 const verifyResponse = await fetch('/verify-payment', {
                                     method: "POST",
                                     headers: { 'content-type': 'application/json' },
@@ -769,10 +833,12 @@
                                         razorpay_payment_id: response.razorpay_payment_id,
                                         razorpay_order_id: response.razorpay_order_id,
                                         razorpay_signature: response.razorpay_signature
+
                                     })
                                 });
                                 const verifyResult = await verifyResponse.json();
                                 if (verifyResult.success) {
+
                                     Swal.fire({
                                         title: "Payment Success",
                                         text: "Your payment has been processed successfully.",

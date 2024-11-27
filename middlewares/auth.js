@@ -55,12 +55,15 @@ const headerData = async (req, res, next) => {
       res.locals.cartCount = cart ? cart.items.length : 0;
       res.locals.wishlistCount = wishlist ? wishlist.products.length : 0;
       res.locals.walletBalance = user.wallet?.balance || 0;
+      res.locals.rewardPoints= user.rewardPoints||0;
       
     } else {
       res.locals.user = null;
       res.locals.walletBalance = 0;
       res.locals.wishlistCount = 0;
       res.locals.cartCount = 0;
+      res.locals.rewardPoints= 0;
+      
     }
     next();
   } catch (error) {

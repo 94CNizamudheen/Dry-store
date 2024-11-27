@@ -217,14 +217,15 @@ const signUp = async (req, res) => {
                 message: "User with this email already exists",
             });
         }
+        const referalCode = `REF${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
         const otp = genarateOtp();
-        const emailSend = await sendVerificationEmail(email, otp);
+        const emailSend = await sendVerificationEmail(email, otp,);
         if (!emailSend) {
             return res.json("Email error");
         }
         const hashedPassword = await bcrypt.hash(password, 10);
         req.session.userOtp = otp;
-        req.session.userData = { name, phone, email, password: hashedPassword };
+        req.session.userData = { name, phone, email, password: hashedPassword ,referalCode:referalCode};
         res.render("verifyOtp");
         console.log("OTP sent", otp);
     } catch (error) {
@@ -391,49 +392,62 @@ const loadWishlist = async (req, res) => {
 };
 const addToWishlist = async (req, res) => {
     try {
-        const userId = req.session.user;
+        if (!req.session.user) {
+            return res.status(401).json({
+                success: false,
+                message: "Please login to add items to your wishlist.",
+            });
+        }
+
+        const userId = req.session.user._id;
         const { productId } = req.body;
+
         let wishlist = await Wishlist.findOne({ userId });
+
         if (!wishlist) {
+
             wishlist = new Wishlist({
                 userId,
                 products: [{ productId }],
             });
             await wishlist.save();
-            
+
             return res.status(200).json({
-                message:"Product added to wishlist",
-                success:false,
-                isExisting:false,
-            })
-        } else {
-            const productExists = wishlist.products.some((product) => 
-                product.productId.toString() === productId
-            );
-            if(productExists){
-                return res.status(400).json({
-                    message:"Product already exists in wishlist",
-                    success:true,
-                    isExisting:true,
-                });
-            }
-        };
+                success: true,
+                message: "Product added to wishlist.",
+                isExisting: false,
+            });
+        }
+
+        const productExists = wishlist.products.some(
+            (product) => product.productId.toString() === productId
+        );
+
+        if (productExists) {
+            return res.status(400).json({
+                success: false,
+                message: "Product already exists in wishlist.",
+                isExisting: true,
+            });
+        }
 
         wishlist.products.push({ productId });
         await wishlist.save();
-        res.status(200).json({
-            message: "Product added to wish list",
+
+        return res.status(200).json({
             success: true,
+            message: "Product added to wishlist.",
             isExisting: false,
         });
     } catch (error) {
-        console.error("error for add to wishlist", error);
+        console.error("Error adding to wishlist:", error);
         res.status(500).json({
             success: false,
-            message: "Failed to update the wishlist",
+            message: "Failed to update the wishlist.",
         });
     }
 };
+
 const removeFromWishlistPage=async(req,res)=>{
     try {
         const userId= req.session.user;
@@ -452,15 +466,7 @@ const removeFromWishlistPage=async(req,res)=>{
         res.status(500).json({message:"Internal Server Error"})
     }
 };
-const loadWalletPage=async(req,res)=>{
-    try {
-        const userId= req.session.user;
-        const userData= await User.findById(userId)
-        res.render('wallet',{userData})
-    } catch (error) {
-        res.redirect('/pageNotFound')
-    }
-}
+
 
 module.exports = {
     loadHomepage,
@@ -477,5 +483,4 @@ module.exports = {
     getProductDetials,
     addToWishlist,
     removeFromWishlistPage,
-    loadWalletPage
 };

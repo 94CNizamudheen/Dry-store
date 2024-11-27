@@ -54,14 +54,16 @@ const loadCart = async (req, res) => {
 
 const addToCart = async (req, res) => {
     try {
-        if (!req.user) {
+        const user = req.session.user;
+        console.log(user)
+        if (!user) {
             return res.status(401).json({
                 success: false,
                 message: "Please login to add items to the cart",
             });
         }
 
-        const userId = req.user._id;
+        const userId = req.session.user._id;
         const { productId, quantity } = req.body;
         if (!productId || !quantity || quantity <= 0) {
             return res.status(400).json({

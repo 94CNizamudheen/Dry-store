@@ -90,11 +90,18 @@
                             <% if(locals.user) {%>
                             <div class="header-action-2">
                                 <div class="header-action-icon-2">
+                                    <a href="#">
+                                        <img class="svgInject" alt="Evara" src="/uploads/sample-images/winner.png">
+                                       
+                                    </a>
+                                    <h6> <%= rewardPoints %></h6>
+                                </div>
+                                <div class="header-action-icon-2">
                                     <a href="/wallet">
                                         <img class="svgInject" alt="Evara" src="/uploads/sample-images/wallet.png">
                                        
                                     </a>
-                                    <h6><%= walletBalance %></h6>
+                                    <h6>₹ <%= walletBalance.toFixed(2) %></h6>
                                 </div>
                                 <div class="header-action-icon-2">
                                     <a href="/wishlist">

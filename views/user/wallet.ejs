@@ -5,7 +5,7 @@
         <div class="row justify-content-center">
             <!-- Main Wallet Card -->
             <div class="col-md-8">
-                
+
                 <!-- Balance and Rewards Section -->
                 <div class="card shadow-sm mb-4">
                     <div class="card-body">
@@ -16,35 +16,21 @@
                                     <i class="fas fa-wallet fs-1 text-primary me-3"></i>
                                     <div>
                                         <p class="text-muted mb-1">Available Balance</p>
-                                        <h2 class="mb-0">₹<%= userData.wallet.balance.toFixed(2) %></h2>
+                                        <h2 class="mb-0">₹<%= userData.wallet.balance.toFixed(2) %>
+                                        </h2>
                                     </div>
                                 </div>
                                 <div class="alert alert-success d-flex align-items-center" role="alert">
                                     <i class="fas fa-coins me-2"></i>
                                     <div>
-                                        <strong>250 Reward Points</strong>
-                                        <br>Worth ₹25 on your next purchase
+                                        <strong>
+                                            <%= rewardPoints %>
+                                        </strong>
+                                        <br>"Earn More, Save More: Get 2% Reward Points on Every Purchase!"
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="card bg-light">
-                                    <div class="card-body">
-                                        <h5 class="card-title mb-3">Quick Actions</h5>
-                                        <div class="d-grid gap-2">
-                                            <button class="btn btn-primary">
-                                                <i class="fas fa-plus-circle me-2"></i>Add Money
-                                            </button>
-                                            <button class="btn btn-outline-primary">
-                                                <i class="fas fa-shopping-cart me-2"></i>Use in Shopping
-                                            </button>
-                                            <button class="btn btn-outline-primary">
-                                                <i class="fas fa-gift me-2"></i>Redeem Points
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -53,13 +39,14 @@
                 <div class="card shadow-sm mb-4">
                     <div class="card-body">
                         <h5 class="card-title mb-3">Add Money to Wallet</h5>
-                        <form>
+                        <form id="walletRechargeForm">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="amount" class="form-label">Amount</label>
                                     <div class="input-group">
                                         <span class="input-group-text">₹</span>
-                                        <input type="number" class="form-control" id="amount" placeholder="Enter amount">
+                                        <input type="number" class="form-control" id="amount" placeholder="Enter amount"
+                                            required>
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
@@ -67,12 +54,11 @@
                                     <select class="form-select">
                                         <option value="card">Credit/Debit Card</option>
                                         <option value="bank">Bank Transfer</option>
-                                        <option value="upi">UPI</option>
-                                        <option value="paypal">PayPal</option>
+                                        <option value="razorpay">Razorpay</option>
                                     </select>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Add Money</button>
+                            <button type="button" class="btn btn-primary" id="pay-button">Add Money</button>
                         </form>
                     </div>
                 </div>
@@ -82,40 +68,46 @@
                     <div class="card-body">
                         <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#transactions">Wallet Transactions</button>
+                                <button class="nav-link active" data-bs-toggle="tab"
+                                    data-bs-target="#transactions">Wallet Transactions</button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#shopping">Shopping History</button>
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#shopping">Shopping
+                                    History</button>
                             </li>
                         </ul>
 
                         <div class="tab-content">
                             <!-- Wallet Transactions -->
                             <div class="tab-pane fade show active" id="transactions">
-                                <% userData.wallet.transaction.forEach(trans => {%>
-                                <div class="list-group list-group-flush">
-                                    <div class="list-group-item d-flex justify-content-between align-items-center">
-                                        
-                                        <div>
-                                            <h6 class="mb-1"><%= trans.type %></h6>
-                                            <small class="text-muted"><%= trans.description %></small>
+                                <% userData.wallet.transaction.forEach(trans=> {%>
+                                    <div class="list-group list-group-flush">
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+
+                                            <div>
+                                                <h6 class="mb-1">
+                                                    <%= trans.type %>
+                                                </h6>
+                                                <small class="text-muted">
+                                                    <%= trans.description %>
+                                                </small>
+                                            </div>
+                                            <div class="text-end">
+                                                <span class="text-success">
+                                                    <%= trans.type==="credit" ? "+" : "-" %>₹<%= trans.amount.toFixed(2)
+                                                            %>
+                                                </span>
+                                                <br>
+                                                <small class="text-muted">
+                                                    <%= new Date(trans.date).toLocaleString('en-US', { day: 'numeric' ,
+                                                        month: 'short' , year: 'numeric' , hour: 'numeric' ,
+                                                        minute: 'numeric' , hour12: true }) %>
+                                                </small>
+                                            </div>
                                         </div>
-                                        <div class="text-end">
-                                            <span class="text-success"><%= trans.type === "credit" ? "+" : "-" %>₹<%= trans.amount.toFixed(2) %></span>
-                                            <br>
-                                            <small class="text-muted"><%= new Date(trans.date).toLocaleString('en-US', {
-                                                day: 'numeric',
-                                                month: 'short',
-                                                year: 'numeric',
-                                                hour: 'numeric',
-                                                minute: 'numeric',
-                                                hour12: true
-                                            }) %></small>
-                                        </div>
+
                                     </div>
-                                  
-                                </div>
-                                <% }) %>
+                                    <% }) %>
                             </div>
 
                             <!-- Shopping History -->
@@ -196,8 +188,118 @@
             </div>
         </div>
     </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        document.getElementById('pay-button').addEventListener('click', async function () {
+            try {
+                const amount = document.getElementById('amount').value;
+
+                if (amount <= 0) {
+                    Swal.fire({
+                        toast: true,
+                        position: 'center',
+                        icon: 'error',
+                        title: 'Please enter a valid amount',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                    return;
+                }
 
 
-<%- include('../partials/user/footer.ejs') %>
+                const response = await fetch('/create-recharge-order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount }),
+                });
+
+                const data = await response.json();
+                console.log('Response from server:', data);
+
+                // if (!data.ok) {
+                //     throw new Error(data.error || 'Failed to create Razorpay order');
+                // }
+                console.log("hello")
+                console.log("amount",data.amount);
+
+                // Razorpay options
+                const options = {
+                    key: data.key,
+                    amount: data.amount,
+                    currency: data.currency,
+                    name: "Henza's Dry Store",
+                    description: 'Payment For Recharge',
+                    order_id: data.order_id,
+                    handler: async function (response) {
+                        try {
+                            const verifyResponse = await fetch('/verify-and-recharge', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    razorpay_payment_id: response.razorpay_payment_id,
+                                    razorpay_order_id: response.razorpay_order_id,
+                                    razorpay_signature: response.razorpay_signature,
+                                    amount: data.amount 
+                                }),
+                            });
+
+                            const verifyResult = await verifyResponse.json();
+
+                            if (verifyResult.success) {
+                                Swal.fire({
+                                    title: 'Payment Success',
+                                    text: 'Your payment has been processed successfully.',
+                                    icon: 'success',
+                                    position: 'center',
+                                    toast: true,
+                                    timer: 2000
+                                }).then(() => {
+                                    window.location.href = verifyResult.redirectURL || '/wallet';
+                                });
+                            } else {
+                                throw new Error('Payment verification failed');
+                            }
+                        } catch (error) {
+                            console.error('Verification Error:', error);
+                            Swal.fire({
+                                title: 'Payment Failed',
+                                text: 'Payment verification failed. Please try again',
+                                icon: 'error',
+                                position: 'center',
+                                toast: true,
+                                timer: 2000
+                            });
+                        }
+                    },
+                    prefill: {
+                        name: data.prefill.name,
+                        email: data.prefill.email,
+                        contact: data.prefill.contact,
+                    },
+                    theme: {
+                        color: '#3399cc'
+                    }
+                };
+
+
+                const razorpayInstance = new Razorpay(options);
+                razorpayInstance.open();
+
+            } catch (error) {
+                console.error('Razorpay initialization Error', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Failed to initialize payment. Please try again',
+                    icon: 'error',
+                    position: 'center',
+                    toast: true,
+                    timer: 2000
+                });
+            }
+        });
+
+    </script>
+
+    <%- include('../partials/user/footer.ejs') %>

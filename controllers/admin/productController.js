@@ -43,8 +43,6 @@ const addProducts = async (req, res) => {
             }
         }
         
-      
-        // Checking if category exists
         const categoryId = await Category.findOne({ name: products.category });
         if (!categoryId) {
             return res.status(400).json("Invalid Category Name");
