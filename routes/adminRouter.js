@@ -10,6 +10,7 @@ const productController= require("../controllers/admin/productController")
 const orderController= require('../controllers/admin/orderController');
 const coupenController=require('../controllers/admin/coupenController');
 const statiticsController=require('../controllers/admin/statiticsController');
+const referralController =require('../controllers/admin/referralCodeController');
 const multer= require('multer');
 const storage= require('../helpers/multer');
 const uploads= multer({storage:storage});
@@ -80,5 +81,9 @@ router.delete('/coupon/:id',adminAuth,coupenController.removeCoupon);
 
 //reports
 router.get('/reports',adminAuth,statiticsController.LoadReportsPage);
+
+//referral
+router.get('/referralCode',adminAuth,referralController.getReferralPage);
+router.patch('/rewards-config',adminAuth,referralController.updateRewardsConfig);
 
 module.exports = router;        

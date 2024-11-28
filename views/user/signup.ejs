@@ -111,6 +111,15 @@
                                     <label for="cPassword">Confirm Password</label>
                                     <span id="cPasswordError" class="text-danger small"></span>
                                 </div>
+                                <div class="form-floating mb-1">
+                                    <input type="text" class="form-control rounded-2" id="referralCode" name="referralCode" placeholder="Referral Code">
+                                    <label for="referralCode">Referral Code (Optional)</label>
+                                    <span id="referralCodeError" class="text-danger small">
+                                        <% if (message) { %>
+                                            <%= message %>
+                                        <% } %>
+                                    </span>
+                                </div>
 
                                 <!-- Terms Checkbox -->
                                 <div class="mb-1">

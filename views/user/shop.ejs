@@ -97,99 +97,106 @@
                     <!-- Product Grid -->
                     <div class="col-lg-9">
                         <div class="shop-product-wrapper">
-                            <% if (products.length===0) { %>
+                            <% if (products.length === 0) { %>
                                 <div class="alert alert-info">No products found matching your criteria.</div>
-                                <% } else { %>
-                                    <div class="row product-grid-4">
-                                        <% products.forEach(function(product, index) { %>
-                                            <div class="col-lg-4 col-md-4 col-12 col-sm-6">
-                                                <div class="product-cart-wrap mb-30">
-                                                    <div class="product-img-action-wrap">
-                                                        <div class="product-img product-img-zoom">
-                                                            <a href="/productDetails?id=<%= product._id %>">
-                                                                <img class="default-img"
-                                                                    src="/uploads/images/<%= product.productImage[0] %>"
-                                                                    alt="<%= product.productName %>">
-                                                                <img class="hover-img"
-                                                                    src="/uploads/images/<%= product.productImage[0] %>"
-                                                                    alt="<%= product.productName %>">
-                                                            </a>
-                                                        </div>
-                                                        <!-- Added back the product action buttons -->
-                                                        <div class="product-action-1">
-                                                            <a aria-label="Quick view" class="action-btn hover-up"
-                                                                data-bs-toggle="modal" data-bs-target="#quickViewModal">
-                                                                <i class="fi-rs-eye"></i>
-                                                            </a>
-                                                            <a aria-label="Add To Wishlist" 
-                                                            class="action-btn hover-up add-to-wishlist" 
-                                                            href="#" 
-                                                            data-product-id="<%= product._id %>">
-                                                            <i class="fi-rs-heart"></i>
-                                                         </a>
-                                                            <a aria-label="Compare" class="action-btn hover-up"
-                                                                href="#">
-                                                                <i class="fi-rs-shuffle"></i>
-                                                            </a>
-                                                        </div>
-                                                        <div class="product-badges">
-                                                            <% if (product.productOffer> 0) { %>
-                                                                <span class="sale">-<%= product.productOffer %>%</span>
-                                                                <% } %>
-                                                                    <% if (product.quantity <=10 && product.quantity> 0) { %>
-                                                                     
-                                                                        <span class="hot">Low Stock</span>
-                                                                        <% } %>
-                                                        </div>
-                                                      </div>
-                                                      <div class="product-content-wrap">
- 
-                                                        <div class="product-category">
-                                                            <a href="#">
-                                                                <%= product.category.name %>
-                                                            </a>
-                                                        </div>
-                                                        <h2>
-                                                            <a href="/productDetails?id=<%= product._id %>">
-                                                                <%= product.productName %>
-                                                            </a>
-                                                        </h2>
-
-                                                        <div class="rating-result" title="<%= product.productOffer %>%">
-                                                            <span>
-                                                                <span>
-                                                                    <%= product.productOffer %> % Off
-                                                                </span>
-                                                            </span>
-                                                        </div>
-                                                        <div class="product-price">
-                                                            <span class="new-price">₹<%= product.salePrice %></span>
-                                                            <% if (product.regularPrice> product.salePrice) { %>
-                                                                <span class="old-price">₹<%= product.regularPrice %>
-                                                                </span>
-                                                                <% } %>
-                                                        </div>
-                                                        <div
-                                                            class="stock-status <%= product.quantity > 0 ? 'in-stock text-success ml-5' : 'text-danger ml-5' %>">
-                                                            <%= product.quantity> 0 ? `Stock left: ${product.quantity}`
-                                                                : 'Out of Stock' %>
-                                                        </div>
-                                                        <% if (product.quantity> 0) {%>
-
-                                                            <div class="product-action-1 show">
-                                                                <a aria-label="Add To Cart" class="action-btn hover-up"
-                                                                    href="javascript:void(0);" id="addToCartButton"
-                                                                    data-product-id="<%= product._id %>">
-                                                                    <i class="fi-rs-shopping-bag-add"></i>
-                                                                </a>
-                                                            </div>
-                                                            <% } %>
+                            <% } else { %>
+                                <div class="row product-grid-4">
+                                    <% products.forEach(function(product, index) { %>
+                                        <div class="col-lg-4 col-md-4 col-12 col-sm-6">
+                                            <div class="product-cart-wrap mb-30">
+                                                <div class="product-img-action-wrap">
+                                                    <div class="product-img product-img-zoom">
+                                                        <a href="/productDetails?id=<%= product._id %>">
+                                                            <img class="default-img"
+                                                                src="/uploads/images/<%= product.productImage[0] %>"
+                                                                alt="<%= product.productName %>">
+                                                            <img class="hover-img"
+                                                                src="/uploads/images/<%= product.productImage[0] %>"
+                                                                alt="<%= product.productName %>">
+                                                        </a>
+                                                    </div>
+                                                    <div class="product-action-1">
+                                                        <a aria-label="Quick view" class="action-btn hover-up"
+                                                            data-bs-toggle="modal" data-bs-target="#quickViewModal">
+                                                            <i class="fi-rs-eye"></i>
+                                                        </a>
+                                                        <a aria-label="Add To Wishlist" 
+                                                        class="action-btn hover-up add-to-wishlist" 
+                                                        href="#" 
+                                                        data-product-id="<%= product._id %>">
+                                                        <i class="fi-rs-heart"></i>
+                                                        </a>
+                                                        <a aria-label="Compare" class="action-btn hover-up" href="#">
+                                                            <i class="fi-rs-shuffle"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div class="product-badges">
+                                                        <% if (product.productOffer > 0) { %>
+                                                            <span class="sale">-<%= product.productOffer %>%</span>
+                                                        <% } %>
+                                                        <% if (product.quantity <= 10 && product.quantity > 0) { %>
+                                                            <span class="hot">Low Stock</span>
+                                                        <% } %>
                                                     </div>
                                                 </div>
+                                                <div class="product-content-wrap">
+                                                    <div class="product-category">
+                                                        <a href="#"><%= product.category.name %></a>
+                                                    </div>
+                                                    <h2>
+                                                        <a href="/productDetails?id=<%= product._id %>">
+                                                            <%= product.productName %>
+                                                        </a>
+                                                    </h2>
+                                                    <div class="rating-result" title="<%= product.productOffer %>%">
+                                                        <span><%= product.productOffer %> % Off</span>
+                                                    </div>
+                                                    <div class="product-price">
+                                                        <span class="new-price">₹<%= product.salePrice %></span>
+                                                        <% if (product.regularPrice > product.salePrice) { %>
+                                                            <span class="old-price">₹<%= product.regularPrice %></span>
+                                                        <% } %>
+                                                    </div>
+                                                    <div class="stock-status <%= product.quantity > 0 ? 'in-stock text-success ml-5' : 'text-danger ml-5' %>">
+                                                        <%= product.quantity > 0 ? `Stock left: ${product.quantity}` : 'Out of Stock' %>
+                                                    </div>
+                                                    <% if (product.quantity > 0) { %>
+                                                        <div class="product-action-1 show">
+                                                            <a aria-label="Add To Cart" class="action-btn hover-up"
+                                                                href="javascript:void(0);" id="addToCartButton"
+                                                                data-product-id="<%= product._id %>">
+                                                                <i class="fi-rs-shopping-bag-add"></i>
+                                                            </a>
+                                                        </div>
+                                                    <% } %>
+                                                </div>
                                             </div>
-                                            <% }); %>
-                                    </div>
-                                    <% } %>
+                                        </div>
+                                    <% }); %>
+                                </div>
+                                
+                                <div class="pagination-area">
+                                    <nav>
+                                        <ul class="pagination justify-content-center">
+                                            <% if (currentPage > 1) { %>
+                                                <li class="">
+                                                    <a class="page-link" href="?page=<%= currentPage - 1 %>">
+                                                        <i class="fi-rs-angle-left"></i>
+                                                    </a>
+                                                </li>
+                                            <% } %>
+                                            
+                                            <% if (products.length === 9) { %>
+                                                <li class="">
+                                                    <a class="page-link" href="?page=<%= currentPage + 1 %>">
+                                                        <i class="fi-rs-angle-right"></i>
+                                                    </a>
+                                                </li>
+                                            <% } %>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            <% } %>
                         </div>
                     </div>
                 </div>

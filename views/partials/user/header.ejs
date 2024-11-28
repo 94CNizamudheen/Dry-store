@@ -38,8 +38,8 @@
                                         <a href="#" class="text-decoration-none">(+01) - 2345 - 6789</a>
                                     </li>
                                     <li>
-                                        <i class="fi-rs-marker"></i>
-                                        <a href="page-contact.html" class="text-decoration-none">Our location</a>
+                                        <img class="svgInject" alt="Evara" src="/uploads/sample-images/map.png" style="height: 30px;height: 30px;">
+                                        <a href="https://maps.app.goo.gl/bsBpgVbUzTXPUcsv9" target="_blank" class="text-decoration-none">Our location</a>
                                     </li>
                                 </ul>
                             </div>
@@ -52,7 +52,7 @@
                                     <li>
                                         <% if(locals.user) { %>
                                             <a class="language-dropdown-active text-decoration-none " href="#" style="font-size: large;">
-                                                <%= user.name %> <i class="fi-rs-angle-small-down"></i>
+                                                <%= user.name %> <img class="svgInject " alt="Evara" src="/uploads/sample-images/profile.png" style="width: 30px; height: 30px;">
                                             </a>
                                             <ul class="language-dropdown list-unstyled mt-2  rounded-3" >
                                                 <li><a href="/user-profile" class="text-decoration-none bg-1 rounded-3 m-1 p-1">Profile</a></li>
@@ -76,43 +76,48 @@
         <div class="header-middle header-middle-ptb-1 d-none d-lg-block">
             <div class="container">
                 <div class="header-wrap">
-                    <div class="logo logo-width-1">
-                        <a href=""><img src="/evara-frontend/assets/imgs/theme/logo for nuts store.png" alt="logo"></a>
+                    <div class="logo logo-width-1 " >
+                        <a href=""><img class="rounded" src="/evara-frontend/assets/imgs/theme/logo for nuts store.png" alt="logo"></a>
                     </div>
                     <div class="header-right">
-                        <div class="search-style-2">
+                        <div class="search-style-1">
                             <form action="#">
-                          
-                                <input type="text" placeholder="Search for items...">
+                                
+                                <span class="input-group-text  " style="background: none;">
+                                    <img src="/uploads/sample-images/image.png" alt="Search" style="width: 24px; height: 24px;">
+                                    <input  type="text" placeholder="Search for items..." >
+                                </span>
+                               
                             </form>
+                            
                         </div>
                         <div class="header-action-right">
                             <% if(locals.user) {%>
                             <div class="header-action-2">
                                 <div class="header-action-icon-2">
                                     <a href="#">
-                                        <img class="svgInject" alt="Evara" src="/uploads/sample-images/winner.png">
+                                        <img class="svgInject" alt="Evara" src="/uploads/sample-images/coin-stack.png">
                                        
                                     </a>
                                     <h6> <%= rewardPoints %></h6>
                                 </div>
                                 <div class="header-action-icon-2">
                                     <a href="/wallet">
-                                        <img class="svgInject" alt="Evara" src="/uploads/sample-images/wallet.png">
+                                        <img class="svgInject" alt="Evara" src="/uploads/sample-images/wallet (1).png">
                                        
                                     </a>
                                     <h6>₹ <%= walletBalance.toFixed(2) %></h6>
                                 </div>
                                 <div class="header-action-icon-2">
                                     <a href="/wishlist">
-                                        <img class="svgInject" alt="Evara" src="/evara-frontend/assets/imgs/theme/icons/icon-heart.svg">
+                                        <img class="svgInject" alt="Evara" src="/uploads/sample-images/folder.png">
                                        
                                     </a>
                                     <h6><%= wishlistCount %></h6>
                                 </div>
                                 <div class="header-action-icon-2">
                                     <a class="mini-cart-icon" href="cart">
-                                        <img alt="Evara" src="/evara-frontend/assets/imgs/theme/icons/icon-cart.svg"> 
+                                        <img alt="Evara" src="/uploads/sample-images/procurement.png"> 
                                     </a>
                                     <h6 ><%= cartCount %></h6>
                                     <div class="cart-dropdown-wrap cart-dropdown-hm2">
@@ -130,20 +135,27 @@
                             <% }else{ %>
                                 <div class="header-action-2">
                                     <div class="header-action-icon-2">
+                                        <a href="#">
+                                            <img class="svgInject" alt="Evara" src="/uploads/sample-images/coin-stack.png">
+                                            <span class="pro-count blue">0</span>
+                                        </a>
+                                        
+                                    </div>
+                                    <div class="header-action-icon-2">
                                         <a href="/wallet">
-                                            <img class="svgInject" alt="Evara" src="/uploads/sample-images/wallet.png">
+                                            <img class="svgInject" alt="Evara" src="/uploads/sample-images/wallet (1).png">
                                             <span class="pro-count blue">0</span>
                                         </a>
                                     </div>
                                     <div class="header-action-icon-2">
                                         <a href="/wishlist">
-                                            <img class="svgInject" alt="Evara" src="/evara-frontend/assets/imgs/theme/icons/icon-heart.svg">
+                                            <img class="svgInject" alt="Evara" src="/uploads/sample-images/folder.png">
                                             <span class="pro-count blue">0</span>
                                         </a>
                                     </div>
                                     <div class="header-action-icon-2">
                                         <a class="mini-cart-icon" href="cart">
-                                            <img alt="Evara" src="/evara-frontend/assets/imgs/theme/icons/icon-cart.svg">
+                                            <img alt="Evara" src="/uploads/sample-images/procurement.png">
                                             <span class="pro-count blue">0</span>
                                         </a>
                                         <div class="cart-dropdown-wrap cart-dropdown-hm2">
@@ -169,7 +181,7 @@
             <div class="container">
                 <div class="header-wrap header-space-between position-relative">
                     <div class="logo logo-width-1 d-block d-lg-none">
-                        <a href="/home"><img src="/evara-frontend/assets/imgs/theme/logo.svg" alt="logo"></a>
+                        <a href="/"><img src="/evara-frontend/assets/imgs/theme/logo for nuts store.png" alt="logo"></a>
                     </div>
                     <div class="header-nav d-none d-lg-flex">
                         <div class="main-categori-wrap d-none d-lg-block">
@@ -236,7 +248,7 @@
         <div class="mobile-header-wrapper-inner">
             <div class="mobile-header-top">
                 <div class="mobile-header-logo">
-                    <a href="/home"><img src="assets/imgs/theme/logo.svg" alt="logo"></a>
+                    <a href="/"><img src="/evara-frontend/assets/imgs/theme/logo for nuts store.png" alt="logo"></a>
                 </div>
                 <div class="mobile-menu-close close-style-wrap close-style-position-inherit">
                     <button class="close-style search-close">
@@ -257,9 +269,9 @@
 
                     <nav>
                         <ul class="mobile-menu">
-                            <li class="menu-item-has-children"><span class="menu-expand"></span><a href="index.html">Home</a> 
+                            <li class="menu-item-has-children"><span class="menu-expand"></span><a href="/">Home</a> 
                             </li>
-                            <li class="menu-item-has-children"><span class="menu-expand"></span><a href="shop-grid-right.html">shop</a>
+                            <li class="menu-item-has-children"><span class="menu-expand"></span><a href="/shop">shop</a>
 
                             </li>
                             <li class="menu-item-has-children"><span class="menu-expand"></span><a href="#">Mega menu</a>
@@ -267,14 +279,12 @@
                             </li>
                             <li class="menu-item-has-children"><span class="menu-expand"></span><a href="#">Pages</a>
                                 <ul class="dropdown">
-                                    <li><a href="page-about.html">About Us</a></li>
-                                    <li><a href="page-contact.html">Contact</a></li>
-                                    <li><a href="page-account.html">My Account</a></li>
-                                    <li><a href="page-login-register.html">login/register</a></li>
-                                    <li><a href="page-purchase-guide.html">Purchase Guide</a></li>
-                                    <li><a href="page-privacy-policy.html">Privacy Policy</a></li>
+                                    <li><a href="/about">About Us</a></li>
+                                    <li><a href="/contac">Contact</a></li>
+                                    <li><a href="/user-profile">My Account</a></li>
+                                    <li><a href="/logIn">login/register</a></li>
                                     <li><a href="page-terms.html">Terms of Service</a></li>
-                                    <li><a href="page-404.html">404 Page</a></li>
+                                    
                                 </ul>
                             </li>
                             <li class="menu-item-has-children"><span class="menu-expand"></span><a href="#">Language</a>
@@ -291,10 +301,10 @@
                 </div>
                 <div class="mobile-header-info-wrap mobile-header-border">
                     <div class="single-mobile-header-info mt-30">
-                        <a  href="page-contact.html"> Our location </a>
+                        <a  href="#"> Our location </a>
                     </div>
                     <div class="single-mobile-header-info">
-                        <a href="page-login-register.html">Log In / Sign Up </a>
+                        <a href="logIn">Log In / Sign Up </a>
                     </div>
                     <div class="single-mobile-header-info">
                         <a href="#">(+01) - 2345 - 6789 </a>

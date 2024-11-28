@@ -77,9 +77,22 @@ const userSchema = new Schema({
             ref: "Order",
         },
     ],
-    referalCode: {
+    referralCode: {
         type: String,
-        unique:true,
+        unique: true,
+        sparse: true
+    },
+    referredBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    totalReferrals: {
+        type: Number,
+        default: 0
+    },
+    referralRewards: {
+        type: Number,
+        default: 0
     },
     redeemed: {
         type: Boolean,
