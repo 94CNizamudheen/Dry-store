@@ -28,7 +28,9 @@ router.post('/logIn',userController.logIn);
 router.post('/verifyOtp',userController.verifyOtp);
 router.get('/resendOtp',userController.resendOtp);
 router.get('/auth/google',passport.authenticate('google',{scope:["profile","email"]}));
-router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:"/signUp"}),(req,res)=>{res.redirect('/')});
+router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:"/signUp"}),(req,res)=>{
+    req.session.user=req.user;
+    return res.redirect('/')});
 router.get('/logOut',userController.logOut);
 router.get("/productDetails",headerData,userController.getProductDetials)
 //wallet

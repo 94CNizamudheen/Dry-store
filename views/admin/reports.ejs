@@ -1,229 +1,544 @@
 <%- include('../partials/admin/header.ejs') %>
-<nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#"><i class="fas fa-chart-line me-2"></i>Sales Report</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link active" href="#"><i class="fas fa-home me-1"></i>Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="fas fa-file-alt me-1"></i>Reports</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="fas fa-cog me-1"></i>Settings</a>
-                </li>
-            </ul>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="fas fa-chart-line me-2"></i>Sales Report</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#"><i class="fas fa-home me-1"></i>Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-file-alt me-1"></i>Reports</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-cog me-1"></i>Settings</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
-<div class="container-fluid py-4">
-    <!-- Report Controls -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <div class="row g-3">
-                <div class="col-md-3">
-                    <label class="form-label">Report Type</label>
-                    <select class="form-select">
-                        <option value="daily">Daily Report</option>
-                        <option value="weekly">Weekly Report</option>
-                        <option value="monthly">Monthly Report</option>
-                        <option value="yearly">Yearly Report</option>
-                        <option value="custom">Custom Date Range</option>
-                    </select>
+    <div class="container-fluid py-4">
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h6 class="card-title">Overall Sales</h6>
+                        <h2 class="mb-0">₹<%= overAllSale.toFixed(2) %></h2>
+                        <small class="text-white-50">After discounts & deductions</small>
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label">Start Date</label>
-                    <input type="date" class="form-control" value="2024-11-25">
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <h6 class="card-title">Total Orders</h6>
+                        <h2 class="mb-0"><%= totalOrders %></h2>
+                        <small class="text-white-50">Completed orders</small>
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label">End Date</label>
-                    <input type="date" class="form-control" value="2024-11-25">
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h6 class="card-title">Total Discounts</h6>
+                        <h2 class="mb-0">₹<%= totalDiscounts.toFixed(2) %></h2>
+                        <small class="text-white-50">All discounts & coupons</small>
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label">Quick Select</label>
-                    <select class="form-select">
-                        <option value="1">Last 24 Hours</option>
-                        <option value="7">Last 7 Days</option>
-                        <option value="30">Last 30 Days</option>
-                        <option value="90">Last 90 Days</option>
-                    </select>
-                </div>
-                <div class="col-12">
-                    <button class="btn btn-primary me-2">Generate Report</button>
-                    <div class="btn-group">
-                        <button class="btn btn-outline-secondary"><i class="fas fa-file-pdf me-1"></i>Download PDF</button>
-                        <button class="btn btn-outline-secondary"><i class="fas fa-file-excel me-1"></i>Download Excel</button>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-white">
+                    <div class="card-body">
+                        <h6 class="card-title">Net Revenue</h6>
+                        <h2 class="mb-0">₹<%= totalRevenue.toFixed(2) %></h2>
+                        <small class="text-white-50">After all deductions</small>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+        <!-- Report Controls -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form id="reportForm">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Report Type</label>
+                            <select id="reportType" class="form-select" required>
+                                <option value="">Select Report Type</option>
+                                <option value="daily">Daily Report</option>
+                                <option value="weekly">Weekly Report</option>
+                                <option value="monthly">Monthly Report</option>
+                                <option value="yearly">Yearly Report</option>
+                                <option value="custom">Custom Date Range</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Start Date</label>
+                            <input id="startDate" type="date" class="form-control" disabled>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">End Date</label>
+                            <input id="endDate" type="date" class="form-control" disabled>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Quick Select</label>
+                            <select id="quickSelect" class="form-select">
+                                <option value="">Select Range</option>
+                                <option value="1">Last 24 Hours</option>
+                                <option value="7">Last 7 Days</option>
+                                <option value="30">Last 30 Days</option>
+                                <option value="90">Last 90 Days</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <button id="generateReport" class="btn btn-primary me-2">Generate Report</button>
+                            <div class="btn-group">
+                                <button id="downloadPdf" class="btn btn-outline-secondary" disabled>
+                                    <i class="fas fa-file-pdf me-1"></i>Download PDF
+                                </button>
+                                <button id="downloadExcel" class="btn btn-outline-secondary" disabled>
+                                    <i class="fas fa-file-excel me-1"></i>Download Excel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
 
-    <!-- Summary Stats -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card bg-primary text-white">
-                <div class="card-body">
-                    <h6 class="card-title">Overall Sales</h6>
-                    <h2 class="mb-0">₹245,890</h2>
-                    <small class="text-white-50">After discounts & deductions</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-success text-white">
-                <div class="card-body">
-                    <h6 class="card-title">Total Orders</h6>
-                    <h2 class="mb-0">1,234</h2>
-                    <small class="text-white-50">Completed orders</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-info text-white">
-                <div class="card-body">
-                    <h6 class="card-title">Total Discounts</h6>
-                    <h2 class="mb-0">₹12,450</h2>
-                    <small class="text-white-50">All discounts & coupons</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-warning text-white">
-                <div class="card-body">
-                    <h6 class="card-title">Net Revenue</h6>
-                    <h2 class="mb-0">₹233,440</h2>
-                    <small class="text-white-50">After all deductions</small>
-                </div>
-            </div>
-        </div>
-    </div>
+        <!-- Report Statistics Container -->
+        <div id="reportStats" class="mb-3"></div>
 
-    <!-- Detailed Report -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <h5 class="card-title">Sales Breakdown</h5>
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Orders</th>
-                            <th>Gross Sales</th>
-                            <th>Discounts</th>
-                            <th>Coupon Codes</th>
-                            <th>Net Sales</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Nov 25, 2024</td>
-                            <td>145</td>
-                            <td>₹12,450</td>
-                            <td>₹890</td>
-                            <td>₹250</td>
-                            <td>₹11,310</td>
-                        </tr>
-                        <tr>
-                            <td>Nov 24, 2024</td>
-                            <td>132</td>
-                            <td>₹11,890</td>
-                            <td>₹750</td>
-                            <td>₹200</td>
-                            <td>₹10,940</td>
-                        </tr>
-                        <tr>
-                            <td>Nov 23, 2024</td>
-                            <td>156</td>
-                            <td>₹13,670</td>
-                            <td>₹920</td>
-                            <td>₹300</td>
-                            <td>₹12,450</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+        <!-- Report Results Container -->
+        <div id="reportResults" class="mb-3"></div>
 
-    <!-- Discount Analysis -->
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Discount Summary</h5>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Discount Type</th>
-                                    <th>Usage Count</th>
-                                    <th>Total Amount</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Seasonal Sale (20% OFF)</td>
-                                    <td>234</td>
-                                    <td>₹4,560</td>
-                                </tr>
-                                <tr>
-                                    <td>WELCOME10</td>
-                                    <td>156</td>
-                                    <td>₹2,340</td>
-                                </tr>
-                                <tr>
-                                    <td>Bulk Purchase (15% OFF)</td>
-                                    <td>89</td>
-                                    <td>₹3,450</td>
-                                </tr>
-                            </tbody>
-                        </table>
+        <!-- Pagination Container -->
+        <div id="paginationContainer" class="text-center"></div>
+
+
+        <!-- Summary Stats -->
+
+
+        <!-- Detailed Report -->
+        <!-- <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Sales Breakdown</h5>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Orders</th>
+                                <th>Gross Sales</th>
+                                <th>Discounts</th>
+                                <th>Coupon Codes</th>
+                                <th>Net Sales</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Nov 25, 2024</td>
+                                <td>145</td>
+                                <td>₹12,450</td>
+                                <td>₹890</td>
+                                <td>₹250</td>
+                                <td>₹11,310</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div> -->
+
+        <!-- Discount Analysis -->
+        <!-- <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Discount Summary</h5>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Discount Type</th>
+                                        <th>Usage Count</th>
+                                        <th>Total Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Seasonal Sale (20% OFF)</td>
+                                        <td>234</td>
+                                        <td>₹4,560</td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Coupon Performance</h5>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Coupon Code</th>
+                                        <th>Redemptions</th>
+                                        <th>Total Savings</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>SUMMER2024</td>
+                                        <td>145</td>
+                                        <td>₹2,890</td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Coupon Performance</h5>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Coupon Code</th>
-                                    <th>Redemptions</th>
-                                    <th>Total Savings</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>SUMMER2024</td>
-                                    <td>145</td>
-                                    <td>₹2,890</td>
-                                </tr>
-                                <tr>
-                                    <td>FIRST50</td>
-                                    <td>89</td>
-                                    <td>₹4,450</td>
-                                </tr>
-                                <tr>
-                                    <td>FLASH25</td>
-                                    <td>67</td>
-                                    <td>₹1,675</td>
-                                </tr>
-                            </tbody>
-                        </table>
+    </div> -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM Element Selections
+            const reportForm = document.getElementById('reportForm');
+            const reportTypeSelect = document.getElementById('reportType');
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
+            const quickSelectInput = document.getElementById('quickSelect');
+            const generateButton = document.getElementById('generateReport');
+            const downloadPDFButton = document.getElementById('downloadPdf');
+            const downloadExcelButton = document.getElementById('downloadExcel');
+            const reportResultsContainer = document.getElementById('reportResults');
+            const reportStatsContainer = document.getElementById('reportStats');
+            const paginationContainer = document.getElementById('paginationContainer');
+
+            // State Management
+            let currentPage = 1;
+            const itemsPerPage = 10;
+            let totalOrders = [];
+
+            // Disable/Enable Date Inputs based on Report Type
+            const toggleDateInputs = () => {
+                const isCustom = reportTypeSelect.value === 'custom';
+                startDateInput.disabled = !isCustom;
+                endDateInput.disabled = !isCustom;
+
+                if (!isCustom) {
+                    startDateInput.value = '';
+                    endDateInput.value = '';
+                }
+            };
+
+            // Initial Setup
+            toggleDateInputs();
+            reportTypeSelect.addEventListener('change', toggleDateInputs);
+
+            // Comprehensive Form Validation
+            const validateReportForm = () => {
+                // Reset previous validation states
+                [reportTypeSelect, startDateInput, endDateInput].forEach(el => {
+                    el.classList.remove('is-invalid');
+                });
+
+                // Validate Report Type
+                if (!reportTypeSelect.value) {
+                    reportTypeSelect.classList.add('is-invalid');
+                    showError('Please select a report type');
+                    return false;
+                }
+
+                // Custom Date Range Validation
+                if (reportTypeSelect.value === 'custom') {
+                    // Start Date Validation
+                    if (!startDateInput.value) {
+                        startDateInput.classList.add('is-invalid');
+                        showError('Start date is required for custom reports');
+                        return false;
+                    }
+
+                    // End Date Validation
+                    if (!endDateInput.value) {
+                        endDateInput.classList.add('is-invalid');
+                        showError('End date is required for custom reports');
+                        return false;
+                    }
+
+                    const startDate = new Date(startDateInput.value);
+                    const endDate = new Date(endDateInput.value);
+                    const today = new Date();
+
+                    // Validate Date Range
+                    if (startDate > endDate) {
+                        [startDateInput, endDateInput].forEach(el => {
+                            el.classList.add('is-invalid');
+                        });
+                        showError('Start date cannot be later than end date');
+                        return false;
+                    }
+
+                    // Prevent Future Dates
+                    if (startDate > today || endDate > today) {
+                        showError('Dates cannot be in the future');
+                        return false;
+                    }
+
+                    // Optional: Limit Custom Date Range
+                    const maxRangeDate = new Date(startDate);
+                    maxRangeDate.setFullYear(startDate.getFullYear() + 1);
+                    if (endDate > maxRangeDate) {
+                        showError('Custom date range cannot exceed 1 year');
+                        return false;
+                    }
+                }
+
+                return true;
+            };
+
+            // Error Display Utility
+            const showError = (message) => {
+                Swal.fire({
+                    icon: 'error',
+                    text: message,
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            };
+
+            // Pagination Rendering
+            const renderPagination = (totalItems) => {
+                const totalPages = Math.ceil(totalItems / itemsPerPage);
+                paginationContainer.innerHTML = '';
+
+                // Previous Button
+                if (currentPage > 1) {
+                    const prevButton = document.createElement('button');
+                    prevButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'me-2');
+                    prevButton.textContent = 'Previous';
+                    prevButton.addEventListener('click', () => {
+                        currentPage--;
+                        renderOrderTable();
+                    });
+                    paginationContainer.appendChild(prevButton);
+                }
+
+                // Page Numbers
+                for (let i = 1; i <= totalPages; i++) {
+                    const pageButton = document.createElement('button');
+                    pageButton.classList.add(
+                        'btn',
+                        'btn-sm',
+                        currentPage === i ? 'btn-primary' : 'btn-outline-secondary',
+                        'me-1'
+                    );
+                    pageButton.textContent = i;
+                    pageButton.addEventListener('click', () => {
+                        currentPage = i;
+                        renderOrderTable();
+                    });
+                    paginationContainer.appendChild(pageButton);
+                }
+
+                // Next Button
+                if (currentPage < totalPages) {
+                    const nextButton = document.createElement('button');
+                    nextButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'ms-2');
+                    nextButton.textContent = 'Next';
+                    nextButton.addEventListener('click', () => {
+                        currentPage++;
+                        renderOrderTable();
+                    });
+                    paginationContainer.appendChild(nextButton);
+                }
+            };
+
+            // Render Order Table with Pagination
+            const renderOrderTable = () => {
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                const paginatedOrders = totalOrders.slice(startIndex, endIndex);
+
+                // Clear Previous Table
+                reportResultsContainer.innerHTML = `
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Final Amount</th>
+                        <th>Discount</th>
+                        <th>Created On</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${paginatedOrders.map(order => `
+                        <tr>
+                            <td>${order.orderId}</td>
+                            <td>₹${order.finalAmount.toFixed(2)}</td>
+                            <td>₹${(order.discount || 0).toFixed(2)}</td>
+                            <td>${new Date(order.createdOn).toLocaleString()}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+
+                // Render Pagination
+                renderPagination(totalOrders.length);
+            };
+
+            // Report Generation
+            generateButton.addEventListener('click', async (e) => {
+                e.preventDefault();
+
+                // Validate Form
+                if (!validateReportForm()) return;
+
+                // Prepare Request Payload
+                const payload = {
+                    reportType: reportTypeSelect.value,
+                    startDate: startDateInput.value,
+                    endDate: endDateInput.value,
+                    quickSelect: quickSelectInput.value
+                };
+
+                try {
+                    // Disable Generate Button During Request
+                    generateButton.disabled = true;
+                    generateButton.innerHTML = 'Generating...';
+
+                    // Fetch Report
+                    const response = await fetch('/admin/generate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to generate report');
+                    }
+
+                    const result = await response.json();
+
+                    if (!result.success) {
+                        throw new Error(result.error || 'Unknown error occurred');
+                    }
+
+                    // Reset Pagination
+                    currentPage = 1;
+                    totalOrders = result.orders;
+
+                    // Update Stats
+                    reportStatsContainer.innerHTML = `
+                <div class="row">
+                    <div class="col-md-4">
+                        <strong>Total Sales:</strong> ₹${result.stats.totalSales.toFixed(2)}
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Total Orders:</strong> ${result.stats.totalOrders}
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Total Discounts:</strong> ₹${result.stats.totalDiscounts.toFixed(2)}
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
+            `;
 
-<%- include('../partials/admin/footer.ejs') %>
+                    // Render Orders
+                    renderOrderTable();
+
+                    // Enable Download Buttons
+                    downloadPDFButton.disabled = false;
+                    downloadExcelButton.disabled = false;
+
+                    // Success Notification
+                    Swal.fire({
+                        icon: 'success',
+                        text: 'Report generated successfully',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+
+                } catch (error) {
+                    console.error('Report Generation Error:', error);
+                    showError(error.message || 'Failed to generate report');
+
+                    // Reset Result and Stats Containers
+                    reportResultsContainer.innerHTML = '';
+                    reportStatsContainer.innerHTML = '';
+                    paginationContainer.innerHTML = '';
+
+                    // Disable Download Buttons
+                    downloadPDFButton.disabled = true;
+                    downloadExcelButton.disabled = true;
+
+                } finally {
+                    // Reset Generate Button
+                    generateButton.disabled = false;
+                    generateButton.innerHTML = 'Generate Report';
+                }
+            });
+
+            // Initial Disable of Download Buttons
+            downloadPDFButton.disabled = true;
+            downloadExcelButton.disabled = true;
+
+            // Download Handlers (PDF & Excel)
+            downloadPDFButton.addEventListener('click', async () => {
+                try {
+                    const response = await fetch('/admin/download/pdf');
+                    if (!response.ok) throw new Error('Failed to download PDF');
+
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = 'Sales_Report.pdf';
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+                } catch (error) {
+                    showError('Failed to download PDF');
+                    console.error('PDF Download Error:', error);
+                }
+            });
+
+            downloadExcelButton.addEventListener('click', async () => {
+                try {
+                    const response = await fetch('/admin/download/excel');
+                    if (!response.ok) throw new Error('Failed to download Excel');
+
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = 'Sales_Report.xlsx';
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+                } catch (error) {
+                    showError('Failed to download Excel');
+                    console.error('Excel Download Error:', error);
+                }
+            });
+        });
+    </script>
+
+
+    <%- include('../partials/admin/footer.ejs') %>

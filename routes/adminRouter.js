@@ -81,6 +81,8 @@ router.delete('/coupon/:id',adminAuth,coupenController.removeCoupon);
 
 //reports
 router.get('/reports',adminAuth,statiticsController.LoadReportsPage);
+router.post('/generate',adminAuth,statiticsController.generateReports);
+router.get('/download/:type',adminAuth,statiticsController.downloadReports);
 
 //referral
 router.get('/referralCode',adminAuth,referralController.getReferralPage);

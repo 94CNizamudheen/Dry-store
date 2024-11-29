@@ -10,8 +10,8 @@
         <!-- Referral Rewards Configuration -->
         <div class="col-md-4 mb-4">
             <div class="card card-hover">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="card-title mb-0">Referral Rewards Configuration</h4>
+                <div class="card-header bg-secondary">
+                    <h4 class="card-title mb-0 " style="color: aliceblue;">Referral Rewards Configuration</h4>
                 </div>
                 <div class="card-body">
                     <form id="rewardsConfigForm">
@@ -39,7 +39,7 @@
         <!-- Referral Statistics -->
         <div class="col-md-8">
             <div class="card card-hover">
-                <div class="card-header bg-success text-white">
+                <div class="card-header bg-secondary">
                     <h4 class="card-title mb-0">Referral Statistics</h4>
                 </div>
                 <div class="card-body">
@@ -47,15 +47,15 @@
                         <div class="col-md-4">
                             <div class="card bg-light mb-3">
                                 <div class="card-body text-center">
-                                    <h5 class="card-title">Total Referrals</h5>
-                                    <p class="display-6 fw-bold"><%= totalReferrals %></p>
+                                    <h5 class="card-title ">Total Referrals</h5>
+                                    <p class="display-6 fw-bold "><%= totalReferrals %></p>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="card bg-light mb-3">
                                 <div class="card-body text-center">
-                                    <h5 class="card-title">Total Rewards Paid</h5>
+                                    <h5 class="card-title ">Total Rewards Paid</h5>
                                     <p class="display-6 fw-bold">₹<%= totalRewardPaid.toFixed(2) %></p>
                                 </div>
                             </div>
@@ -64,8 +64,8 @@
                             <div class="card bg-light mb-3">
                                 <div class="card-body text-center">
                                     <h5 class="card-title">Current Configuration</h5>
-                                    <h6>For Referrer :<%= config.referrerReward.toFixed(2)  %></h6><br>
-                                    <h6>For New User :<%= config.newUserReward.toFixed(2)  %></h6>
+                                    <h6 class="text-warning">For Referrer :<%= config.referrerReward.toFixed(2)  %></h6><br>
+                                    <h6 class="text-warning">For New User :<%= config.newUserReward.toFixed(2)  %></h6>
                                     
                                 </div>
                             </div>
@@ -150,8 +150,10 @@
                     icon: 'success',
                     title: result.message,
                     showConfirmButton: false,
-                    timer: 3000
-                });
+                    timer: 1000
+                }).then(()=>{
+                    window.location.reload();
+                })
             }else{
                 throw new Error(result.message);
             }

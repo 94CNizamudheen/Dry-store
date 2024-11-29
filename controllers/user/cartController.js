@@ -13,7 +13,7 @@ const loadCart = async (req, res) => {
         const cartedProducts = await Cart.findOne({ userId }).populate({
             path: "items.productId",
             model: "Product",
-            select: "productName productImage salePrice description",
+            select: "productName productImage salePrice description regularPrice",
         });
         const cart = await Cart.findOne({ userId }).populate("items.productId");
         if (!cart) {
@@ -28,14 +28,18 @@ const loadCart = async (req, res) => {
                 return total + item.price * item.quantity;
             }, 0);
         }
+        
+        
 
         const subtotal = parseFloat(cartTotal.toFixed(2));
-
         const shipping = 0;
         const total = subtotal + shipping;
-        const discount = parseFloat(req.session.discount) || 0;
-        const discountedTotal =
-            parseFloat(req.session.discountedTotal) || cartTotal;
+        const totalDiscount = cart.items.reduce((sum, item) => {
+            const regularPrice = item.productId?.regularPrice || 0;
+            const salePrice = item.productId?.salePrice || 0;
+            const quantity = item.quantity || 0;
+            return sum + ((regularPrice - salePrice) * quantity);
+        }, 0);
         res.render("cart", {
             cart: cartedProducts,
             isEmpty: !cartedProducts || cartedProducts.items.length === 0,
@@ -43,8 +47,8 @@ const loadCart = async (req, res) => {
             user: req.user,
             total: total,
             subtotal: subtotal,
-            discountedTotal: discountedTotal.toFixed(2),
-            discount: discount.toFixed(2),
+            totalDiscount: totalDiscount.toFixed(2),    
+        
         });
     } catch (error) {
         console.error("Error loading cart page:", error);
@@ -110,7 +114,7 @@ const addToCart = async (req, res) => {
         cart.items.push({
             productId,
             quantity: parseInt(quantity),
-            price: product.salePrice,
+            // price: product.salePrice,
             totalPrice: product.salePrice * parseInt(quantity),
         });
 
@@ -137,7 +141,11 @@ const updateQuantity = async (req, res) => {
     try {
         const { productId, action } = req.body;
         const userId = req.session.user;
-        const cart = await Cart.findOne({ userId });
+        const cart = await Cart.findOne({ userId }).populate({
+            path: "items.productId",
+            model: "Product",
+            select: "salePrice ",
+        });
         const code = req.session.couponCode;
         const coupon = await Coupon.findOne({ code });
         if (coupon) {
@@ -149,10 +157,12 @@ const updateQuantity = async (req, res) => {
         if (!cart) {
             return res.status(404).json({ error: "Cart not found" });
         }
-
+        console.log('productId',productId);
         const item = cart.items.find(
-            (item) => item.productId.toString() === productId
-        );
+            (item) => productId);
+        if (!item) {
+            return res.status(404).json({ error: "Product not found in cart" });
+        }
         if (item) {
             const product = await Product.findById(productId);
 
@@ -177,14 +187,20 @@ const updateQuantity = async (req, res) => {
                     error: "Minimum quantity reached (1)",
                 });
             }
-            item.totalPrice = item.price * item.quantity;
+            item.totalPrice = item.productId.salePrice * item.quantity;
             await cart.save();
             const subtotal = cart.items.reduce(
                 (acc, item) => acc + item.totalPrice,
                 0
             );
+            
             const shipping = 0;
             const total = subtotal + shipping;
+            const totalDiscount = cart.items.reduce((sum, item) => {
+                const regularPrice = item.productId?.regularPrice || 0;
+                const salePrice = item.productId?.salePrice || 0;
+                return sum + ((regularPrice - salePrice) * item.quantity);
+            }, 0);
 
             res.json({
                 success: true,
@@ -193,6 +209,7 @@ const updateQuantity = async (req, res) => {
                 newTotalPrice: item.totalPrice,
                 subtotal,
                 total,
+                totalDiscount: totalDiscount.toFixed(2),
             });
         } else {
             res.status(404).json({ error: "Product not found in cart" });

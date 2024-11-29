@@ -375,9 +375,15 @@
 
 
                                                         <tr>
-                                                            <th>SubTotal</th>
+                                                            <th>Total</th>
                                                             <td id="subtotal" class="product-subtotal" colspan="2">
-                                                                <%= subtotal.toFixed(2) %>
+                                                                ₹<%= regularTotal.toFixed(2) %>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Discount</th>
+                                                            <td id="subtotal" class="product-subtotal text-success" colspan="2">
+                                                               - ₹<%= totalDiscount.toFixed(2) %>
                                                             </td>
                                                         </tr>
 
@@ -389,7 +395,7 @@
 
                                                         </tr>
                                                         <tr>
-                                                            <th>Discount</th>
+                                                            <th>Applied Discount</th>
                                                             <td colspan="2">
                                                                 <input type="hidden" id="discount"
                                                                     value="<%=discount.toFixed(2) %>">
@@ -405,8 +411,8 @@
                                                                 <td colspan="2" class="product-subtotal">
                                                                     <input type="hidden" id="total"
                                                                         value="<%=total.toFixed(2) %>">
-                                                                    <span id="totalAmount"
-                                                                        class="font-xl text-brand fw-900">₹<%=
+                                                                    <span id="totalAmount "
+                                                                        class="font-xl text-brand fw-900 text-success">₹<%=
                                                                             total.toFixed(2) %>
                                                                     </span>
 
@@ -417,7 +423,7 @@
                                                                         <input type="hidden" id="total"
                                                                             value="<%= discountedTotal.toFixed(2) %>">
                                                                         <span id="totalAmount"
-                                                                            class="font-xl text-brand fw-900">₹<%=
+                                                                            class="font-xl text-brand fw-900 text-success">₹<%=
                                                                                 discountedTotal.toFixed(2) %>
                                                                         </span>
 

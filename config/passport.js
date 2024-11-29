@@ -15,6 +15,7 @@ passport.use(new GoogleStrategy({
         let user=await User.findOne({googleId:profile.id});
         if(user){
             return done(null,user); 
+            
         }else{
             user= new User({
                 name:profile.displayName,
@@ -23,6 +24,8 @@ passport.use(new GoogleStrategy({
             })
             await user.save();
             return done(null,user)
+            req.session.user=user
+            
         }
     } catch (error) {
         return done(error,null)
@@ -36,6 +39,8 @@ passport.deserializeUser((id,done)=>{
     User.findById(id)
     .then(user => {
         done(null,user);
+        console.log("insidePassport;",user)
+        
     }).catch(err => {
         done(err,null);
     });

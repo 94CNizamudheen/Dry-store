@@ -17,6 +17,7 @@
                                             <th scope="col">Image</th>
                                             <th scope="col">Name</th>
                                             <th scope="col">Price</th>
+                                            <th scope="col">Discount Price</th>
                                             <th scope="col">Quantity</th>
                                             <th scope="col">Subtotal</th>
                                             <th scope="col">Remove</th>
@@ -38,10 +39,17 @@
                                                         <%= item.productId.productName %>
                                                     </strong>
                                                 </td>
+                                                <td class="price text-center ">
+                                                    <span style="text-decoration: line-through;"
+                                                        class="text-primary fw-bold ">₹<%=
+                                                            item.productId.regularPrice.toFixed(2) %>
+                                                    </span>
+                                                </td>
 
                                                 <!-- Product Price -->
                                                 <td class="price text-center">
-                                                    <span class="text-primary fw-bold">₹<%= item.price.toFixed(2) %>
+                                                    <span class="text-success fw-bold">₹<%=
+                                                            item.productId.salePrice.toFixed(2) %>
                                                     </span>
                                                 </td>
 
@@ -166,22 +174,31 @@
                                         <div class="table-responsive">
                                             <!-- Cart Totals Table -->
                                             <table class="table">
+                                                <input type="hidden" id="backendTotalDiscount"
+                                                    value="<%= totalDiscount %>">
+
                                                 <tbody>
-                                                    <!-- Normal Total Row -->
-                                                    <tr id="normalTotalRow" class="<%= discount > 0 ? 'd-none' : '' %>">
-                                                        <td class="fw-bold">Total</td>
+                                                    <tr>
+                                                        <td class="fw-bold">Total Discount</td>
+                                                        <td class="text-end">
+                                                            ₹<span id="totalDiscount" class="ms-2">
+                                                                <%= totalDiscount %>
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="fw-bold">Total Price</td>
                                                         <td class="text-end">
                                                             ₹<span id="total" class="ms-2">
                                                                 <%= total.toFixed(2) %>
                                                             </span>
                                                         </td>
                                                     </tr>
-
-                                                    
                                                 </tbody>
+
                                             </table>
 
-                                           
+
                                         </div>
 
                                         <a href="/check-out" class="btn">
@@ -204,7 +221,6 @@
         document.addEventListener("DOMContentLoaded", function () {
 
             function updateCartTotals() {
-            
                 const itemTotals = Array.from(
                     document.querySelectorAll('[id^="total-"]')
                 ).map((el) => parseFloat(el.textContent) || 0);
@@ -213,23 +229,21 @@
                 const shipping = 0;
                 const total = subtotal + shipping;
 
-      
+                
                 const totalElement = document.getElementById('total');
                 if (totalElement) {
                     totalElement.textContent = total.toFixed(2);
                 }
 
-          
-                const cartTotalAmount = document.querySelector(".cart_total_amount .text-brand");
-                const cartTotalFinal = document.querySelector(".cart_total_amount .font-xl");
-
-                if (cartTotalAmount) {
-                    cartTotalAmount.textContent = `₹${subtotal.toFixed(2)}`;
-                }
-                if (cartTotalFinal) {
-                    cartTotalFinal.textContent = `₹${total.toFixed(2)}`;
+                
+                const backendTotalDiscount = parseFloat(document.getElementById('backendTotalDiscount').value);
+                const discountElement = document.getElementById('totalDiscount');
+                if (discountElement) {
+                    discountElement.textContent = backendTotalDiscount.toFixed(2);
                 }
             }
+
+            updateCartTotals();
 
             async function updateQuantity(productId, action) {
                 try {
@@ -249,10 +263,9 @@
 
                     if (data.success) {
 
-                        document.getElementById(`qty-${productId}`).textContent =
-                            data.newQuantity;
-                        document.getElementById(`total-${productId}`).textContent =
-                            data.newTotalPrice.toFixed(2);
+                        document.getElementById(`qty-${productId}`).textContent = data.newQuantity;
+                        document.getElementById(`total-${productId}`).textContent =data.newTotalPrice.toFixed(2);
+                        document.getElementById('totalDiscount').textContent = data.totalDiscount;
                         updateCartTotals();
                     }
                 } catch (error) {

@@ -25,7 +25,7 @@ const loadCheckOutPage = async (req, res) => {
         const cartedProducts = await Cart.findOne({ userId }).populate({
             path: "items.productId",
             model: "Product",
-            select: "productName productImage salePrice description",
+            select: "productName productImage salePrice description regularPrice",
         });
         
         const cart = await Cart.findOne({ userId }).populate("items.productId");
@@ -40,8 +40,13 @@ const loadCheckOutPage = async (req, res) => {
         const total = subtotal + shipping;
         const discount=req.session.discount ||0;
         const discountedTotal=req.session.discountedTotal||0;
-        console.log('discountedTotal',discountedTotal);
-        console.log('discount:',discount);
+        const regularTotal= cart.items.reduce((sum,item)=>(sum+item.productId?.regularPrice||0)*item.quantity,0);
+        const totalDiscount = cart.items.reduce((sum, item) => {
+            const regularPrice = item.productId?.regularPrice || 0;
+            const salePrice = item.productId?.salePrice || 0;
+            return sum + ((regularPrice - salePrice) * item.quantity);
+        }, 0);
+
 
         res.render('check-out', {
             user: userData,
@@ -53,7 +58,9 @@ const loadCheckOutPage = async (req, res) => {
             selectedAddress: req.session.selectedAddress || null, 
             discount:discount,
             discountedTotal:discountedTotal,
-            coupons
+            coupons,
+            totalDiscount,
+            regularTotal
         });
     } catch (error) {
         console.error('Error loading checkout page:', error);
