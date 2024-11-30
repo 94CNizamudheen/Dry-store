@@ -48,7 +48,7 @@
                                 <td><%= product.productName %></td>
                                 <td><%= product.category.name %></td>
                                 <td><%= product.quantity %></td>
-                                <td><%= product.salePrice.toFixed(2) %></td>
+                                <td><%= product.salePrice ? product.salePrice.toFixed(2) : product.regularPrice.toFixed(2) %></td>
                                 <td>
                                     <% if(product.status==="Available") {%>
                                     <span class="badge bg-success"><%= product.status %></span></td>
@@ -198,6 +198,8 @@
                 timer: 3000,
                 timerProgressBar: true,
                 showConfirmButton: false,
+                toast:true,
+                position:"center"
             });
         }
     
@@ -209,6 +211,8 @@
                 timer: 3000,
                 timerProgressBar: true,
                 showConfirmButton: false,
+                toast:true,
+                position:"center"
             });
         }
     
@@ -251,6 +255,8 @@
                     text: "Failed to update inventory.",
                     timer: 3000,
                     timerProgressBar: true,
+                    toast:true,
+                    position:"center"
                 });
             } else {
                 Swal.fire({
@@ -259,6 +265,8 @@
                     text: "Inventory updated successfully.",
                     timer: 3000,
                     timerProgressBar: true,
+                    toast:true,
+                    position:"center"
                 }).then(() => {
                     location.reload();
                 });
@@ -272,6 +280,8 @@
                 text: "An unexpected error occurred.",
                 timer: 3000,
                 timerProgressBar: true,
+                toast:true,
+                position:"center"
             });
         });
 }

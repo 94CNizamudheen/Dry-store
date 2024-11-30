@@ -1,10 +1,50 @@
 <%-include ("../../views/partials/user/header.ejs")%>
-<style>
-            .added i {
-    color: green !important;
-}
-</style>
+    <style>
+        .added i {
+            color: green !important;
 
+        }
+
+        .active-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .filter-tag {
+            background-color: #f0f0f0;
+            padding: 5px 10px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            font-size: 0.9em;
+        }
+
+        .remove-filter {
+            margin-left: 5px;
+            color: #ff0000;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .clear-all-filters {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .active-filters-container {
+            display: none;
+        }
+
+        .active-filters-container.show-filters {
+            display: block;
+        }
+    </style>
+    <style>
+
+    </style>
 
     <main class="main">
 
@@ -12,194 +52,281 @@
 
         <section class="product-tabs pt-25 pb-20 wow fadeIn animated">
             <div class="container">
-                <div class="row">
-                    <!-- Sidebar Filters -->
-                    <div class="col-lg-3">
-                        <div class="widget-category mb-30">
-                            <h5 class="section-title style-1 mb-30">Category</h5>
-                            <ul class="categories">
-                                <li>
-                                    <a href="/shop" class="<%= !currentCategory ? 'active' : '' %>">
-                                        All Categories
-                                    </a>
-                                </li>
-                                <% categoryGroups.forEach(function(cat) { %>
-                                    <li>
-                                        <a href="/shop?category=<%= cat._id %>"
-                                            class="<%= currentCategory === cat._id.toString() ? 'active' : '' %>">
-                                            <%= cat.name %> (<%= cat.count %>)
-                                        </a>
-                                    </li>
-                                    <% }); %>
-                            </ul>
-                        </div>
+                <% if (search) { %>
+                    <p>Showing results for "<%= search %>"</p>
+                    <% } %>
+                        <div class="row">
+                            <!-- Sidebar Filters -->
+                            <div class="col-lg-3">
+                                <!-- Active Filters Section -->
+                                <div id="activeFilters"
+                                    class="mb-30 active-filters-container <%= (!currentCategory && currentSort === 'newest' && !currentPriceRange.min && !search) ? '' : 'show-filters' %>">
+                                    <h5 class="section-title style-1 mb-30">Active Filters</h5>
+                                    <div class="active-filters">
+                                        <% if (currentCategory) { %>
+                                            <span class="filter-tag">
+                                                <%= categoryGroups.find(cat=> cat._id.toString() ===
+                                                    currentCategory)?.name || 'Category' %>
+                                                    <a href="/shop?<%= new URLSearchParams({
+                                            ...(currentSort ? {sort: currentSort} : {}),
+                                            ...(currentPriceRange.min ? {minPrice: currentPriceRange.min, maxPrice: currentPriceRange.max} : {}),
+                                            ...(search ? {search: search} : {})
+                                        }).toString() %>" class="remove-filter">&times;</a>
+                                            </span>
+                                            <% } %>
 
-                        <div class="widget-category mb-30">
-                            <h5 class="section-title style-1 mb-30">Sort by</h5>
-                            <ul class="categories">
-                                <li>
-                                    <a href="?sort=newest" class="<%= currentSort === 'newest' ? 'active' : '' %>">
-                                        Newest First
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="?sort=popularity"
-                                        class="<%= currentSort === 'popularity' ? 'active' : '' %>">
-                                        Popularity
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="?sort=rating" class="<%= currentSort === 'rating' ? 'active' : '' %>">
-                                        Average Rating
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="?sort=price-asc"
-                                        class="<%= currentSort === 'price-asc' ? 'active' : '' %>">
-                                        Price: Low to High
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="?sort=price-desc"
-                                        class="<%= currentSort === 'price-desc' ? 'active' : '' %>">
-                                        Price: High to Low
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="?sort=name-asc" class="<%= currentSort === 'name-asc' ? 'active' : '' %>">
-                                        Name: A-Z
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="?sort=name-desc"
-                                        class="<%= currentSort === 'name-desc' ? 'active' : '' %>">
-                                        Name: Z-A
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div class="widget-category mb-30">
-                            <h5 class="section-title style-1 mb-30">Price Range</h5>
-                            <ul class="categories">
-                                <% priceRanges.forEach(function(range) { %>
-                                    <li>
-                                        <a href="?minPrice=<%= range.min %>&maxPrice=<%= range.max %>"
-                                            class="<%= (currentPriceRange.min == range.min && currentPriceRange.max == range.max) ? 'active' : '' %>">
-                                            ₹<%= range.min %>-<%= range.max===Infinity ? '+' : '₹' + range.max %>
-                                        </a>
-                                    </li>
-                                    <% }); %>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- Product Grid -->
-                    <div class="col-lg-9">
-                        <div class="shop-product-wrapper">
-                            <% if (products.length === 0) { %>
-                                <div class="alert alert-info">No products found matching your criteria.</div>
-                            <% } else { %>
-                                <div class="row product-grid-4">
-                                    <% products.forEach(function(product, index) { %>
-                                        <div class="col-lg-4 col-md-4 col-12 col-sm-6">
-                                            <div class="product-cart-wrap mb-30">
-                                                <div class="product-img-action-wrap">
-                                                    <div class="product-img product-img-zoom">
-                                                        <a href="/productDetails?id=<%= product._id %>">
-                                                            <img class="default-img"
-                                                                src="/uploads/images/<%= product.productImage[0] %>"
-                                                                alt="<%= product.productName %>">
-                                                            <img class="hover-img"
-                                                                src="/uploads/images/<%= product.productImage[0] %>"
-                                                                alt="<%= product.productName %>">
-                                                        </a>
-                                                    </div>
-                                                    <div class="product-action-1">
-                                                        <a aria-label="Quick view" class="action-btn hover-up"
-                                                            data-bs-toggle="modal" data-bs-target="#quickViewModal">
-                                                            <i class="fi-rs-eye"></i>
-                                                        </a>
-                                                        <a aria-label="Add To Wishlist" 
-                                                        class="action-btn hover-up add-to-wishlist" 
-                                                        href="#" 
-                                                        data-product-id="<%= product._id %>">
-                                                        <i class="fi-rs-heart"></i>
-                                                        </a>
-                                                        <a aria-label="Compare" class="action-btn hover-up" href="#">
-                                                            <i class="fi-rs-shuffle"></i>
-                                                        </a>
-                                                    </div>
-                                                    <div class="product-badges">
-                                                        <% if (product.productOffer > 0) { %>
-                                                            <span class="sale">-<%= product.productOffer %>%</span>
-                                                        <% } %>
-                                                        <% if (product.quantity <= 10 && product.quantity > 0) { %>
-                                                            <span class="hot">Low Stock</span>
-                                                        <% } %>
-                                                    </div>
-                                                </div>
-                                                <div class="product-content-wrap">
-                                                    <div class="product-category">
-                                                        <a href="#"><%= product.category.name %></a>
-                                                    </div>
-                                                    <h2>
-                                                        <a href="/productDetails?id=<%= product._id %>">
-                                                            <%= product.productName %>
-                                                        </a>
-                                                    </h2>
-                                                    <div class="rating-result" title="<%= product.productOffer %>%">
-                                                        <span><%= product.productOffer %> % Off</span>
-                                                    </div>
-                                                    <div class="product-price">
-                                                        <span class="new-price">₹<%= product.salePrice %></span>
-                                                        <% if (product.regularPrice > product.salePrice) { %>
-                                                            <span class="old-price">₹<%= product.regularPrice %></span>
-                                                        <% } %>
-                                                    </div>
-                                                    <div class="stock-status <%= product.quantity > 0 ? 'in-stock text-success ml-5' : 'text-danger ml-5' %>">
-                                                        <%= product.quantity > 0 ? `Stock left: ${product.quantity}` : 'Out of Stock' %>
-                                                    </div>
-                                                    <% if (product.quantity > 0) { %>
-                                                        <div class="product-action-1 show">
-                                                            <a aria-label="Add To Cart" class="action-btn hover-up"
-                                                                href="javascript:void(0);" id="addToCartButton"
-                                                                data-product-id="<%= product._id %>">
-                                                                <i class="fi-rs-shopping-bag-add"></i>
-                                                            </a>
-                                                        </div>
+                                                <% if (currentSort && currentSort !=='newest' ) { %>
+                                                    <span class="filter-tag">
+                                                        <% const sortLabels={ 'popularity' : 'Popularity' , 'rating'
+                                                            : 'Average Rating' , 'price-asc' : 'Price: Low to High'
+                                                            , 'price-desc' : 'Price: High to Low' , 'name-asc'
+                                                            : 'Name: A-Z' , 'name-desc' : 'Name: Z-A' }; %>
+                                                            <%= sortLabels[currentSort] %>
+                                                                <a href="/shop?<%= new URLSearchParams({
+                                            ...(currentCategory ? {category: currentCategory} : {}),
+                                            ...(currentPriceRange.min ? {minPrice: currentPriceRange.min, maxPrice: currentPriceRange.max} : {}),
+                                            ...(search ? {search: search} : {})
+                                        }).toString() %>" class="remove-filter">&times;</a>
+                                                    </span>
                                                     <% } %>
-                                                </div>
+
+                                                        <% if (currentPriceRange.min !==undefined) { %>
+                                                            <span class="filter-tag">
+                                                                Price: ₹<%= currentPriceRange.min %>-<%=
+                                                                        currentPriceRange.max===Infinity ? '+' : '₹' +
+                                                                        currentPriceRange.max %>
+                                                                        <a href="/shop?<%= new URLSearchParams({
+                                            ...(currentCategory ? {category: currentCategory} : {}),
+                                            ...(currentSort && currentSort !== 'newest' ? {sort: currentSort} : {}),
+                                            ...(search ? {search: search} : {})
+                                        }).toString() %>" class="remove-filter">&times;</a>
+                                                            </span>
+                                                            <% } %>
+
+                                                                <% if (search) { %>
+                                                                    <span class="filter-tag">
+                                                                        Search: <%= search %>
+                                                                            <a href="/shop?<%= new URLSearchParams({
+                                            ...(currentCategory ? {category: currentCategory} : {}),
+                                            ...(currentSort && currentSort !== 'newest' ? {sort: currentSort} : {}),
+                                            ...(currentPriceRange.min ? {minPrice: currentPriceRange.min, maxPrice: currentPriceRange.max} : {})
+                                        }).toString() %>" class="remove-filter">&times;</a>
+                                                                    </span>
+                                                                    <% } %>
+
+                                                                        <% if (currentCategory || (currentSort &&
+                                                                            currentSort !=='newest' ) ||
+                                                                            currentPriceRange.min !==undefined ||
+                                                                            search) { %>
+                                                                            <a href="/shop"
+                                                                                class="clear-all-filters">Clear All
+                                                                                Filters</a>
+                                                                            <% } %> 
+                                    </div>
+                                </div>
+
+                                <!-- Categories Section -->
+                                <div class="widget-category mb-30">
+                                    <h5 class="section-title style-1 mb-30">Category</h5>
+                                    <ul class="categories">
+                                        <li>
+                                            <a href="/shop?<%= new URLSearchParams({
+                                        ...(currentSort && currentSort !== 'newest' ? {sort: currentSort} : {}),
+                                        ...(currentPriceRange.min ? {minPrice: currentPriceRange.min, maxPrice: currentPriceRange.max} : {}),
+                                        ...(search ? {search: search} : {})
+                                    }).toString() %>" class="<%= !currentCategory ? 'active' : '' %>">
+                                                All Categories
+                                            </a>
+                                        </li>
+                                        <% categoryGroups.forEach(function(cat) { %>
+                                            <li>
+                                                <a href="/shop?<%= new URLSearchParams({
+                                            category: cat._id,
+                                            ...(currentSort && currentSort !== 'newest' ? {sort: currentSort} : {}),
+                                            ...(currentPriceRange.min ? {minPrice: currentPriceRange.min, maxPrice: currentPriceRange.max} : {}),
+                                            ...(search ? {search: search} : {})
+                                        }).toString() %>"
+                                                    class="<%= currentCategory === cat._id.toString() ? 'active' : '' %>">
+                                                    <%= cat.name %> (<%= cat.count %>)
+                                                </a>
+                                            </li>
+                                            <% }); %>
+                                    </ul>
+                                </div>
+
+                                <!-- Sort Section -->
+                                <div class="widget-category mb-30">
+                                    <h5 class="section-title style-1 mb-30">Sort by</h5>
+                                    <ul class="categories">
+                                        <li>
+                                            <a href="/shop?<%= new URLSearchParams({
+                                        ...(currentCategory ? {category: currentCategory} : {}),
+                                        ...(currentPriceRange.min ? {minPrice: currentPriceRange.min, maxPrice: currentPriceRange.max} : {}),
+                                        ...(search ? {search: search} : {})
+                                    }).toString() %>" class="<%= currentSort === 'newest' ? 'active' : '' %>">
+                                                Newest First
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/shop?<%= new URLSearchParams({
+                                        sort: 'popularity',
+                                        ...(currentCategory ? {category: currentCategory} : {}),
+                                        ...(currentPriceRange.min ? {minPrice: currentPriceRange.min, maxPrice: currentPriceRange.max} : {}),
+                                        ...(search ? {search: search} : {})
+                                    }).toString() %>" class="<%= currentSort === 'popularity' ? 'active' : '' %>">
+                                                Popularity
+                                            </a>
+                                        </li>
+
+                                    </ul>
+                                </div>
+
+                                <!-- Price Range Section -->
+                                <div class="widget-category mb-30">
+                                    <h5 class="section-title style-1 mb-30">Price Range</h5>
+                                    <ul class="categories">
+                                        <% priceRanges.forEach(function(range) { %>
+                                            <li>
+                                                <a href="/shop?<%= new URLSearchParams({
+                                            minPrice: range.min,
+                                            maxPrice: range.max,
+                                            ...(currentCategory ? {category: currentCategory} : {}),
+                                            ...(currentSort && currentSort !== 'newest' ? {sort: currentSort} : {}),
+                                            ...(search ? {search: search} : {})
+                                        }).toString() %>"
+                                                    class="<%= (currentPriceRange.min == range.min && currentPriceRange.max == range.max) ? 'active' : '' %>">
+                                                    ₹<%= range.min %>-<%= range.max===Infinity ? '+' : '₹' + range.max
+                                                            %>
+                                                </a>
+                                            </li>
+                                            <% }); %>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Product Grid -->
+                            <div class="col-lg-9">
+                                <div class="shop-product-wrapper">
+                                    <% if (products.length===0) { %>
+                                        <div class="alert alert-info">No products found matching your criteria.</div>
+                                        <% } else { %>
+                                            <div class="row product-grid-4">
+                                                <% products.forEach(function(product, index) { %>
+                                                    <div class="col-lg-4 col-md-4 col-12 col-sm-6">
+                                                        <div class="product-cart-wrap mb-30">
+                                                            <div class="product-img-action-wrap">
+                                                                <div class="product-img product-img-zoom">
+                                                                    <a href="/productDetails?id=<%= product._id %>">
+                                                                        <img class="default-img"
+                                                                            src="/uploads/images/<%= product.productImage[0] %>"
+                                                                            alt="<%= product.productName %>">
+                                                                        <img class="hover-img"
+                                                                            src="/uploads/images/<%= product.productImage[0] %>"
+                                                                            alt="<%= product.productName %>">
+                                                                    </a>
+                                                                </div>
+                                                                <div class="product-action-1">
+                                                                    <a aria-label="Quick view"
+                                                                        class="action-btn hover-up"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#quickViewModal">
+                                                                        <i class="fi-rs-eye"></i>
+                                                                    </a>
+                                                                    <a aria-label="Add To Wishlist"
+                                                                        class="action-btn hover-up add-to-wishlist"
+                                                                        href="#" data-product-id="<%= product._id %>">
+                                                                        <i class="fi-rs-heart"></i>
+                                                                    </a>
+                                                                    <a aria-label="Compare" class="action-btn hover-up"
+                                                                        href="#">
+                                                                        <i class="fi-rs-shuffle"></i>
+                                                                    </a>
+                                                                </div>
+                                                                <div class="product-badges">
+                                                                    <% if (product.productOffer> 0) { %>
+                                                                        <span class="sale">-<%= product.productOffer %>
+                                                                                %</span>
+                                                                        <% } %>
+                                                                            <% if (product.quantity <=10 &&
+                                                                                product.quantity> 0) { %>
+                                                                                <span class="hot">Low Stock</span>
+                                                                                <% } %>
+                                                                </div>
+                                                            </div>
+                                                            <div class="product-content-wrap">
+                                                                <div class="product-category">
+                                                                    <a href="#">
+                                                                        <%= product.category.name %>
+                                                                    </a>
+                                                                </div>
+                                                                <h2>
+                                                                    <a href="/productDetails?id=<%= product._id %>">
+                                                                        <%= product.productName %>
+                                                                    </a>
+                                                                </h2>
+                                                                <div class="rating-result"
+                                                                    title="<%= product.productOffer %>%">
+                                                                    <span>
+                                                                        <%= product.productOffer %> % Off
+                                                                    </span>
+                                                                </div>
+                                                                <div class="product-price">
+                                                                    <span class="new-price">₹<%= product.salePrice %>
+                                                                    </span>
+                                                                    <% if (product.regularPrice> product.salePrice) { %>
+                                                                        <span class="old-price">₹<%=
+                                                                                product.regularPrice %></span>
+                                                                        <% } %>
+                                                                </div>
+                                                                <div
+                                                                    class="stock-status <%= product.quantity > 0 ? 'in-stock text-success ml-5' : 'text-danger ml-5' %>">
+                                                                    <%= product.quantity> 0 ? `Stock left:
+                                                                        ${product.quantity}` : 'Out of Stock' %>
+                                                                </div>
+                                                                <% if (product.quantity> 0) { %>
+                                                                    <div class="product-action-1 show">
+                                                                        <a aria-label="Add To Cart"
+                                                                            class="action-btn hover-up"
+                                                                            href="javascript:void(0);"
+                                                                            id="addToCartButton"
+                                                                            data-product-id="<%= product._id %>">
+                                                                            <i class="fi-rs-shopping-bag-add"></i>
+                                                                        </a>
+                                                                    </div>
+                                                                    <% } %>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <% }); %>
                                             </div>
-                                        </div>
-                                    <% }); %>
-                                </div>
-                                
-                                <div class="pagination-area">
-                                    <nav>
-                                        <ul class="pagination justify-content-center">
-                                            <% if (currentPage > 1) { %>
-                                                <li class="">
-                                                    <a class="page-link" href="?page=<%= currentPage - 1 %>">
-                                                        <i class="fi-rs-angle-left"></i>
-                                                    </a>
-                                                </li>
+
+                                            <div class="pagination-area">
+                                                <nav>
+                                                    <ul class="pagination justify-content-center">
+                                                        <% if (currentPage> 1) { %>
+                                                            <li class="">
+                                                                <a class="page-link"
+                                                                    href="?page=<%= currentPage - 1 %>">
+                                                                    <i class="fi-rs-angle-left"></i>
+                                                                </a>
+                                                            </li>
+                                                            <% } %>
+
+                                                                <% if (products.length===9) { %>
+                                                                    <li class="">
+                                                                        <a class="page-link"
+                                                                            href="?page=<%= currentPage + 1 %>">
+                                                                            <i class="fi-rs-angle-right"></i>
+                                                                        </a>
+                                                                    </li>
+                                                                    <% } %>
+                                                    </ul>
+                                                </nav>
+                                            </div>
                                             <% } %>
-                                            
-                                            <% if (products.length === 9) { %>
-                                                <li class="">
-                                                    <a class="page-link" href="?page=<%= currentPage + 1 %>">
-                                                        <i class="fi-rs-angle-right"></i>
-                                                    </a>
-                                                </li>
-                                            <% } %>
-                                        </ul>
-                                    </nav>
                                 </div>
-                            <% } %>
+                            </div>
                         </div>
-                    </div>
-                </div>
             </div>
         </section>
         <!-- <section class="banner-2 section-padding pb-0">
@@ -287,7 +414,7 @@
                     </div>
                 </div>
             </div>
-        </section> 
+        </section>
 
         <section class="section-padding">
             <div class="container pb-20">
@@ -322,97 +449,101 @@
             </div>
         </section>
 
-        <!-- <section class="section-padding">
-        <div class="container pt-25 pb-20">
-            <div class="row">
-                <div class="col-lg-6">
-                    <h3 class="section-title mb-20"><span>From</span> blog</h3>
-                    <div class="post-list mb-4 mb-lg-0">
-                        <article class="wow fadeIn animated">
-                            <div class="d-md-flex d-block">
-                                <div class="post-thumb d-flex mr-15">
-                                    <a class="color-white" href="blog-post-fullwidth.html">
-                                        <img src="assets/imgs/blog/blog-2.jpg" alt="">
-                                    </a>
-                                </div>
-                                <div class="post-content">
-                                    <div class="entry-meta mb-10 mt-10">
-                                        <a class="entry-meta meta-2" href="blog-category-fullwidth.html"><span class="post-in font-x-small">Fashion</span></a>
+        <section class="section-padding">
+            <div class="container pt-25 pb-20">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <h3 class="section-title mb-20"><span>From</span> blog</h3>
+                        <div class="post-list mb-4 mb-lg-0">
+                            <article class="wow fadeIn animated">
+                                <div class="d-md-flex d-block">
+                                    <div class="post-thumb d-flex mr-15">
+                                        <a class="color-white" href="blog-post-fullwidth.html">
+                                            <img src="assets/imgs/blog/blog-2.jpg" alt="">
+                                        </a>
                                     </div>
-                                    <h4 class="post-title mb-25 text-limit-2-row">
-                                        <a href="blog-post-fullwidth.html">Qualcomm is developing a Nintendo Switch-like console, report says</a>
-                                    </h4>
-                                    <div class="entry-meta meta-1 font-xs color-grey mt-10 pb-10">
-                                        <div>
-                                            <span class="post-on">14 April 2022</span>
-                                            <span class="hit-count has-dot">12M Views</span>
+                                    <div class="post-content">
+                                        <div class="entry-meta mb-10 mt-10">
+                                            <a class="entry-meta meta-2" href="blog-category-fullwidth.html"><span
+                                                    class="post-in font-x-small">Fashion</span></a>
                                         </div>
-                                        <a href="blog-post-right.html">Read More</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </article>
-                        <article class="wow fadeIn animated">
-                            <div class="d-md-flex d-block">
-                                <div class="post-thumb d-flex mr-15">
-                                    <a class="color-white" href="blog-post-fullwidth.html">
-                                        <img src="assets/imgs/blog/blog-1.jpg" alt="">
-                                    </a>
-                                </div>
-                                <div class="post-content">
-                                    <div class="entry-meta mb-10 mt-10">
-                                        <a class="entry-meta meta-2" href="blog-category-fullwidth.html"><span class="post-in font-x-small">Healthy</span></a>
-                                    </div>
-                                    <h4 class="post-title mb-25 text-limit-2-row">
-                                        <a href="blog-post-fullwidth.html">Not even the coronavirus can derail 5G's global momentum</a>
-                                    </h4>
-                                    <div class="entry-meta meta-1 font-xs color-grey mt-10 pb-10">
-                                        <div>
-                                            <span class="post-on">14 April 2022</span>
-                                            <span class="hit-count has-dot">12M Views</span>
+                                        <h4 class="post-title mb-25 text-limit-2-row">
+                                            <a href="blog-post-fullwidth.html">Qualcomm is developing a Nintendo
+                                                Switch-like console, report says</a>
+                                        </h4>
+                                        <div class="entry-meta meta-1 font-xs color-grey mt-10 pb-10">
+                                            <div>
+                                                <span class="post-on">14 April 2022</span>
+                                                <span class="hit-count has-dot">12M Views</span>
+                                            </div>
+                                            <a href="blog-post-right.html">Read More</a>
                                         </div>
-                                        <a href="blog-post-right.html">Read More</a>
                                     </div>
                                 </div>
-                            </div>
-                        </article>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="banner-img banner-1 wow fadeIn animated">
-                                <img src="assets/imgs/banner/banner-5.jpg" alt="">
-                                <div class="banner-text">
-                                    <span>Accessories</span>
-                                    <h4>Save 17% on <br>Autumn Hat</h4>
-                                    <a href="shop-grid-right.html">Shop Now <i class="fi-rs-arrow-right"></i></a>
+                            </article>
+                            <article class="wow fadeIn animated">
+                                <div class="d-md-flex d-block">
+                                    <div class="post-thumb d-flex mr-15">
+                                        <a class="color-white" href="blog-post-fullwidth.html">
+                                            <img src="assets/imgs/blog/blog-1.jpg" alt="">
+                                        </a>
+                                    </div>
+                                    <div class="post-content">
+                                        <div class="entry-meta mb-10 mt-10">
+                                            <a class="entry-meta meta-2" href="blog-category-fullwidth.html"><span
+                                                    class="post-in font-x-small">Healthy</span></a>
+                                        </div>
+                                        <h4 class="post-title mb-25 text-limit-2-row">
+                                            <a href="blog-post-fullwidth.html">Not even the coronavirus can derail 5G's
+                                                global momentum</a>
+                                        </h4>
+                                        <div class="entry-meta meta-1 font-xs color-grey mt-10 pb-10">
+                                            <div>
+                                                <span class="post-on">14 April 2022</span>
+                                                <span class="hit-count has-dot">12M Views</span>
+                                            </div>
+                                            <a href="blog-post-right.html">Read More</a>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            </article>
                         </div>
-                        <div class="col-md-6">
-                            <div class="banner-img mb-15 wow fadeIn animated">
-                                <img src="assets/imgs/banner/banner-6.jpg" alt="">
-                                <div class="banner-text">
-                                    <span>Big Offer</span>
-                                    <h4>Save 20% on <br>Women's socks</h4>
-                                    <a href="shop-grid-right.html">Shop Now <i class="fi-rs-arrow-right"></i></a>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="banner-img banner-1 wow fadeIn animated">
+                                    <img src="assets/imgs/banner/banner-5.jpg" alt="">
+                                    <div class="banner-text">
+                                        <span>Accessories</span>
+                                        <h4>Save 17% on <br>Autumn Hat</h4>
+                                        <a href="shop-grid-right.html">Shop Now <i class="fi-rs-arrow-right"></i></a>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="banner-img banner-2 wow fadeIn animated">
-                                <img src="assets/imgs/banner/banner-7.jpg" alt="">
-                                <div class="banner-text">
-                                    <span>Smart Offer</span>
-                                    <h4>Save 20% on <br>Eardrop</h4>
-                                    <a href="shop-grid-right.html">Shop Now <i class="fi-rs-arrow-right"></i></a>
+                            <div class="col-md-6">
+                                <div class="banner-img mb-15 wow fadeIn animated">
+                                    <img src="assets/imgs/banner/banner-6.jpg" alt="">
+                                    <div class="banner-text">
+                                        <span>Big Offer</span>
+                                        <h4>Save 20% on <br>Women's socks</h4>
+                                        <a href="shop-grid-right.html">Shop Now <i class="fi-rs-arrow-right"></i></a>
+                                    </div>
+                                </div>
+                                <div class="banner-img banner-2 wow fadeIn animated">
+                                    <img src="assets/imgs/banner/banner-7.jpg" alt="">
+                                    <div class="banner-text">
+                                        <span>Smart Offer</span>
+                                        <h4>Save 20% on <br>Eardrop</h4>
+                                        <a href="shop-grid-right.html">Shop Now <i class="fi-rs-arrow-right"></i></a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section> -->
+        </section> -->
         <section class="mb-50">
             <div class="container">
                 <div class="row">
@@ -572,7 +703,7 @@
                     const result = await response.json();
 
                     if (response.status === 401) {
-                        
+
                         Swal.fire({
                             title: 'Login Required!',
                             text: result.message,
@@ -582,7 +713,7 @@
                             timer: 2000,
                             showConfirmButton: true,
                         });
-                
+
                     }
 
                     if (response.ok) {
@@ -637,7 +768,7 @@
             document.addEventListener('click', async (e) => {
                 if (e.target && e.target.closest('#addToCartButton')) {
                     e.preventDefault();
-                   
+
 
                     const button = e.target.closest('#addToCartButton');
                     const productId = button.dataset.productId;
@@ -666,9 +797,9 @@
                                 icon: 'info',
                                 toast: true,
                                 position: 'center',
-                            
+
                             });
-                            
+
                         }
                         if (data.success) {
                             Swal.fire({

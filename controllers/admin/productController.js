@@ -31,10 +31,10 @@ const addProducts = async (req, res) => {
         const products = req.body;
         const images = [];
         if (req.files && req.files.length > 0) {
-            const validImageTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+            const validImageTypes = ['image/png', 'image/jpeg', 'image/jpg','image/webp'];
             for (let file of req.files) {
                 if (!validImageTypes.includes(file.mimetype)) {
-                    return res.status(400).json("Only image files (PNG, JPEG, JPG) are allowed.");
+                    return res.status(400).json("Only image files (PNG, JPEG, JPG, webp) are allowed.");
                 }
                 const originalImagePath = file.path;
                 const resizedImagePath = path.join("public", "uploads", "product-images", file.filename);
@@ -118,28 +118,38 @@ const getAllProducts= async(req,res)=>{
     }
 };
 
-const addProductOffer=async(req,res)=>{
+const addProductOffer = async (req, res) => {
     try {
-        const {percentage,productId}= req.body;
+        const { percentage, productId } = req.body;
         console.log(percentage);
-        const findProduct= await Product.findOne({_id:productId});
-        const findCategory=await Category.findOne({_id:findProduct.category});
-        if(findCategory.categoryOffer > percentage){
-            return res.json({status:false,message:'This product already have a Category Offer'});
+
+        const findProduct = await Product.findOne({ _id: productId });
+        const findCategory = await Category.findOne({ _id: findProduct.category });
+
+        if (findCategory.categoryOffer > percentage) {
+            return res.json({ status: false, message: 'This product already has a Category Offer' });
         }
-        findProduct.salePrice= findProduct.salePrice - Math.floor(findProduct.regularPrice*(percentage/100));
-        findProduct.productOffer=parseInt(percentage);
-         await findProduct.save();
-         findCategory.categoryOffer=0;
-         await findCategory.save();
-         
-         res.json({status:true});
+
+        findProduct.salePrice = findProduct.salePrice - Math.floor(findProduct.regularPrice * (percentage / 100));
+        findProduct.productOffer = parseInt(percentage);
+
+        await findProduct.save();
+
+        findCategory.categoryOffer = 0;
+        await findCategory.save();
+
+        return res.json({ status: true });
 
     } catch (error) {
-        res.redirect('/pageError');
-        res.status(500).json("Internal server Error");
+        console.error(error);
+
+        if (!res.headersSent) {
+            res.redirect('/pageError'); 
+            return res.status(500).json({ message: "Internal server error" });
+        }
     }
 };
+
 const removeProductOffer=async(req,res)=>{
     try {
         const{productId}= req.body;
@@ -251,7 +261,7 @@ const deleteSingleImage= async(req,res)=>{
         }else{
             console.log(`image ${imageNameToServer} not found`);
         }
-        res.send({status:true})
+        res.send({status:true,})
 
     } catch (error) {
         res.redirect('/pageError');

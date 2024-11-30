@@ -65,6 +65,7 @@ const headerData = async (req, res, next) => {
       res.locals.rewardPoints= 0;
       
     }
+    res.locals.searchTerm = req.query.search || '';
     next();
   } catch (error) {
     console.error("Error in header data middleware:", error);

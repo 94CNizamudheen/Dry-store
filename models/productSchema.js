@@ -24,7 +24,7 @@ const productSchema= new Schema({
     },
     salePrice:{
         type:Number,
-        required:true,
+        
     },
     taxRate:{
         type:Number,
@@ -64,5 +64,12 @@ const productSchema= new Schema({
 
 
 },{timestamps:true});
+
+productSchema.pre('save', function (next) {
+    if (this.isNew && !this.salePrice) {
+        this.salePrice = this.regularPrice;
+    }
+    next();
+});
 const Product=mongoose.model("Product",productSchema);
 module.exports=Product;

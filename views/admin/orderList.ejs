@@ -184,7 +184,9 @@
                             title: 'Success!',
                             text: 'Status updated successfully',
                             icon: 'success',
-                            confirmButtonText: 'OK'
+                            confirmButtonText: 'OK',
+                            toast:true,
+                            position:"center"
                         });
                         window.location.reload();
                     } else {
@@ -192,7 +194,9 @@
                             title: 'Error!',
                             text: `Failed to update status: ${data.message}`,
                             icon: 'error',
-                            confirmButtonText: 'OK'
+                            confirmButtonText: 'OK',
+                            toast:true,
+                            position:"center"
                         });
                     }
                 } catch (error) {
@@ -201,7 +205,9 @@
                         title: 'Error!',
                         text: 'Failed to update status due to a network error',
                         icon: 'error',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'OK',
+                        toast:true,
+                        position:"center"
                     });
                 }
             });
@@ -281,7 +287,9 @@
                         title: 'Error!',
                         text: 'Failed to load order details',
                         icon: 'error',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'OK',
+                        toast:true,
+                         position:"center"
                     });
                 }
             });
@@ -311,7 +319,9 @@
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Yes, cancel it!',
-                cancelButtonText: 'No, keep it'
+                cancelButtonText: 'No, keep it',
+                toast:true,
+                position:"center"
             });
 
             if (confirmation.isConfirmed) {
@@ -329,7 +339,9 @@
                             title: 'Cancelled!',
                             text: 'The order has been cancelled successfully.',
                             icon: 'success',
-                            confirmButtonText: 'OK'
+                            confirmButtonText: 'OK',
+                            toast:true,
+                            position:"center"
                         });
                         window.location.reload();
                     } else {
@@ -337,7 +349,9 @@
                             title: 'Error!',
                             text: `Failed to cancel order: ${data.message}`,
                             icon: 'error',
-                            confirmButtonText: 'OK'
+                            confirmButtonText: 'OK',
+                            toast:true,
+                             position:"center"
                         });
                     }
                 } catch (error) {
@@ -346,7 +360,9 @@
                         title: 'Error!',
                         text: 'Failed to cancel the order due to a network error.',
                         icon: 'error',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'OK',
+                        toast:true,
+                        position:"center"
                     });
                 }
             }

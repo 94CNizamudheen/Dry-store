@@ -63,6 +63,8 @@
                     title: 'Category updated successfully!',
                     showConfirmButton: false,
                     timer: 1500,
+                    toast:true,
+                    position:"center"
                 }).then(() => {
                     window.location.href = result.redirectUrl;
                 });
@@ -74,6 +76,8 @@
                 icon: 'error',
                 title: 'Oops...',
                 text: 'Something went wrong. Please try again later.',
+                toast:true,
+                position:"center"
             });
         }
     }

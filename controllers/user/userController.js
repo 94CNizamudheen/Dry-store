@@ -107,10 +107,10 @@ const loadSignUp = async (req, res) => {
 const loadShopping = async (req, res) => {
     try {
         const userId = req.session.user;
-        const { sort = "newest", category, minPrice, maxPrice ,page=1} = req.query;
+        const { sort = "newest", category, minPrice, maxPrice ,page=1,search} = req.query;
         const limit=9;
         const skip=(page-1)*limit;
-
+        console.log("serched:",search);
         let userData = null;
         if (userId) {
             userData = await User.findById(userId);
@@ -133,6 +133,13 @@ const loadShopping = async (req, res) => {
                 $lte: Number(maxPrice),
             };
         }
+        if(search){
+            filterQuery.$or=[
+                {productName:{$regex: new RegExp(search,"i")}},
+                {description:{$regex: new RegExp(search,"i")}},
+            ]
+        }
+
         let sortQuery = {};
         switch (sort) {
             case "price-asc":
@@ -208,6 +215,8 @@ const loadShopping = async (req, res) => {
                 user: userData,
                 currentPage:Number(page),
                 totalPage,
+                search:search||'',
+                
             });
         } else {
             return res.render("shop", {
@@ -215,11 +224,12 @@ const loadShopping = async (req, res) => {
                 categories: categories,
                 categoryGroups,
                 priceRanges,
-                currentSort: sort,
-                currentCategory: category,
+                currentSort: sort||'newest',
+                currentCategory: category||'',
                 currentPriceRange: { min: minPrice, max: maxPrice },
                 currentPage:Number(page),
                 totalPage,
+                search:search||'',
             });
         }
     } catch (error) {

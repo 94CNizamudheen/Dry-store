@@ -133,26 +133,26 @@
                             &laquo;
                         </a>
                     </li>
-        
+
                     <!-- Page Numbers -->
-                    <% for (let i = 1; i <= totalPages; i++) { %>
+                    <% for (let i=1; i <=totalPages; i++) { %>
                         <li class="page-item <%= i === currentPage ? 'active' : '' %>">
                             <a class="page-link" href="?page=<%= i %>">
                                 <%= i %>
                             </a>
                         </li>
-                    <% } %>
-        
-                    <!-- Next Arrow -->
-                    <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
-                        <a class="page-link" href="?page=<%= currentPage + 1 %>">
-                            &raquo;
-                        </a>
-                    </li>
+                        <% } %>
+
+                            <!-- Next Arrow -->
+                            <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                                <a class="page-link" href="?page=<%= currentPage + 1 %>">
+                                    &raquo;
+                                </a>
+                            </li>
                 </ul>
             </nav>
         </div>
-        
+
     </section> <!-- content-main end// -->
 
     <script>
@@ -192,13 +192,17 @@
                         Swal.fire({
                             icon: "error",
                             title: "Oops",
-                            text: "Category already exists"
+                            text: "Category already exists",
+                            toast: true,
+                            position: "center"
                         });
                     } else {
                         Swal.fire({
                             icon: "error",
                             title: "Oops",
-                            text: "An error occurred while adding category"
+                            text: "An error occurred while adding category",
+                            toast: true,
+                            position: "center"
                         });
                     }
                 });
@@ -246,17 +250,22 @@
         };
 
         async function addCategoryOffer(categoryId) {
-            console.log("add function called")
-            console.log(`category id is ${categoryId}`)
+            console.log("add function called");
+            console.log(`category id is ${categoryId}`);
+
             const { value: amount } = await Swal.fire({
                 title: "Offer in percentage",
                 input: "number",
                 inputLabel: "Percentage",
                 inputPlaceholder: "%",
+                toast: true,
+                position: "center",
+                showConfirmButton: true // For input prompt
             });
+
             if (amount) {
                 try {
-                    console.log(`category id is ${categoryId}`)
+                    console.log(`category id is ${categoryId}`);
                     const response = await fetch("/admin/addCategoryOffer", {
                         method: "POST",
                         headers: {
@@ -266,30 +275,46 @@
                             percentage: amount,
                             categoryId: categoryId,
                         }),
-                    })
+                    });
 
                     const data = await response.json();
                     if (response.ok && data.status === true) {
-                        Swal.fire(
-                            "Offer Added",
-                            "Offer has been added",
-                            "Success"
-                        ).then(() => {
+                        Swal.fire({
+                            title: "Offer Added",
+                            text: "Offer has been added",
+                            icon: "success",
+                            toast: true,
+                            position: "center",
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
                             location.reload();
-                        })
+                        });
                     } else {
-                        Swal.fire("Failed", data.message || "Adding offer Failed", "error")
+                        Swal.fire({
+                            title: "Failed",
+                            text: data.message || "Adding offer failed",
+                            icon: "error",
+                            toast: true,
+                            position: "center",
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
                     }
                 } catch (error) {
-                    Swal.fire(
-                        "Error",
-                        "An error occured while adding the offer",
-                        "error"
-                    );
-                    console.log("error while adding Offer", error);
+                    Swal.fire({
+                        title: "Error",
+                        text: "An error occurred while adding the offer",
+                        icon: "error",
+                        toast: true,
+                        position: "center",
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                    console.log("error while adding offer", error);
                 }
             }
-        };
+        }
 
         async function removeCategoryOffer(categoryId) {
             try {
@@ -300,31 +325,45 @@
                     },
                     body: JSON.stringify({ categoryId: categoryId })
                 });
+
                 const data = await response.json();
                 if (response.ok && data.status === true) {
-                    Swal.fire(
-                        "Offer Removed",
-                        "The offer has been removed",
-                        "success"
-                    ).then(() => {
+                    Swal.fire({
+                        title: "Offer Removed",
+                        text: "The offer has been removed",
+                        icon: "success",
+                        toast: true,
+                        position: "center",
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
                         location.reload();
-                    })
+                    });
                 } else {
-                    Swal.fire("Error", data.message || "Remove offer failed", "error")
+                    Swal.fire({
+                        title: "Error",
+                        text: data.message || "Remove offer failed",
+                        icon: "error",
+                        toast: true,
+                        position: "center",
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
                 }
-
-
-
             } catch (error) {
-                Swal.fire(
-                    "Error",
-                    "An error Occured remove Offer",
-                    "error"
-                )
-                console.log("error removing Offer");
-
+                Swal.fire({
+                    title: "Error",
+                    text: "An error occurred while removing the offer",
+                    icon: "error",
+                    toast: true,
+                    position: "center",
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                console.log("error removing offer");
             }
         }
+
 
 
     </script>

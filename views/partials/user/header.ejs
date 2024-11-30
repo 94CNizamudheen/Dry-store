@@ -20,8 +20,37 @@
     
 </head>
 
-<body>
-
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchForm = document.getElementById('searchForm');
+        const searchInput = document.getElementById('searchInput');
+        const searchIcon = document.getElementById('searchIcon');
+    
+        
+        searchForm.addEventListener('submit', function(e) {
+            if (!searchInput.value.trim()) {
+                e.preventDefault(); 
+            }
+        });
+    
+        
+        searchIcon.addEventListener('click', function() {
+            if (searchInput.value.trim()) {
+                searchForm.submit();
+            }
+        });
+    
+    
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (this.value.trim()) {
+                    searchForm.submit();
+                }
+            }
+        });
+    });
+    </script>
     
     <header class="header-area header-style-1 header-height-2">
         <div class="header-top header-top-ptb-1 d-none d-lg-block">
@@ -81,15 +110,13 @@
                     </div>
                     <div class="header-right">
                         <div class="search-style-1">
-                            <form action="#">
-                                
-                                <span class="input-group-text  " style="background: none;">
-                                    <img src="/uploads/sample-images/image.png" alt="Search" style="width: 24px; height: 24px;">
-                                    <input  type="text" placeholder="Search for items..." >
+                            <form id="searchForm" action="/shop" method="GET">
+                                <span class="input-group-text" style="background: none;">
+                                    <img src="/uploads/sample-images/image.png" alt="Search" style="width: 24px; height: 24px;" id="searchIcon">
+                                    <input type="text" name="search" placeholder="Search for items..." id="searchInput" value="<%= locals.searchTerm || '' %>">
+                                    <button type="submit" style="display:none;"></button>
                                 </span>
-                               
                             </form>
-                            
                         </div>
                         <div class="header-action-right">
                             <% if(locals.user) {%>

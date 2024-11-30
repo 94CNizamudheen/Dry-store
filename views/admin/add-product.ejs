@@ -30,7 +30,7 @@
 
                 </div>
             </div>
-            <div class="col-lg-6">
+            <div class="row">
                 <div class="card mb-4">
                     <div class="card-header">
                         <h4>Basic</h4>
@@ -64,14 +64,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-lg-4">
-                                    <div class="mb-4">
-                                        <label class="form-label">Sale price</label>
-                                        <input placeholder="₹" type="text" class="form-control" name="salePrice"
-                                            id="salePrice">
-                                        <div id="salePrice-error" class="error-message"></div>
-                                    </div>
-                                </div>
+                               
                                 <div class="mb-4">
                                     <label class="form-label">Quantity</label>
                                     <input placeholder="packets" name="quantity" type="text"
@@ -125,96 +118,70 @@
                                 </div>
                             </div> <!-- card end// -->
 
-                            <div class="card mb-4">
+                             <!-- card end// -->
+
+                             <div class="card mb-4">
                                 <div class="card-header">
-                                    <h4>Shipping</h4>
+                                    <h4 class="mb-0">Media</h4>
                                 </div>
                                 <div class="card-body">
-
-                                    <div class="row">
-                                        <div class="col-lg-6">
-
+                                    <div class="card mb-3">
+                                        <div class="card-header">
+                                            <h5 class="mb-0">Choose Images</h5>
                                         </div>
-
-                                    </div>
-                                    <div class="mb-4">
-                                        <label for="product_name" class="form-label">Weight</label>
-                                        <input type="text" placeholder="gam" class="form-control" id="">
-                                    </div>
-                                    <div class="mb-4">
-                                        <label for="product_name" class="form-label">Shipping fees</label>
-                                        <input type="text" placeholder="₹" class="form-control" id="">
-                                    </div>
-
-
-                                </div>
-                            </div> <!-- card end// -->
-
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <h4>Media</h4>
-                                </div>
-                                <div class="card mb-2">
-                                    <div class="card-header">
-                                        <h4>Choose images</h4>
-                                    </div>
-                                    <div class="border row">
-                                        <div id="addedImagesContainer" class="thumbnails-container"></div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="card-body align-items-center" style="margin-bottom: 20px;">
-                                            <img src="" alt="" id="imgView1">
-                                            <input class="form-control" type="file" name="images" id="input1"
-                                                accept="image/png, image/jpeg, image/jpg"
-                                                onchange="viewImage1(event), viewImage(event, 1)">
-                                            <div id="images-error" class="error-message"></div>
-                                        </div>
-                                        <div class="image-cropper d-flex align-items-center"
-                                            style="display:none; width: 300px; height: 200px; margin-bottom: 20px;">
-                                            <img src="" id="croppedImg1" alt="">
-                                            <button type="button" id="saveButton1"
-                                                class="btn-sm btn-primary">Save</button>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="card-body align-items-center" style="margin-bottom: 20px;">
-                                            <img src="" alt="" id="imgView2">
-
-
-                                            <input class="form-control" type="file" name="images" id="input2"
-                                                accept="image/png, image/jpeg, image/jpg"
-                                                onchange="viewImage2(event),viewImage(event, 2)">
-                                        </div>
-                                        <div class="image-cropper d-flex align-items-center"
-                                            style="display:none; width: 300px; height: 200px; margin-bottom: 20px;">
-                                            <img src="" id="croppedImg2" alt="">
-                                            <button type="button" id="saveButton2"
-                                                class="btn-sm btn-primary">Save</button>
+                                        <div class="card-body">
+                                            <div class="row justify-content-center">
+                                                <!-- Image 1 -->
+                                                <div class="col-12 col-md-4 mb-3">
+                                                    <div class="d-flex flex-column align-items-center">
+                                                        <img src="" alt="Image 1 Preview" id="imgView1" class="img-fluid mb-2" >
+                                                        <input class="form-control mb-2" type="file" name="images" id="input1" accept="image/png, image/jpeg, image/jpg"
+                                                               onchange="viewImage1(event), viewImage(event, 1)">
+                                                        <div id="images-error-1" class="error-message text-danger mt-2"></div>
+                                                    </div>
+                                                    <div class="image-cropper d-flex justify-content-center mt-2" >
+                                                        <img src="" id="croppedImg1" alt="Cropped Image 1" class="img-fluid mb-2">
+                                                        <button type="button" id="saveButton1" class="btn btn-sm btn-primary mt-2">Save</button>
+                                                    </div>
+                                                </div>
+                            
+                                                <!-- Image 2 -->
+                                                <div class="col-12 col-md-4 mb-3">
+                                                    <div class="d-flex flex-column align-items-center">
+                                                        <img src="" alt="Image 2 Preview" id="imgView2" class="img-fluid mb-2" >
+                                                        <input class="form-control mb-2" type="file" name="images" id="input2" accept="image/png, image/jpeg, image/jpg"
+                                                               onchange="viewImage2(event), viewImage(event, 2)">
+                                                        <div id="images-error-2" class="error-message text-danger mt-2"></div>
+                                                    </div>
+                                                    <div class="image-cropper d-flex justify-content-center mt-2" >
+                                                        <img src="" id="croppedImg2" alt="Cropped Image 2" class="img-fluid mb-2">
+                                                        <button type="button" id="saveButton2" class="btn btn-sm btn-primary mt-2">Save</button>
+                                                    </div>
+                                                </div>
+                            
+                                                <!-- Image 3 -->
+                                                <div class="col-12 col-md-4 mb-3">
+                                                    <div class="d-flex flex-column align-items-center">
+                                                        <img src="" alt="Image 3 Preview" id="imgView3" class="img-fluid mb-2" >
+                                                        <input class="form-control mb-2" type="file" name="images" id="input3" accept="image/png, image/jpeg, image/jpg"
+                                                               onchange="viewImage3(event), viewImage(event, 3)">
+                                                        <div id="images-error-3" class="error-message text-danger mt-2"></div>
+                                                    </div>
+                                                    <div class="image-cropper d-flex justify-content-center mt-2" >
+                                                        <img src="" id="croppedImg3" alt="Cropped Image 3" class="img-fluid mb-2">
+                                                        <button type="button" id="saveButton3" class="btn btn-sm btn-primary mt-2">Save</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                            
+                                            <!-- Global error message -->
+                                            <div id="images-error" class="error-message text-danger mt-3"></div>
                                         </div>
                                     </div>
-
-                                    <div class="row">
-                                        <div class="card-body align-items-center" style="margin-bottom: 20px;">
-                                            <img src="" alt="" id="imgView3">
-
-
-                                            <input class="form-control" type="file" name="images" id="input3"
-                                                accept="image/png, image/jpeg, image/jpg"
-                                                onchange="viewImage3(event),viewImage(event, 3)">
-                                        </div>
-                                        <div class="image-cropper d-flex align-items-center"
-                                            style="display:none; width: 300px; height: 200px; margin-bottom: 20px;">
-                                            <img src="" id="croppedImg3" alt="">
-                                            <button type="button" id="saveButton3"
-                                                class="btn-sm btn-primary">Save</button>
-                                        </div>
-                                    </div>
-
-                                    <div id="images-error" class="error-message"></div>
-
                                 </div>
                             </div>
+                            
+                            
                             <div id="submit-error" class="error-message" style="margin-bottom: 10px;"></div>
                             <div>
                                 <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to
@@ -282,6 +249,7 @@
                     });
 
                     croppedContainer.style.display = "none";
+                    saveButton.style.display = "none";
                     cropper.destroy();  // Clean up cropper instance
                 };
             };
@@ -332,7 +300,9 @@
                     title: 'Success!',
                     text: 'Product added successfully!',
                     icon: 'success',
-                    confirmButtonText: 'OK'
+                    confirmButtonText: 'OK',
+                    toast:true,
+                    position: "center"
                 }).then((result) => {
                     if (result.isConfirmed) {
 
@@ -349,7 +319,6 @@
             const description = document.getElementById('descriptionid').value.trim();
             const brand = document.getElementsByName('brand')[0].value;
             const price = document.getElementsByName('regularPrice')[0].value.trim();
-            const saleprice = document.getElementsByName('salePrice')[0].value.trim();
             const quantity = document.getElementsByName('quantity')[0].value.trim();
             const category = document.getElementsByName('category')[0].value;
             const images = document.getElementById('input1');
@@ -376,15 +345,6 @@
 
             if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {
                 displayErrorMessage('regularPrice-error', 'Please enter a valid non-negative price.');
-                isValid = false;
-            }
-
-            if (!/^\d+(\.\d{1,2})?$/.test(saleprice) || parseFloat(saleprice) < 0) {
-                displayErrorMessage('salePrice-error', 'Please enter a valid non-negative sale price.');
-                isValid = false;
-            }
-            if (parseFloat(price) <= parseFloat(saleprice)) {
-                displayErrorMessage('regularPrice-error', 'Regular price must be greater than sale price.');
                 isValid = false;
             }
 
