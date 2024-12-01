@@ -117,16 +117,14 @@ const loadShopping = async (req, res) => {
         }
         const categories = await Category.find({ isListed: true });
 
-        // Building filter query
         const filterQuery = {
             category: { $in: categories.map((category) => category._id) },
             quantity: { $gte: 0 },
         };
-        // all category filter if specified
+
         if (category) {
             filterQuery.category = category;
         }
-        // all price Range if specified
         if (minPrice !== undefined && maxPrice !== undefined) {
             filterQuery.salePrice = {
                 $gte: Number(minPrice),
@@ -201,6 +199,7 @@ const loadShopping = async (req, res) => {
                 },
             },
         ]);
+        const brands= await Brand.find();
         const totalProducts= await Product.countDocuments(filterQuery);
         const totalPage= Math.ceil(totalProducts/limit)
         if (userData) {
@@ -216,6 +215,7 @@ const loadShopping = async (req, res) => {
                 currentPage:Number(page),
                 totalPage,
                 search:search||'',
+                brands,
                 
             });
         } else {
@@ -230,6 +230,7 @@ const loadShopping = async (req, res) => {
                 currentPage:Number(page),
                 totalPage,
                 search:search||'',
+                brands
             });
         }
     } catch (error) {

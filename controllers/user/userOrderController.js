@@ -309,7 +309,7 @@ const cancelOrder = async (req, res) => {
                 await product.save();
             }
         }
-        if(order.paymentDetails.method==='ONLINE' && order.paymentDetails.paymentStatus==="Completed"){
+        if((order.paymentDetails.method==='ONLINE'||order.paymentDetails.method==='WALLET') && order.paymentDetails.paymentStatus==="Completed"){
             console.log(`Processing refund for Order ${orderId}`);
 
             const user = await User.findById(order.user._id);
@@ -325,7 +325,7 @@ const cancelOrder = async (req, res) => {
                 user.wallet = { balance: 0, transaction: [] };
             }
 
-            if(refundMethod==="Wallet"){
+            if(refundMethod==="WALLET"){
                 user.wallet.balance+=order.paymentDetails.paidAmount;
                 user.wallet.transaction.push({
                     type:'credit',
@@ -334,7 +334,7 @@ const cancelOrder = async (req, res) => {
                 });
                 await user.save();
                 console.log(`Refund of ₹${order.finalAmount} added to user's Wallet  `);
-            }else if(refundMethod==="Bank"){
+            }else if(refundMethod==="BANK"){
                 return res.status(500).json({
                     success:false,
                     message:"Bank transfer Currently un available. Sorry for the inconvenience "
@@ -362,6 +362,89 @@ const cancelOrder = async (req, res) => {
         });
     }
 };
+//===================================================================
+const cancelOrderItem = async (req, res) => {
+    try {
+        const { orderId, productId, refundMethod } = req.query;
+
+        if (!orderId || !productId) {
+            return res.status(400).json({
+                success: false,
+                message: "OrderId and ProductId are required",
+            });
+        }
+
+        const order = await Order.findOne({ orderId: orderId }).populate('orderedItems.product user');
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: "Order not found",
+            });
+        }
+
+        if (order.coupenApplid) {
+            return res.status(400).json({
+                success: false,
+                message: "Order with applied coupon cannot be cancelled",
+            });
+        }
+
+        const itemIndex = order.orderedItems.findIndex(item => item.product._id.toString() === productId);
+        if (itemIndex === -1) {
+            return res.status(404).json({
+                success: false,
+                message: "Product not found in order",
+            });
+        }
+
+        const item = order.orderedItems[itemIndex];
+        const user = order.user;
+
+        if ((order.paymentDetails.method === 'ONLINE' || order.paymentDetails.method === 'WALLET') && order.paymentDetails.paymentStatus === "Completed") {
+            if (refundMethod === 'WALLET') {
+                user.wallet.balance += item.product.salePrice * item.quantity;
+                user.wallet.transaction.push({
+                    type: "credit",
+                    amount: item.product.salePrice * item.quantity,
+                    description: `Refund for cancelled item: ${item.product.productName}`
+                });
+                await user.save();
+            } else if (refundMethod === 'BANK') {
+                return res.status(500).json({
+                    success: false,
+                    message: "Bank transfer currently unavailable. Sorry for the inconvenience."
+                });
+            }
+        }
+
+        item.product.quantity += item.quantity;
+        if (item.product.status === "Out of stock" && item.product.quantity > 0) {
+            item.product.status = "Available";
+        }
+        await item.product.save();
+
+        order.orderedItems.splice(itemIndex, 1);
+        order.status = order.orderedItems.length > 0 ? 'Partially Cancelled' : "Cancelled";
+
+        await order.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Item cancelled",
+            redirectUrl: '/user-profile'
+        });
+
+    } catch (error) {
+        console.error('Error cancelling order item:', error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to cancel order item",
+            error: error.message
+        });
+    }
+};
+
+
 //===================================================================================================
 const checkOrderPayment=async(req,res)=>{
     try {
@@ -580,7 +663,8 @@ module.exports={
    cancelOrder,
    createRazorpayOrder,
    verifyRazorpayPaymentAndPlaceOrder,
-   checkOrderPayment
+   checkOrderPayment,
+   cancelOrderItem
   
    
 

@@ -89,6 +89,7 @@ router.post('/handle-payment',userAuth,orderController.handlePaymentMethod);
 router.post('/place-order',userAuth,orderController.placeOrderForCODandWALLET);
 router.get('/order-success-page',userAuth,orderController.loadOrderSuccessPage);
 router.get('/cancel-order',userAuth,orderController.cancelOrder);
+router.patch('/cancel-order-item',userAuth,orderController.cancelOrderItem);
 router.get('/check-order-payment', userAuth, orderController.checkOrderPayment);
 router.post('/create-razorpay-order',userAuth,orderController.createRazorpayOrder);
 router.post('/verify-payment',userAuth,orderController.verifyRazorpayPaymentAndPlaceOrder);

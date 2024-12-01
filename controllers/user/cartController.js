@@ -47,7 +47,7 @@ const loadCart = async (req, res) => {
             user: req.user,
             total: total,
             subtotal: subtotal,
-            totalDiscount: totalDiscount.toFixed(2),    
+            totalDiscount: totalDiscount,
         
         });
     } catch (error) {

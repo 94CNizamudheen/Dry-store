@@ -178,14 +178,7 @@
                                                     value="<%= totalDiscount %>">
 
                                                 <tbody>
-                                                    <tr>
-                                                        <td class="fw-bold">Total Discount</td>
-                                                        <td class="text-end">
-                                                            ₹<span id="totalDiscount" class="ms-2">
-                                                                <%= totalDiscount %>
-                                                            </span>
-                                                        </td>
-                                                    </tr>
+                                                    
                                                     <tr>
                                                         <td class="fw-bold">Total Price</td>
                                                         <td class="text-end">
@@ -236,11 +229,11 @@
                 }
 
                 
-                const backendTotalDiscount = parseFloat(document.getElementById('backendTotalDiscount').value);
-                const discountElement = document.getElementById('totalDiscount');
-                if (discountElement) {
-                    discountElement.textContent = backendTotalDiscount.toFixed(2);
-                }
+                // const backendTotalDiscount = parseFloat(document.getElementById('backendTotalDiscount').value);
+                // const discountElement = document.getElementById('totalDiscount');
+                // if (discountElement) {
+                //     discountElement.textContent = backendTotalDiscount.toFixed(2);
+                // }
             }
 
             updateCartTotals();
@@ -265,7 +258,7 @@
 
                         document.getElementById(`qty-${productId}`).textContent = data.newQuantity;
                         document.getElementById(`total-${productId}`).textContent =data.newTotalPrice.toFixed(2);
-                        document.getElementById('totalDiscount').textContent = data.totalDiscount;
+                        // document.getElementById('totalDiscount').textContent = data.totalDiscount;
                         updateCartTotals();
                     }
                 } catch (error) {
