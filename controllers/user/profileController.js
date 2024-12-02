@@ -163,7 +163,11 @@ const postNewPassword=async(req,res)=>{
             const orders = await Order.find({ user: userId }).populate({
                 path: 'orderedItems.product',
                 select: 'productName productImage price',
-            }).sort({ createdOn: -1 });
+            }).populate({
+                path:'partialCancelledDetails.product',
+                select:'productName productImage price'
+            })
+            .sort({ createdOn: -1 });
             
             res.render('user-profile',{
                 user:userData,

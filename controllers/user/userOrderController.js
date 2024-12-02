@@ -382,13 +382,6 @@ const cancelOrderItem = async (req, res) => {
             });
         }
 
-        if (order.coupenApplid) {
-            return res.status(400).json({
-                success: false,
-                message: "Order with applied coupon cannot be cancelled",
-            });
-        }
-
         const itemIndex = order.orderedItems.findIndex(item => item.product._id.toString() === productId);
         if (itemIndex === -1) {
             return res.status(404).json({
@@ -399,22 +392,17 @@ const cancelOrderItem = async (req, res) => {
 
         const item = order.orderedItems[itemIndex];
         const user = order.user;
-
+        let cancelledItemValue=0;
         if ((order.paymentDetails.method === 'ONLINE' || order.paymentDetails.method === 'WALLET') && order.paymentDetails.paymentStatus === "Completed") {
-            if (refundMethod === 'WALLET') {
-                user.wallet.balance += item.product.salePrice * item.quantity;
-                user.wallet.transaction.push({
-                    type: "credit",
-                    amount: item.product.salePrice * item.quantity,
-                    description: `Refund for cancelled item: ${item.product.productName}`
-                });
-                await user.save();
-            } else if (refundMethod === 'BANK') {
-                return res.status(500).json({
-                    success: false,
-                    message: "Bank transfer currently unavailable. Sorry for the inconvenience."
-                });
-            }
+
+             cancelledItemValue = item.price * item.quantity;
+            user.wallet.balance += cancelledItemValue;
+            user.wallet.transaction.push({
+                type: "credit",
+                amount: cancelledItemValue,
+                description: `Refund for cancelled item: ${item.product.productName}`
+            });
+            await user.save();
         }
 
         item.product.quantity += item.quantity;
@@ -423,14 +411,73 @@ const cancelOrderItem = async (req, res) => {
         }
         await item.product.save();
 
-        order.orderedItems.splice(itemIndex, 1);
-        order.status = order.orderedItems.length > 0 ? 'Partially Cancelled' : "Cancelled";
+        order.partialCancelledDetails.push({
+            product:item.product._id,
+            quantity:item.quantity,
+            originalQuantity:item.quantity,
+            price:item.price,
+            cancelledOn: new Date(),
+            refundAmount:cancelledItemValue,
+            refundMethod:refundMethod||null
+            
+        })
 
+        const remainingItems = order.orderedItems.filter(orderItem => orderItem.product._id.toString() !== productId);
+        const newTotalPrice = remainingItems.reduce((total, orderItem) => {
+            return total + (orderItem.price * orderItem.quantity);
+        }, 0);
+
+        // Coupon handling
+        let newDiscount = 0;
+        let newFinalAmount = newTotalPrice;
+        let couponRemoved = false;
+
+        if (order.coupenApplid && order.couponCode) {
+            const coupon = await Coupon.findOne({ code: order.couponCode });
+            
+            if (coupon) {
+                if (newTotalPrice >= coupon.minimumPrice) {
+                  
+                    if (coupon.discountType === 'percentage') {
+                        newDiscount = Math.min(
+                            (coupon.discountValue / 100) * newTotalPrice, 
+                            newTotalPrice
+                        );
+                    } else if (coupon.discountType === 'flat') {
+                        newDiscount = Math.min(coupon.discountValue, newTotalPrice);
+                    }
+                    
+                    newFinalAmount = newTotalPrice - newDiscount;
+                } else {
+                
+                    order.coupenApplid = false;
+                    order.couponCode = null;
+                    couponRemoved = true;
+
+                    await Coupon.findOneAndUpdate(
+                        { code: coupon.code },
+                        { 
+                            $pull: { userId: user._id },
+                            $inc: { timesUsed: -1 }
+                        }
+                    );
+                }
+            }
+        }
+
+        order.orderedItems = remainingItems;
+        order.totalPrice = newTotalPrice;
+        order.discount = newDiscount;
+        order.finalAmount = newFinalAmount;
+        order.status = remainingItems.length > 0 ? 'Partially Cancelled' : "Cancelled";
+        
         await order.save();
 
         return res.status(200).json({
             success: true,
-            message: "Item cancelled",
+            message: couponRemoved 
+                ? "Item cancelled. Coupon removed due to insufficient order total." 
+                : "Item cancelled",
             redirectUrl: '/user-profile'
         });
 

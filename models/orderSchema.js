@@ -2,13 +2,14 @@ const mongoose= require("mongoose");
 const {Schema}= mongoose;
 const {v4:uuidv4}=require("uuid");
 const Coupon = require("./couponSchema");
+const { ref } = require("pdfkit");
 
 
 const orderSchema= new Schema({
     orderId:{
-        type:String,
-        default:()=>uuidv4(),
-        unique:true,
+        type: String,
+        default: () => (Date.now().toString(36) + Math.random().toString(36).substr(2, 5)).toUpperCase(),
+        unique: true,
     },
     orderedItems:[{
         product:{
@@ -64,6 +65,42 @@ const orderSchema= new Schema({
         paidAmount: { type: Number },
         paidAt: { type: Date }
     },
+    partialCancelledDetails:[{
+        product:{
+            type:Schema.Types.ObjectId,
+            ref:"Product",
+            required:true,
+        },
+        quantity:{
+            type:Number,
+            required:true,
+        },
+        originalQuantity:{
+            type:Number,
+            required:true,
+        },
+        price:{
+            type:Number,
+            required:true,
+
+        },
+        cancelledOn:{
+            type: Date,
+            default: Date.now
+        },
+        refundMethod:{
+            type:String,
+            enum:['WALLET','BANK',null],
+            default:null,
+        },
+        refundAmount:{
+            type:Number,
+            default:0,
+        }
+
+
+    }],
+
     invoiceDate:{
         type:Date,
     },
