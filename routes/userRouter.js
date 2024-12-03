@@ -33,6 +33,7 @@ router.get('/auth/google/callback',passport.authenticate('google',{failureRedire
     return res.redirect('/')});
 router.get('/logOut',userController.logOut);
 router.get("/productDetails",headerData,userController.getProductDetials)
+router.post('/download-invoice',userAuth,userController.downoladInvoice);
 //wallet
 router.get('/wallet',headerData,userAuth,walletController.loadWalletPage)
 router.post('/create-recharge-order',userAuth,walletController.createRechargeOrder);
@@ -93,6 +94,7 @@ router.patch('/cancel-order-item',userAuth,orderController.cancelOrderItem);
 router.get('/check-order-payment', userAuth, orderController.checkOrderPayment);
 router.post('/create-razorpay-order',userAuth,orderController.createRazorpayOrder);
 router.post('/verify-payment',userAuth,orderController.verifyRazorpayPaymentAndPlaceOrder);
+
 
 
 

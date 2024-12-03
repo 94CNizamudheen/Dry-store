@@ -130,6 +130,8 @@
                         text: "A new OTP has been sent to your registered email.",
                         timer: 2000,
                         showConfirmButton: false,
+                        toast:true,
+                        position:"center",
                     });
                 },
                 error: function() {
@@ -137,6 +139,8 @@
                         icon: "error",
                         title: "Error",
                         text: "Failed to resend OTP. Please try again later.",
+                        toast:true,
+                        position:"center",
                     });
                 }
             });

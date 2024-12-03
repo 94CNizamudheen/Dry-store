@@ -643,17 +643,16 @@
                                 text: data.message,
                                 icon: data.isExisting ? 'info' : 'success',
                                 timer: 2000,
-                                showConfirmButton: false,
+                                showConfirmButton: true,
                                 toast: true,
                                 position: 'center',
-                            });
-
-                            if (!data.isExisting) {
-                                const cartCountElement = document.querySelector('.cart-count');
-                                if (cartCountElement) {
-                                    cartCountElement.textContent = data.cartCount;
-                                }
+                            }).then(()=>window.location.reload())
+                            const cartCountDisplay= document.querySelectorAll('#cartCountDisplay');
+                            if(cartCountDisplay){
+                                cartCountDisplay.textContent= data.cartCount;
                             }
+
+                          
 
                             // Update stock count
                             const stockElement = document.querySelector(`[data-stock-id="${productId}"]`);

@@ -55,12 +55,12 @@ const couponSchema = new Schema({
     default: 0,
     min: [0, "Times used cannot be negative"],
   },
-  userId: [
+  userUsage: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+        userId: { type:Schema.Types.ObjectId, ref: "User" },
+        usageCount: { type: Number, default: 0 },
     },
-  ],
+],
 });
 
 // Virtual field for checking if the coupon is expired

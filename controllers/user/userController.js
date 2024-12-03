@@ -1,4 +1,4 @@
-const { json, response } = require("express");
+const { json, response, application } = require("express");
 const User = require("../../models/userSchema");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
@@ -10,8 +10,39 @@ const { name } = require("ejs");
 const Cart = require("../../models/cartScema");
 const Wishlist = require("../../models/wishlistSchema");
 const ReferralOffer = require("../../models/referralOfferSchema");
-const Config= require('../../models/configSchema')
+const Config= require('../../models/configSchema');
+const Order = require("../../models/orderSchema");
+const { quadraticCurveTo } = require("pdfkit");
+const {generateOrderInvoice}= require('../../utilities/pdf');
 
+
+
+async function getOrderDetails(orderId){
+    try {
+        const order= await Order.findById(orderId).populate('orderedItems.product').populate('user')
+        return{
+            orderId:order._Id,
+            customerName:order.shippingAddress.name,
+            totalPrice:order.totalPrice,
+            discount:order.discount,
+            finalAmount:order.finalAmount,
+            paymentMethod:order.paymentDetails.method,
+            orderDate:order.createdOn,
+            status:order.status,
+            items:order.orderedItems.forEach(item=>({
+                productName:item.product.productName,
+                quantity: item.quantity,Brand,
+                price:item.price,
+
+            })),
+            shippingAddress:`${order.shippingAddress.addressType},${order.shippingAddress.city},${order.shippingAddress.state},${order.shippingAddress.pincode}`,
+            expectedDeliveryDate:order.expectedDeliveryDate,
+        }
+    } catch (error) {
+        console.error('error for fetching order deatails'.error);
+        throw new Error(error.message||"Error fetching order details")
+    }
+}
 
 const addReferralReward=async(userId)=>{
     const user= await User.findById(userId).populate('referredBy');
@@ -110,7 +141,6 @@ const loadShopping = async (req, res) => {
         const { sort = "newest", category, minPrice, maxPrice ,page=1,search} = req.query;
         const limit=9;
         const skip=(page-1)*limit;
-        console.log("serched:",search);
         let userData = null;
         if (userId) {
             userData = await User.findById(userId);
@@ -357,6 +387,9 @@ const securePassword = async (password) => {
 
 const verifyOtp = async (req, res) => {
     try {
+        if(req.session.user){
+            return res.redirect('/home');
+        }
         const { otp,referrerCode } = req.body;
         console.log(otp);
 
@@ -392,11 +425,11 @@ const verifyOtp = async (req, res) => {
             await saveUserData.save();
             await addReferralReward(saveUserData._id); 
             req.session.user = saveUserData;
-            res.json({ success: true, redirectUrl: "/" });
+            res.redirect(303, '/');;
         } else {
             res
                 .status(400)
-                .json({ success: false, message: "Invalid OTP please try again" });
+                .render("verifyOtp",{ success: false, message: "Invalid OTP please try again" });
         }
     } catch (error) {
         console.error("Error verifying Otp", error);
@@ -561,6 +594,27 @@ const removeFromWishlistPage=async(req,res)=>{
         res.status(500).json({message:"Internal Server Error"})
     }
 };
+const downoladInvoice= async(req,res)=>{
+    try {
+        const {orderId}=req.body;
+        const order= await Order.findOne({orderId}).populate('orderedItems.product').populate('user');
+
+        if(!order){
+            return res.status(404).json({message:"order not found"});
+        }
+        const pdfBuffer=await generateOrderInvoice(order);
+         // Sending the PDF as a download
+         res.setHeader('Content-Type',"application/json");
+         res.setHeader('Content-Disposition',`attachment;filename=invoice-${orderId}.pdf`);
+         res.send(pdfBuffer);
+
+    } catch (error) {
+        console.error("Error in genarate invoice",error);
+        res.status(500).json({suceess:false,message:"internal server Error genarate invoice"});
+
+    }
+};
+
 
 
 module.exports = {
@@ -578,4 +632,5 @@ module.exports = {
     getProductDetials,
     addToWishlist,
     removeFromWishlistPage,
+    downoladInvoice
 };

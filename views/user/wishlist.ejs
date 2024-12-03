@@ -172,7 +172,7 @@
                                 showConfirmButton: false,
                                 position: 'center',
                                 toast: true,
-                            });
+                            }).then(()=>window.location.reload())
 
                             if (!data.isExisting) {
                                 const cartCountElement = document.querySelector('.cart-count');

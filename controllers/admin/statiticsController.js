@@ -1,25 +1,25 @@
-const User= require('../../models/userSchema');
-const Order= require('../../models/orderSchema');
-const Coupon= require('../../models/couponSchema');
+const User = require('../../models/userSchema');
+const Order = require('../../models/orderSchema');
+const Coupon = require('../../models/couponSchema');
 
-const {generatePDF}= require('../../utilities/pdf');
-const {generateExcel}= require('../../utilities/excel');
+const { generatePDF } = require('../../utilities/pdf');
+const { generateExcel } = require('../../utilities/excel');
 
 
 
-const LoadReportsPage=async(req,res)=>{
+const LoadReportsPage = async (req, res) => {
     try {
-        const orders= await Order.find();
-        const coupon= await Coupon.find();
-        const overAllSale= orders.reduce((sum, order) => sum + order.totalPrice, 0);
-        const totalRevenue= orders.reduce((sum, order) => sum + order.finalAmount, 0);
-        const totalDiscounts= orders.reduce((sum, order) => sum + (order.discount || 0), 0);
-        const totalOrders= await Order.countDocuments();
+        const orders = await Order.find();
+        const coupon = await Coupon.find();
+        const overAllSale = orders.reduce((sum, order) => sum + order.totalPrice, 0);
+        const totalRevenue = orders.reduce((sum, order) => sum + order.finalAmount, 0);
+        const totalDiscounts = orders.reduce((sum, order) => sum + (order.discount || 0), 0);
+        const totalOrders = await Order.countDocuments();
 
 
-        res.render('reports',{totalRevenue,totalOrders,totalDiscounts,overAllSale})
+        res.render('reports', { totalRevenue, totalOrders, totalDiscounts, overAllSale })
     } catch (error) {
-        console.error('error for load reports page',error);
+        console.error('error for load reports page', error);
         res.redirect('/pageError')
     }
 }
@@ -72,25 +72,25 @@ const generateReports = async (req, res) => {
 
         const orders = await Order.find(filters)
             .sort({ createdOn: -1 })
-            .lean(); 
+            .lean();
 
 
         const stats = {
             totalSales: orders.reduce((sum, order) => sum + order.finalAmount, 0),
             totalOrders: orders.length,
             totalDiscounts: orders.reduce((sum, order) => sum + (order.discount || 0), 0),
-            averageOrderValue: orders.length 
-                ? (orders.reduce((sum, order) => sum + order.finalAmount, 0) / orders.length).toFixed(2) 
+            averageOrderValue: orders.length
+                ? (orders.reduce((sum, order) => sum + order.finalAmount, 0) / orders.length).toFixed(2)
                 : 0,
-            discountPercentage: orders.length 
-                ? ((orders.reduce((sum, order) => sum + (order.discount || 0), 0) / 
-                    orders.reduce((sum, order) => sum + order.finalAmount, 0)) * 100).toFixed(2) 
+            discountPercentage: orders.length
+                ? ((orders.reduce((sum, order) => sum + (order.discount || 0), 0) /
+                    orders.reduce((sum, order) => sum + order.finalAmount, 0)) * 100).toFixed(2)
                 : 0
         };
 
         res.json({
-            success: true, 
-            stats, 
+            success: true,
+            stats,
             orders: orders.map(order => ({
                 ...order,
                 createdOn: order.createdOn.toISOString()
@@ -100,7 +100,7 @@ const generateReports = async (req, res) => {
     } catch (error) {
         console.error('Error generating Reports', error);
         res.status(500).json({
-            success: false, 
+            success: false,
             error: "Failed to generate reports",
             details: error.message
         });
@@ -110,7 +110,7 @@ const generateReports = async (req, res) => {
 const downloadReports = async (req, res) => {
     try {
         const { type } = req.params;
-        
+
         const orders = await Order.find().sort({ createdOn: -1 });
 
         if (type === 'pdf') {
@@ -120,26 +120,29 @@ const downloadReports = async (req, res) => {
             res.send(pdfBuffer);
         } else if (type === 'excel') {
             const excelBuffer = await generateExcel(orders);
+
             res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             res.setHeader('Content-Disposition', 'attachment; filename="Sales_Report.xlsx"');
+
+            res.status(200);
             res.send(excelBuffer);
         } else {
-            res.status(400).json({ 
-                success: false, 
-                error: "Invalid file type" 
+            res.status(400).json({
+                success: false,
+                error: "Invalid file type"
             });
         }
     } catch (error) {
         console.error('Error downloading report', error);
-        res.status(500).json({ 
-            success: false, 
+        res.status(500).json({
+            success: false,
             error: "Failed to download report",
-            details: error.message 
+            details: error.message
         });
     }
 };
 
-module.exports={
+module.exports = {
     LoadReportsPage,
     generateReports,
     downloadReports

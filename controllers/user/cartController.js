@@ -259,6 +259,7 @@ const removeItem = async (req, res) => {
         res.status(500).json({ error: "Server error" });
     }
 };
+
 const applyCoupon = async (req, res) => {
     try {
         console.log("apply copon invoked");

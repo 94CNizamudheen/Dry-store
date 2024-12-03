@@ -428,8 +428,7 @@
                                                                                 delivered. Thank you for shopping!</p>
                                                                             <small class="text-muted">
                                                                                 <%= new
-                                                                                    Date(order.invoiceDate).toLocaleString()
-                                                                                    %>
+                                                                                    Date(order.invoiceDate).toLocaleString()%>
                                                                             </small>
                                                                         </div>
                                                                     </div>
@@ -452,9 +451,10 @@
 
                                                             <!-- Order Items -->
                                                             <div class="order-items">
-                                                                <% order.orderedItems.forEach(item => { %>
+                                                                <% order.orderedItems.forEach(item=> { %>
                                                                     <div class="item-row">
-                                                                        <img src="/uploads/images/<%= item.product.productImage[0] %>" alt="Product" class="item-image">
+                                                                        <img src="/uploads/images/<%= item.product.productImage[0] %>"
+                                                                            alt="Product" class="item-image">
                                                                         <div class="flex-grow-1">
                                                                             <h6 class="mb-1">
                                                                                 <%= item.product.productName %>
@@ -464,48 +464,78 @@
                                                                             </p>
                                                                         </div>
                                                                         <div class="text-end">
-                                                                            <h6>₹<%= (item.price * item.quantity).toFixed(2) %></h6>
-                                                                            <% if (order.orderedItems.length > 1 && !order.coupon) { %>
-                                                                                <a class="text-danger" href="#" onclick="cancelOrderItem('<%= order.orderId %>', '<%= item.product._id %>')">Cancel Item</a>
-                                                                            <% } %>
+                                                                            <h6>₹<%= (item.price *
+                                                                                    item.quantity).toFixed(2) %>
+                                                                            </h6>
+                                                                            <% if (order.orderedItems.length> 1
+                                                                                &&!order.coupon) { %>
+                                                                                <a class="text-danger" href="#"
+                                                                                    onclick="cancelOrderItem('<%= order.orderId %>', '<%= item.product._id %>')">Cancel
+                                                                                    Item</a>
+                                                                                <% } %>
                                                                         </div>
                                                                     </div>
-                                                                <% }) %>
-                                                            
-                                                                <% if (order.partialCancelledDetails.length > 0) { %>
-                                                                    <h5 class="mt-4 text-warning">Partially Cancelled Items</h5>
-                                                                    <% order.partialCancelledDetails.forEach(cancelled => { %>
-                                                                        <div class="item-row">
-                                                                            <img src="/uploads/images/<%= cancelled.product.productImage[0] %>" alt="Product" class="item-image">
-                                                                            <div class="flex-grow-1">
-                                                                                <h6 class="mb-1">
-                                                                                    <%= cancelled.product.productName %>
-                                                                                </h6>
-                                                                                <p class="mb-0 text-muted">
-                                                                                    Original Quantity: <%= cancelled.originalQuantity %><br>
-                                                                                    Cancelled Quantity: <%= cancelled.quantity %>
-                                                                                </p>
-                                                                            </div>
-                                                                            <div class="text-end">
-                                                                                <h6>Refund: ₹<%= cancelled.refundAmount.toFixed(2) %></h6>
-                                                                                <p class="text-muted">Cancelled on: <%= new Date(cancelled.cancelledOn).toLocaleDateString() %></p>
-                                                                            </div>
-                                                                        </div>
                                                                     <% }) %>
-                                                                <% } %>
-                                                            
-                                                                <br>
-                                                                <div class="text-end">
-                                                                    <h6>Total: ₹<%= order.totalPrice.toFixed(2) %></h6>
-                                                                </div><br>
-                                                                <div class="text-end">
-                                                                    <h6>Discount: ₹<%= order.discount.toFixed(2) %></h6>
-                                                                </div><br>
-                                                                <div class="text-end">
-                                                                    <h6>Discounted Price: ₹<%= order.finalAmount.toFixed(2) %></h6>
-                                                                </div>
+
+                                                                        <% if (order.partialCancelledDetails.length> 0)
+                                                                            { %>
+                                                                            <h5 class="mt-4 text-warning">Partially
+                                                                                Cancelled Items</h5>
+                                                                            <%
+                                                                                order.partialCancelledDetails.forEach(cancelled=>
+                                                                                {%>
+                                                                                <div class="item-row">
+                                                                                    <img src="/uploads/images/<%= cancelled.product.productImage[0] %>"
+                                                                                        alt="Product"
+                                                                                        class="item-image">
+                                                                                    <div class="flex-grow-1">
+                                                                                        <h6 class="mb-1">
+                                                                                            <%= cancelled.product.productName
+                                                                                                %>
+                                                                                        </h6>
+                                                                                        <p class="mb-0 text-muted">
+                                                                                            Original Quantity: <%=
+                                                                                                cancelled.originalQuantity
+                                                                                                %><br>
+                                                                                                Cancelled Quantity:
+                                                                                                <%=cancelled.quantity%>
+                                                                                        </p>
+                                                                                    </div>
+                                                                                    <div class="text-end">
+                                                                                        <h6>Refund: ₹
+                                                                                            <%=cancelled.refundAmount.toFixed(2)%>
+                                                                                        </h6>
+                                                                                        <p class="text-muted">Cancelled
+                                                                                            on: <%= new
+                                                                                                Date(cancelled.cancelledOn).toLocaleDateString()
+                                                                                                %>
+                                                                                        </p>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <% }) %>
+                                                                                    <% } %>
+
+                                                                                        <br>
+                                                                                        <div class="text-end">
+                                                                                            <h6>Total: ₹<%=
+                                                                                                    order.totalPrice.toFixed(2)
+                                                                                                    %>
+                                                                                            </h6>
+                                                                                        </div><br>
+                                                                                        <div class="text-end">
+                                                                                            <h6>Discount: ₹
+                                                                                                <%=order.discount.toFixed(2)
+                                                                                                    %>
+                                                                                            </h6>
+                                                                                        </div><br>
+                                                                                        <div class="text-end">
+                                                                                            <h6>Discounted Price: ₹
+                                                                                                <%=order.finalAmount.toFixed(2)
+                                                                                                    %>
+                                                                                            </h6>
+                                                                                        </div>
                                                             </div>
-                                                            
+
 
                                                             <!-- Address Information -->
                                                             <div class="row mt-4">
@@ -580,12 +610,20 @@
                                                                     onclick="cancelOrder('<%= order.orderId %>')">Cancel
                                                                     Order</a>
                                                                 <% } %>
+                                                                    <!-- Download Invoice Button -->
+                                                                    <button class="btn btn-primary btn-sm"
+                                                                        onclick="downloadInvoice('<%= order.orderId %>')">
+                                                                        <i class="bi bi-file-earmark-arrow-down"></i>
+                                                                        Download Invoice
+                                                                    </button>
+
+
                                                         </div>
                                                         <% }); %>
                                                 </div>
                                                 <% } else { %>
-                                                    <h3>NO orders</h3>
-                                                    <% } %>
+                                                    < h3>NO orders</h3>
+                                                        <% } %>
                                         </div>
                                     </div>
 
@@ -812,8 +850,8 @@
                             confirmButtonText: 'Refund to Wallet',
                             denyButtonText: 'Refund to Bank',
                             cancelButtonText: 'Cancel',
-                            tost:true,
-                            position:"center"
+                            tost: true,
+                            position: "center"
 
                         }).then((result) => {
                             if (result.isConfirmed || result.isDenied) {
@@ -831,8 +869,8 @@
                             cancelButtonColor: '#d33',
                             confirmButtonText: 'Yes, cancel it!',
                             cancelButtonText: 'No, keep it',
-                            tost:true,
-                            position:"center"
+                            tost: true,
+                            position: "center"
 
                         }).then((result) => {
                             if (result.isConfirmed) {
@@ -941,8 +979,8 @@
                             confirmButtonText: 'Refund to Wallet',
                             denyButtonText: 'Refund to Bank',
                             cancelButtonText: 'Cancel',
-                            tost:true,
-                            position:"center"
+                            tost: true,
+                            position: "center"
 
                         }).then((result) => {
                             if (result.isConfirmed || result.isDenied) {
@@ -960,8 +998,8 @@
                             cancelButtonColor: '#d33',
                             confirmButtonText: 'Yes, cancel it!',
                             cancelButtonText: 'No, keep it',
-                            tost:true,
-                            position:"center"
+                            tost: true,
+                            position: "center"
 
                         }).then((result) => {
                             if (result.isConfirmed) {
@@ -1023,6 +1061,41 @@
             });
         }
     </script>
+    <script>
+        function downloadInvoice(orderId){
+            fetch('/download-invoice',{
+                method:"POST",
+                headers:{"Content-Type":"application/json"},
+                body:JSON.stringify({orderId})
+            }).then(response=>{
+                if(!response.ok){
+                    throw new Error(`Response from network is not ok Status: ${response.status}`);
+                }
+                return response.blob();
+            }).then(blob=>{
+                const url= window.URL.createObjectURL(blob);
+                const a= document.createElement('a');
+                a.href=url;
+                a.download=`invoice-${orderId}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+
+
+            }).catch(error=>{
+                console.error('An error occured for download invoice');
+                Swal.fire({
+                    icon:"error",
+                    text:"Failed to download invoice. Please try again later.",
+                    toast:true,
+                    position:"center",
+                    
+                })
+            })
+
+        }
+        </script>
 
 
 

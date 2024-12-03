@@ -211,7 +211,9 @@
             </div>
         </div>
     </div> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.1/dist/sweetalert2.min.css">
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.1/dist/sweetalert2.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // DOM Element Selections
@@ -264,14 +266,13 @@
 
                 // Custom Date Range Validation
                 if (reportTypeSelect.value === 'custom') {
-                    // Start Date Validation
+
                     if (!startDateInput.value) {
                         startDateInput.classList.add('is-invalid');
                         showError('Start date is required for custom reports');
                         return false;
                     }
 
-                    // End Date Validation
                     if (!endDateInput.value) {
                         endDateInput.classList.add('is-invalid');
                         showError('End date is required for custom reports');
@@ -282,7 +283,6 @@
                     const endDate = new Date(endDateInput.value);
                     const today = new Date();
 
-                    // Validate Date Range
                     if (startDate > endDate) {
                         [startDateInput, endDateInput].forEach(el => {
                             el.classList.add('is-invalid');
@@ -291,13 +291,11 @@
                         return false;
                     }
 
-                    // Prevent Future Dates
                     if (startDate > today || endDate > today) {
                         showError('Dates cannot be in the future');
                         return false;
                     }
 
-                    // Optional: Limit Custom Date Range
                     const maxRangeDate = new Date(startDate);
                     maxRangeDate.setFullYear(startDate.getFullYear() + 1);
                     if (endDate > maxRangeDate) {
@@ -309,7 +307,6 @@
                 return true;
             };
 
-            // Error Display Utility
             const showError = (message) => {
                 Swal.fire({
                     icon: 'error',
@@ -381,6 +378,7 @@
                     <tr>
                         <th>Order ID</th>
                         <th>Final Amount</th>
+                        <th>Coupon Code</th>
                         <th>Discount</th>
                         <th>Created On</th>
                     </tr>
@@ -390,6 +388,7 @@
                         <tr>
                             <td>${order.orderId}</td>
                             <td>₹${order.finalAmount.toFixed(2)}</td>
+                            <td>${order.couponCode||"No coupon"}</td>
                             <td>₹${(order.discount || 0).toFixed(2)}</td>
                             <td>${new Date(order.createdOn).toLocaleString()}</td>
                         </tr>

@@ -118,10 +118,11 @@ const handlePaymentMethod = async (req, res) => {
         const userId = req.session.user;
         const { paymentOption } = req.body;
         const user= await User.findById(userId);
-
         const code= req.session.couponCode
         const coupon= await Coupon.findOne({code});
         const cart = await Cart.findOne({ userId }).populate('items.productId');
+
+      
         
 
         const total = cart.items.reduce((acc, item) => acc + item.totalPrice, 0);
@@ -132,6 +133,10 @@ const handlePaymentMethod = async (req, res) => {
         }else{
             finalAmount =total+shipping;
         } 
+        if(paymentOption==="COD" && finalAmount<1000){
+            return res.status(400).json({error:"Minimum amount for Cash On Delivery is ₹1000/- "})
+        };
+
         console.log("paymentOption selected:",paymentOption);
         const validPaymentOption = ['COD', 'ONLINE',"WALLET"];
         if (paymentOption === 'WALLET') {
@@ -185,6 +190,7 @@ const placeOrderForCODandWALLET = async (req, res) => {
         }else{
             finalAmount =total+shipping;
         };
+       
         if (paymentMethod === 'WALLET') {
             const user = await User.findById(userId);
             if (user.wallet.balance < finalAmount) {
@@ -195,6 +201,7 @@ const placeOrderForCODandWALLET = async (req, res) => {
             user.wallet.balance -= finalAmount;
             await user.save();
         }
+        
         const orderedItems = cart.items.map(item => ({
             product: item.productId._id,
             quantity: item.quantity,
@@ -231,12 +238,20 @@ const placeOrderForCODandWALLET = async (req, res) => {
         
         await Cart.deleteOne({ userId });
         
-        if(coupon){
-            await Coupon.findByIdAndUpdate(coupon._id,{
-                $inc:{timesUsed:1},
-                $push:{userId:userId}
-            });
-        };
+        if (coupon) {
+            const userCouponUsage = coupon.userUsage.find(u => u.userId.toString() === userId.toString());
+            if (userCouponUsage) {
+                if (userCouponUsage.usageCount >= coupon.usageLimit) {
+                    return res.status(400).json({ error: "Coupon usage limit exceeded for this user." });
+                }
+                userCouponUsage.usageCount += 1;
+            } else {
+                coupon.userUsage.push({ userId, usageCount: 1 });
+            }
+        
+            await coupon.save();
+        }
+        
         for (const item of cart.items) {
             const product= await Product.findById(item.productId._id);
             const newQuantity= product.quantity - item.quantity;
@@ -434,10 +449,9 @@ const cancelOrderItem = async (req, res) => {
 
         if (order.coupenApplid && order.couponCode) {
             const coupon = await Coupon.findOne({ code: order.couponCode });
-            
+        
             if (coupon) {
                 if (newTotalPrice >= coupon.minimumPrice) {
-                  
                     if (coupon.discountType === 'percentage') {
                         newDiscount = Math.min(
                             (coupon.discountValue / 100) * newTotalPrice, 
@@ -446,24 +460,24 @@ const cancelOrderItem = async (req, res) => {
                     } else if (coupon.discountType === 'flat') {
                         newDiscount = Math.min(coupon.discountValue, newTotalPrice);
                     }
-                    
                     newFinalAmount = newTotalPrice - newDiscount;
                 } else {
-                
+                    
                     order.coupenApplid = false;
                     order.couponCode = null;
                     couponRemoved = true;
-
+        
                     await Coupon.findOneAndUpdate(
                         { code: coupon.code },
                         { 
-                            $pull: { userId: user._id },
-                            $inc: { timesUsed: -1 }
+                            $pull: { userId: user._id },  
+                            $inc: { timesUsed: -1 }     
                         }
                     );
                 }
             }
         }
+        
 
         order.orderedItems = remainingItems;
         order.totalPrice = newTotalPrice;
@@ -520,6 +534,12 @@ const checkOrderPayment=async(req,res)=>{
 //================================================================================================
 const createRazorpayOrder = async (req, res) => {
     try {
+        
+        const selectedAddressId = req.session.selectedAddress;
+        if (!selectedAddressId) {
+            return res.status(400).json({ error: "Please select a delivery address" });
+        }
+     
         if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
             return res.status(500).json({
                 success: false,
@@ -618,7 +638,7 @@ const verifyRazorpayPaymentAndPlaceOrder= async(req,res)=>{
                 }else{
                     finalAmount = total + shipping;
                 }
-
+                
                 user.rewardPoints += Math.floor(finalAmount * 0.02);
                 await user.save();
 
@@ -657,12 +677,19 @@ const verifyRazorpayPaymentAndPlaceOrder= async(req,res)=>{
                 });
 
                 await newOrder.save();
-                if(coupon){
-                    await Coupon.findByIdAndUpdate(coupon._id,{
-                        $inc:{timesUsed:1},
-                        $push:{userId:userId}
-                    });
-                };
+                if (coupon) {
+                    const userCouponUsage = coupon.userUsage.find(u => u.userId.toString() === userId.toString());
+                    if (userCouponUsage) {
+                        if (userCouponUsage.usageCount >= coupon.usageLimit) {
+                            return res.status(400).json({ error: "Coupon usage limit exceeded for this user." });
+                        }
+                        userCouponUsage.usageCount += 1;
+                    } else {
+                        coupon.userUsage.push({ userId, usageCount: 1 });
+                    }
+                
+                    await coupon.save();
+                }
                 await Cart.deleteOne({ userId });
 
                 for (const item of cart.items) {

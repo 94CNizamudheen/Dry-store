@@ -482,8 +482,6 @@
             </div>
         </section>
     </main>
-
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
 
@@ -532,8 +530,6 @@
                             showConfirmButton: true,
                         });
                     };
-
-
                 } catch (error) {
                     console.error("Error adding to Wishlist:", error);
                     Swal.fire({
@@ -617,8 +613,7 @@
                                 showConfirmButton: data.isExisting,
                                 position: 'center',
                                 toast: true,
-                            });
-
+                            }).then(()=>window.location.reload())
                             // Update cart count if new item
                             if (!data.isExisting) {
                                 const cartCountElement = document.querySelector('.cart-count');

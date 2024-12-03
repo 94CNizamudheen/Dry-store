@@ -184,79 +184,123 @@
                                             <div class="card mx-auto card-address">
                                                 <div class="card-body">
                                                     <h4 class="card-title mb-4">Add Address</h4>
-                                                    <form id="addressForm" action="/check-out-add-address"
-                                                        method="POST">
-                                                        <!-- First Row -->
-                                                        <div class="row mb-3">
+                                                    <form id="addressForm" action="/check-out-add-address" method="POST"
+                                                        class="container">
+                                                        <div class="row">
+                                                            <!-- First Column -->
                                                             <div class="col-md-6">
-                                                                <label for="addressType" class="form-label">Address
-                                                                    Type</label>
-                                                                <input type="text" id="addressType" name="addressType"
-                                                                    class="form-control"
-                                                                    placeholder="e.g., Home, Office" required />
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <label for="name" class="form-label">Full Name</label>
-                                                                <input type="text" id="name" name="name"
-                                                                    class="form-control" placeholder="Full Name"
-                                                                    required />
-                                                            </div>
-                                                        </div>
+                                                                <div class="row mb-3">
+                                                                    <div class="col-12">
+                                                                        <label for="addressType"
+                                                                            class="form-label">Address Type</label>
+                                                                        <input type="text" id="addressType"
+                                                                            name="addressType" class="form-control"
+                                                                            placeholder="e.g., Home, Office" required />
+                                                                    </div>
+                                                                </div>
 
-                                                        <!-- Second Row -->
-                                                        <div class="row mb-3">
-                                                            <div class="col-md-6">
-                                                                <label for="city" class="form-label">City</label>
-                                                                <input type="text" id="city" name="city"
-                                                                    class="form-control" placeholder="City" required />
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <label for="landmark"
-                                                                    class="form-label">Landmark</label>
-                                                                <input type="text" id="landmark" name="landmark"
-                                                                    class="form-control" placeholder="Landmark" />
-                                                            </div>
-                                                        </div>
+                                                                <div class="row mb-3">
+                                                                    <div class="col-12">
+                                                                        <label for="name" class="form-label">Full
+                                                                            Name</label>
+                                                                        <input type="text" id="name" name="name"
+                                                                            class="form-control" placeholder="Full Name"
+                                                                            required />
+                                                                    </div>
+                                                                </div>
 
-                                                        <!-- Third Row -->
-                                                        <div class="row mb-3">
-                                                            <div class="col-md-6">
-                                                                <label for="state" class="form-label">State</label>
-                                                                <input type="text" id="state" name="state"
-                                                                    class="form-control" placeholder="State" required />
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <label for="pincode" class="form-label">Pincode</label>
-                                                                <input type="text" id="pincode" name="pincode"
-                                                                    class="form-control" placeholder="Pincode"
-                                                                    required />
-                                                            </div>
-                                                        </div>
+                                                                <div class="row mb-3">
+                                                                    <div class="col-12">
+                                                                        <label for="pincode"
+                                                                            class="form-label">Pincode</label>
+                                                                        <input type="text" id="pincode" name="pincode"
+                                                                            class="form-control"
+                                                                            placeholder="6-digit Pincode" required />
+                                                                        <div id="pincode-validation-message"
+                                                                            class="text-muted small mt-1"></div>
+                                                                    </div>
+                                                                </div>
 
-                                                        <!-- Fourth Row -->
-                                                        <div class="row mb-3">
-                                                            <div class="col-md-6">
-                                                                <label for="phone" class="form-label">Phone</label>
-                                                                <input type="text" id="phone" name="phone"
-                                                                    class="form-control" placeholder="Phone Number"
-                                                                    required />
+                                                                <!-- Towns Selection - Initially Hidden -->
+                                                                <div id="townsContainer" class="row mb-3"
+                                                                    style="display: none;">
+                                                                    <div class="col-12">
+                                                                        <label for="towns" class="form-label">Select
+                                                                            City</label>
+                                                                        <select id="towns" name="towns[]"
+                                                                            class="form-select" multiple required>
+                                                                            <!-- Options will be dynamically populated -->
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
                                                             </div>
+
+                                                            <!-- Second Column -->
                                                             <div class="col-md-6">
-                                                                <label for="altPhone" class="form-label">Alternative
-                                                                    Phone</label>
-                                                                <input type="text" id="altPhone" name="altPhone"
-                                                                    class="form-control"
-                                                                    placeholder="Alternative Phone" />
+                                                                <div class="row mb-3">
+                                                                    <div class="col-12">
+                                                                        <label for="landmark"
+                                                                            class="form-label">Landmark</label>
+                                                                        <input type="text" id="landmark" name="landmark"
+                                                                            class="form-control"
+                                                                            placeholder="Landmark" />
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="row mb-3">
+                                                                    <div class="col-12">
+                                                                        <label for="city"
+                                                                            class="form-label">City</label>
+                                                                        <input type="text" id="city" name="city"
+                                                                            class="form-control" placeholder="City"
+                                                                            required readonly />
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="row mb-3">
+                                                                    <div class="col-12">
+                                                                        <label for="state"
+                                                                            class="form-label">State</label>
+                                                                        <input type="text" id="state" name="state"
+                                                                            class="form-control" placeholder="State"
+                                                                            required readonly />
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="row mb-3">
+                                                                    <div class="col-12">
+                                                                        <label for="phone"
+                                                                            class="form-label">Phone</label>
+                                                                        <input type="tel" id="phone" name="phone"
+                                                                            class="form-control"
+                                                                            placeholder="Phone Number" required
+                                                                            pattern="[0-9]{10}" />
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="row mb-3">
+                                                                    <div class="col-12">
+                                                                        <label for="altPhone"
+                                                                            class="form-label">Alternative Phone</label>
+                                                                        <input type="tel" id="altPhone" name="altPhone"
+                                                                            class="form-control"
+                                                                            placeholder="Alternative Phone"
+                                                                            pattern="[0-9]{10}" />
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
 
                                                         <!-- Submit Button -->
-                                                        <div class="mb-4">
-                                                            <button type="submit" class="btn btn-primary w-100">
-                                                                Add Address
-                                                            </button>
+                                                        <div class="row">
+                                                            <div class="col-12">
+                                                                <button type="submit" class="btn btn-primary w-100">
+                                                                    Add Address
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     </form>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -512,7 +556,113 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const pincodeInput = document.getElementById('pincode');
+            const townsContainer = document.getElementById('townsContainer');
+            const townsDropdown = document.getElementById('towns');
+            const cityInput = document.getElementById('city');
+            const stateInput = document.getElementById('state');
+            const validationMessage = document.getElementById('pincode-validation-message');
 
+            // Cache to store pincode results
+            const pincodeCache = new Map();
+
+            // Debounce function
+            function debounce(func, delay) {
+                let timeoutId;
+                return function () {
+                    const context = this;
+                    const args = arguments;
+                    clearTimeout(timeoutId);
+                    timeoutId = setTimeout(() => {
+                        func.apply(context, args);
+                    }, delay);
+                };
+            }
+
+            // Fetch pincode details
+            const fetchPincodeDetails = debounce(async function () {
+                const pincode = pincodeInput.value.trim();
+
+                // Reset UI
+                townsContainer.style.display = 'none';
+                validationMessage.textContent = '';
+                pincodeInput.classList.remove('is-valid', 'is-invalid');
+                townsDropdown.innerHTML = '';
+                cityInput.value = '';
+                stateInput.value = '';
+
+                // Validate pincode
+                if (!/^\d{6}$/.test(pincode)) {
+                    validationMessage.textContent = 'Please enter a valid 6-digit pincode';
+                    pincodeInput.classList.add('is-invalid');
+                    return;
+                }
+
+                // Check cache first
+                if (pincodeCache.has(pincode)) {
+                    updateTownsAndLocation(pincodeCache.get(pincode));
+                    return;
+                }
+
+                try {
+                    // Show loading state
+                    validationMessage.textContent = 'Fetching location details...';
+                    validationMessage.classList.add('text-primary');
+
+                    const response = await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
+                    const data = await response.json();
+
+                    if (data[0].Status === "Success" && data[0].PostOffice.length > 0) {
+                        // Cache the result
+                        pincodeCache.set(pincode, data[0]);
+                        updateTownsAndLocation(data[0]);
+
+                        // Success validation
+                        validationMessage.textContent = 'Pincode verified successfully';
+                        validationMessage.classList.remove('text-primary', 'text-danger');
+                        validationMessage.classList.add('text-success');
+                        pincodeInput.classList.add('is-valid');
+                    } else {
+                        throw new Error('No data found');
+                    }
+                } catch (error) {
+                    console.error('Error fetching town details:', error);
+                    validationMessage.textContent = 'Invalid Pincode. Please check and try again.';
+                    validationMessage.classList.remove('text-primary', 'text-success');
+                    validationMessage.classList.add('text-danger');
+                    pincodeInput.classList.add('is-invalid');
+                }
+            }, 500);
+
+            // Update towns dropdown and location details
+            function updateTownsAndLocation(pincodeData) {
+                // Populate towns dropdown
+                const uniqueTowns = [...new Set(pincodeData.PostOffice.map(po => po.Name))];
+                uniqueTowns.forEach(town => {
+                    const option = document.createElement('option');
+                    option.value = town;
+                    option.textContent = town;
+                    townsDropdown.appendChild(option);
+                });
+
+                // Show towns container
+                townsContainer.style.display = 'block';
+
+                // Set state (assuming all post offices in the same pincode are in the same state)
+                stateInput.value = pincodeData.PostOffice[0].State;
+            }
+
+            // Event listeners
+            pincodeInput.addEventListener('blur', fetchPincodeDetails);
+
+            townsDropdown.addEventListener('change', function () {
+                const selectedTowns = Array.from(this.selectedOptions).map(option => option.value);
+                cityInput.value = selectedTowns.join(', ');
+            });
+        });
+    </script>
 
     <script>
 
@@ -891,7 +1041,7 @@
                     console.error('Razorpay initialization Error', error);
                     Swal.fire({
                         title: "Error",
-                        text: "Failed to initialize payment. Please try again",
+                        text: error.message || "Failed to initialize payment. Please try again",
                         position: 'center',
                         toast: true,
                         icon: "error"
@@ -986,4 +1136,76 @@
         });
 
     </script>
+    <!-- <script>
+        document.getElementById('pincode').addEventListener('blur', function () {
+            const pincode = this.value.trim();
+
+            if (pincode.length === 6) {
+                fetch(`https://api.postalpincode.in/pincode/${pincode}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data[0].Status === "Success") {
+                            const postOffice = data[0].PostOffice[0];
+                            document.getElementById('city').value = postOffice.District;
+                            document.getElementById('state').value = postOffice.State;
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                text: "Invalid pincode",
+                                toast: true,
+                                position: "center"
+                            })
+                        }
+                    })
+                    .catch(error => console.error('Error fetching location details:', error));
+            } else {
+                Swal.fire({
+                icon:'error',
+                text:"Please enter a valid 6-digit pincode.",
+                toast:true,
+                position:"center"
+            })
+            }
+        });
+    </script> -->
+
+    <button type="submit" class="btn btn-primary w-100">Add Address</button>
+    </form>
+
+    <script>
+        document.getElementById('pincode').addEventListener('blur', function () {
+            const pincode = this.value.trim();
+            const townsDropdown = document.getElementById('towns');
+            const cityInput = document.getElementById('city');
+
+            if (pincode.length === 6) {
+                fetch(`https://api.postalpincode.in/pincode/${pincode}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        townsDropdown.innerHTML = ''; // Clear previous options
+                        cityInput.value = ''; // Clear city input
+                        if (data[0].Status === "Success") {
+                            data[0].PostOffice.forEach(postOffice => {
+                                const option = document.createElement('option');
+                                option.value = postOffice.Name;
+                                option.textContent = postOffice.Name;
+                                townsDropdown.appendChild(option);
+                            });
+                        } else {
+                            alert('Invalid Pincode or no towns available');
+                        }
+                    })
+                    .catch(error => console.error('Error fetching town details:', error));
+            } else {
+                alert('Please enter a valid 6-digit pincode.');
+            }
+        });
+
+        // When a town is selected, set it as the city
+        document.getElementById('towns').addEventListener('change', function () {
+            const selectedTowns = Array.from(this.selectedOptions).map(option => option.value);
+            document.getElementById('city').value = selectedTowns.join(', ');
+        });
+    </script>
+
     <%- include('../partials/user/footer.ejs') %>
