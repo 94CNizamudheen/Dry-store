@@ -140,6 +140,9 @@ const orderSchema= new Schema({
     notes: { 
         type: String
     }, 
+    shippingCharge:{
+        type:Number,
+    },
 
     user:{
         type:Schema.Types.ObjectId,

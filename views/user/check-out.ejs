@@ -442,7 +442,7 @@
 
                                                         <tr>
                                                             <th>Shipping</th>
-                                                            <td colspan="2"><em>Free Shipping</em></td>
+                                                            <td id="shippingCharge" colspan="2"><em>Free Shipping</em></td>
                                                         </tr>
                                                         <tr>
 
@@ -795,8 +795,10 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
+                                document.getElementById('shippingCharge').innerText=`₹ ${data.shippingCharge.toFixed(2)}`;
                                 document.querySelectorAll('.card').forEach(card => {
                                     card.classList.remove('border-success');
+
                                 });
                                 const selectedCard = document.querySelector(`#address-${addressId}`);
                                 selectedCard.classList.add('border-success');

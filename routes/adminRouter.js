@@ -11,6 +11,7 @@ const orderController= require('../controllers/admin/orderController');
 const coupenController=require('../controllers/admin/coupenController');
 const statiticsController=require('../controllers/admin/statiticsController');
 const referralController =require('../controllers/admin/referralCodeController');
+const shippingContoller= require('../controllers/admin/shippingController');
 const multer= require('multer');
 const storage= require('../helpers/multer');
 const uploads= multer({storage:storage});
@@ -87,5 +88,11 @@ router.get('/download/:type',adminAuth,statiticsController.downloadReports);
 //referral
 router.get('/referralCode',adminAuth,referralController.getReferralPage);
 router.patch('/rewards-config',adminAuth,referralController.updateRewardsConfig);
+
+//shipping
+router.get('/shipping',adminAuth,shippingContoller.loadShipping);
+router.post('/addState',adminAuth,shippingContoller.addState);
+router.patch('/updateShipping',adminAuth,shippingContoller.updateShipping);
+
 
 module.exports = router;        

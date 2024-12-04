@@ -1,0 +1,193 @@
+<%- include('../partials/admin/header.ejs') %>
+    <!-- <style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f8f9fa;
+    }
+    .sidebar {
+        height: 100vh;
+        background-color: #343a40;
+        color: white;
+        padding: 15px;
+    }
+    .sidebar a {
+        color: white;
+        text-decoration: none;
+        display: block;
+        margin: 15px 0;
+    }
+    .sidebar a:hover {
+        background-color: #495057;
+        padding-left: 10px;
+    }
+    .content {
+        margin-left: 250px;
+        padding: 20px;
+    }
+    .header {
+        background-color: #343a40;
+        color: white;
+        padding: 15px;
+    }
+    .card {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .table th, .table td {
+        vertical-align: middle;
+    }
+</style> -->
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar for Adding States -->
+            <div class="col-md-3 bg-light p-4">
+                <h5>Add New State</h5>
+                <form id="addStateForm">
+                    <div class="mb-3">
+                        <label for="stateName" class="form-label">State Name</label>
+                        <input type="text" class="form-control" id="stateName" placeholder="Enter state name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="shippingCharge" class="form-label">Shipping Charge (₹)</label>
+                        <input type="number" class="form-control" id="shippingCharge"
+                            placeholder="Enter shipping charge" required>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Add State</button>
+                </form>
+            </div>
+
+            <!-- Main Content for Editing Shipping Charges -->
+            <div class="col-md-9 ">
+                <div class="content p-5">
+                    <div class="header">
+                        <h4>Set Shipping Charges - State-wise</h4>
+                    </div>
+
+                    <div class="container mt-3">
+                        <div class="card p-4">
+                            <h5>List of States with Shipping Charges</h5>
+                            <table class="table table-bordered">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>State</th>
+                                        <th>Shipping Charge (₹)</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="stateTableBody">
+                                    <% shipping.forEach(element=> {%>
+                                        <tr>
+                                            <td><%= element.state %></td>
+                                            <td><input type="number" class="form-control charge-input" value="<%= element.charge %>" data-state="<%= element.state %>"></td>
+                                            <td><button class="btn btn-warning update-shipping-btn">Update</button></td>
+                                        </tr>
+                                        <% }) %>
+                                </tbody>
+                            </table>
+                          
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.getElementById('addStateForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const stateName = document.getElementById('stateName').value.trim();
+            const shippingCharge = document.getElementById('shippingCharge').value.trim();
+            if (stateName && shippingCharge) {
+                try {
+                    const response = await fetch('/admin/addState', {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ state: stateName, charge: shippingCharge })
+                    });
+
+                    const result = await response.json();
+                    if (response.ok) {
+                        Swal.fire({
+                            icon: "sucess",
+                            text: "State added successfully!",
+                            toast: true,
+                            position: "center",
+                        }).then(() => window.location.reload())
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            text: result.message || "Failed to add state.",
+                            toast: true,
+                            position: "center",
+                        });
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        icon: "error",
+                        text: 'An error Occured:' + error.message,
+                        toast: true,
+                        position: "center",
+                    });
+
+                }
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    text: "Please fill out the fields",
+                    toast: true,
+                    position: "center",
+                });
+
+            }
+        });
+
+
+    </script>
+    <script>
+        document.querySelectorAll('.update-shipping-btn').forEach(button => {
+            button.addEventListener('click', async function (e) {
+                e.preventDefault();
+
+                const input = this.closest('tr').querySelector('.charge-input');
+                const state = input.getAttribute('data-state');
+                const charge = input.value.trim();
+
+                try {
+                    const response = await fetch('/admin/updateShipping', {
+                        method: "PATCH",
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ state: state, charge: charge }),
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        Swal.fire({
+                            icon: "success",
+                            text: result.message || "State and charge updated successfully!",
+                            toast: true,
+                            position: "center",
+                        }).then(() => window.location.reload());
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            text: result.message || "Failed to update.",
+                            toast: true,
+                            position: "center",
+                        });
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        icon: "error",
+                        text: 'An error occurred: ' + error.message,
+                        toast: true,
+                        position: "center",
+                    });
+                }
+            });
+        });
+    </script>
+
+    <%- include('../partials/admin/footer.ejs') %>

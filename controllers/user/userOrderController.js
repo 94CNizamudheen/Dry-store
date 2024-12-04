@@ -10,6 +10,7 @@ const env = require('dotenv').config();
 const { error } = require('console');
 const Coupon= require('../../models/couponSchema');
 const { session } = require('passport');
+const ShippingData= require('../../models/shippingData')
 
 
 
@@ -103,59 +104,73 @@ const selectAddress = async (req, res) => {
         if (!addressId) {
             return res.status(400).json({ success: false, error: "Address ID is required." });
         }
+        const addressDoc = await Address.findOne(
+            { userId, 'address._id': addressId },
+            { 'address.$': 1 }
+        );
+        const state= addressDoc.address[0].state;
+        const shipping= await ShippingData.findOne({state:state});
+        if (!shipping) {
+            return res.status(404).json({ success: false, error: "Shipping data not found for the selected state." });
+        }
+        const shippingCharge=shipping.charge;
+        req.session.shippingCharge= shippingCharge;
 
-        res.status(200).json({ success: true, selectedAddress: addressId });
+        res.status(200).json({ success: true, selectedAddress: addressId, shippingCharge:shippingCharge });
     } catch (error) {
         console.error("Error selecting address:", error);
         res.status(500).json({ success: false, error: "Internal server error" });
     }
 };
 //===============================================================================================
-const handlePaymentMethod = async (req, res) => {
-    try {
-        console.log("Processing payment method");
+    const handlePaymentMethod = async (req, res) => {
+        try {
+            console.log("Processing payment method");
 
-        const userId = req.session.user;
-        const { paymentOption } = req.body;
-        const user= await User.findById(userId);
-        const code= req.session.couponCode
-        const coupon= await Coupon.findOne({code});
-        const cart = await Cart.findOne({ userId }).populate('items.productId');
+            const userId = req.session.user;
+            const { paymentOption } = req.body;
+            const user= await User.findById(userId);
+            const code= req.session.couponCode
+            const coupon= await Coupon.findOne({code});
+            const cart = await Cart.findOne({ userId }).populate('items.productId');
+            const selectedAddressId = req.session.selectedAddress;
+            if (!selectedAddressId) {
+                return res.status(400).json({ error: "Please select a delivery address" });
+            }   
 
-      
         
+            const total = cart.items.reduce((acc, item) => acc + item.totalPrice, 0);
 
-        const total = cart.items.reduce((acc, item) => acc + item.totalPrice, 0);
-        let finalAmount=0;
-        const shipping = 0;
-        if(coupon){
-             finalAmount = req.session.discountedTotal;
-        }else{
-            finalAmount =total+shipping;
-        } 
-        if(paymentOption==="COD" && finalAmount<1000){
-            return res.status(400).json({error:"Minimum amount for Cash On Delivery is ₹1000/- "})
-        };
+            let finalAmount=0;
+            const shipping = req.session.shippingCharge;
+            if(coupon){
+                finalAmount = req.session.discountedTotal;
+            }else{
+                finalAmount =total+shipping;
+            } 
+            if(paymentOption==="COD" && finalAmount<1000){
+                return res.status(400).json({error:"Minimum amount for Cash On Delivery is ₹1000/- "})
+            };
 
-        console.log("paymentOption selected:",paymentOption);
-        const validPaymentOption = ['COD', 'ONLINE',"WALLET"];
-        if (paymentOption === 'WALLET') {
-            if (user.wallet.balance < finalAmount) {
-                return res.status(400).json({ error: `Insufficient wallet balance. Balance ₹-${user.wallet.balance.toFixed(2)}`});
+            console.log("paymentOption selected:",paymentOption);
+            const validPaymentOption = ['COD', 'ONLINE',"WALLET"];
+            if (paymentOption === 'WALLET') {
+                if (user.wallet.balance < finalAmount) {
+                    return res.status(400).json({ error: `Insufficient wallet balance. Balance ₹-${user.wallet.balance.toFixed(2)}`});
+                }
             }
-        }
 
-        if (!validPaymentOption.includes(paymentOption)) {
-            return res.status(400).json({ error: "Invalid Payment Option" });
+            if (!validPaymentOption.includes(paymentOption)) {
+                return res.status(400).json({ error: "Invalid Payment Option" });
+            }
+            req.session.paymentMethod = paymentOption;
+            console.log("pay mthd in sesion:", req.session.paymentMethod );
+            res.json({ success: true });
+        } catch (error) {
+            console.error("Error for handling payment method:", error);
+            res.status(500).json({ error: "Internal server error" });
         }
-        req.session.paymentMethod = paymentOption;
-        console.log("pay mthd in sesion:", req.session.paymentMethod );
-        res.json({ success: true });
-    } catch (error) {
-        console.error("Error for handling payment method:", error);
-        res.status(500).json({ error: "Internal server error" });
-    }
-};
+    };
 //================================================================================================  
 
 const placeOrderForCODandWALLET = async (req, res) => {
@@ -165,7 +180,7 @@ const placeOrderForCODandWALLET = async (req, res) => {
         const userId = req.session.user;
         const selectedAddressId = req.session.selectedAddress;
         const paymentMethod = req.session.paymentMethod;
-
+        
         if (!selectedAddressId) {
             return res.status(400).json({ error: "Please select a delivery address" });
         }
@@ -184,7 +199,7 @@ const placeOrderForCODandWALLET = async (req, res) => {
         const total = cart.items.reduce((acc, item) => acc + item.totalPrice, 0);
         const discount= req.session.discount;
         let finalAmount=0;
-        const shipping = 0;
+        const shipping = req.session.shippingCharge;
         if(coupon){
              finalAmount = req.session.discountedTotal;
         }else{
@@ -232,6 +247,7 @@ const placeOrderForCODandWALLET = async (req, res) => {
             coupenApplid: !!coupon,
             discount:discount,
             couponCode:code,
+            shippingCharge:shipping,
         });
 
         await newOrder.save();
@@ -263,7 +279,8 @@ const placeOrderForCODandWALLET = async (req, res) => {
         delete req.session.paymentMethod;
         delete req.session.couponCode;
         delete req.session.discount;
-        delete req.session.discountedTotal
+        delete req.session.discountedTotal;
+        delete req.session.shippingCharge;
 
         res.status(200).json({ success: true, redirectURL: `/order-success-page` });
     } catch (error) {
@@ -631,7 +648,7 @@ const verifyRazorpayPaymentAndPlaceOrder= async(req,res)=>{
                 const coupon= await Coupon.findOne({code})
                 const discount= req.session.discount;
                 const total = cart.items.reduce((acc, item) => acc + item.totalPrice, 0);
-                const shipping = 0;
+                const shipping = req.session.shippingCharge;
                 let finalAmount=0;
                 if(coupon){
                     finalAmount=req.session.discountedTotal;
@@ -674,6 +691,7 @@ const verifyRazorpayPaymentAndPlaceOrder= async(req,res)=>{
                     coupenApplid: !!coupon,
                     discount:discount,
                     couponCode:code,
+                    shippingCharge:shipping
                 });
 
                 await newOrder.save();
@@ -708,6 +726,7 @@ const verifyRazorpayPaymentAndPlaceOrder= async(req,res)=>{
                 delete req.session.couponCode;
                 delete req.session.discount;
                 delete req.session.discountedTotal;
+                delete req.session.shippingCharge;
     
                 return res.status(200).json({ 
                     success: true, 
