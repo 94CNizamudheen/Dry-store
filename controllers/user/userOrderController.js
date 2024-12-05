@@ -14,6 +14,10 @@ const ShippingData= require('../../models/shippingData')
 
 
 
+const razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
 
 
 const loadCheckOutPage = async (req, res) => {
@@ -37,7 +41,7 @@ const loadCheckOutPage = async (req, res) => {
         }
         const subtotal = cart.items.reduce((acc, item) => acc + item.totalPrice, 0);
 
-        const shipping = 0;
+        const shipping = req.session.shippingCharge||0;
         const total = subtotal + shipping;
         const discount=req.session.discount ||0;
         const discountedTotal=req.session.discountedTotal||0;
@@ -61,7 +65,8 @@ const loadCheckOutPage = async (req, res) => {
             discountedTotal:discountedTotal,
             coupons,
             totalDiscount,
-            regularTotal
+            regularTotal,
+            shipping
         });
     } catch (error) {
         console.error('Error loading checkout page:', error);
@@ -550,93 +555,60 @@ const checkOrderPayment=async(req,res)=>{
 };
 //================================================================================================
 const createRazorpayOrder = async (req, res) => {
+    
     try {
-        
-        const selectedAddressId = req.session.selectedAddress;
-        if (!selectedAddressId) {
-            return res.status(400).json({ error: "Please select a delivery address" });
-        }
-     
-        if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
-            return res.status(500).json({
-                success: false,
-                error: "Razorpay credentials are not configured"
-            });
-        }
+        const amount = req.body.amount * 100;
+        const options = {
+            amount: amount,
+            currency: "INR",
+            receipt: `order_rcptid_${Date.now()}`,
+        };
 
-        const razorpay = new Razorpay({
-            key_id: process.env.RAZORPAY_KEY_ID,
-            key_secret: process.env.RAZORPAY_KEY_SECRET,
-        });
-        
-        const { amount } = req.body;
-        if (!amount || isNaN(amount) || amount <= 0) {
-            return res.status(400).json({
-                error: "Invalid amount",
-                success: false
-            });
-        }
-        const userId = req.session.user;
-        if (!userId) {
-            return res.status(401).json({
-                success: false,
-                error: "User not authenticated"
-            });
-        }
-
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                error: "User not found"
-            });
-        }
-        const order = await razorpay.orders.create({
-            amount: amount * 100,
-            currency: 'INR',
-            receipt: `order_${Date.now()}`,
-        });
-
-        res.json({
-            success: true,
-            key_id: process.env.RAZORPAY_KEY_ID,
-            order: {
-                id: order.id,
-                amount: Math.round(amount * 100),
-                currency: order.currency,
+        const order = await razorpay.orders.create(options);
+ 
+        res.status(200).json({
+            success:true,
+            key: process.env.RAZORPAY_KEY_ID,
+            amount: amount,
+            currency: "INR",
+            order_id: order.id,
+            prefill: {
+                name: req.session.user.name,
+                email: req.session.user.email,
+                contact: req.session.user.phone,
             },
-            customerName: user.name,
-            customerEmail: user.email,
-            customerPhone: user.phone
         });
-        
     } catch (error) {
-        console.error("Error creating Razorpay order:", error);
-        res.status(500).json({
-            success: false,
-            error: "Failed to create Razorpay order"
-        });
+        console.error("Error creating order:", error);
+        res.status(500).json({ error: "Error creating Razorpay order" });
     }
 };
 //==============================================================================================
 const verifyRazorpayPaymentAndPlaceOrder= async(req,res)=>{
     try {
         const userId= req.session.user;
-        const { razorpay_payment_id}=req.body;
+        const { razorpay_payment_id, razorpay_order_id, razorpay_signature,amount } = req.body;
         const razorpay = new Razorpay({
             key_id: process.env.RAZORPAY_KEY_ID,
             key_secret: process.env.RAZORPAY_KEY_SECRET
         });
-
+        
         const payment= await razorpay.payments.fetch(razorpay_payment_id);
-
-        if (payment.status !== 'authorized') {
-            return res.status(400).json({
-                success: false,
-                error: "Payment verification failed"
+        console.log(payment);
+        if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
+            return res.status(400).json({ 
+                success: false, 
+                error: "Missing payment details" 
             });
-            
-        } else {
+        };
+        const hmac = crypto.createHmac('sha256', `${process.env.RAZORPAY_KEY_SECRET}`);
+        hmac.update(`${razorpay_order_id}|${razorpay_payment_id}`);
+        const generated_signature = hmac.digest('hex');
+        console.log(generated_signature,razorpay_signature);
+        if (generated_signature !== razorpay_signature) {
+            return res.status(400).json({success:false, error: 'Invalid signature' });
+        }
+        else {
             const placeOrderAfterPayment = async () => {
                 const selectedAddressId = req.session.selectedAddress;
                 const paymentMethod = 'ONLINE';

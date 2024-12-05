@@ -66,10 +66,6 @@ const verifyAndrecharge = async (req, res) => {
             key_secret: process.env.RAZORPAY_KEY_SECRET,
         });
 
-        const payment = await razorpay.payments.fetch(razorpay_payment_id);
-
-        
-
         const hmac = crypto.createHmac('sha256', `${process.env.RAZORPAY_KEY_SECRET}`);
         hmac.update(`${razorpay_order_id}|${razorpay_payment_id}`);
         const generated_signature = hmac.digest('hex');

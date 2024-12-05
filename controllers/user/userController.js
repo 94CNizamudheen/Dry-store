@@ -104,6 +104,7 @@ const loadHomepage = async (req, res) => {
         let productData = await Product.find({
             category: { $in: categories.map((category) => category._id) },
             quantity: { $gte: 0 },
+            isBlocked:false,
         })
             .populate("category")
             .populate("brand")
@@ -150,6 +151,7 @@ const loadShopping = async (req, res) => {
         const filterQuery = {
             category: { $in: categories.map((category) => category._id) },
             quantity: { $gte: 0 },
+            isBlocked:false,
         };
 
         if (category) {

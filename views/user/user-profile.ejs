@@ -523,19 +523,21 @@
                                                                                             </h6>
                                                                                         </div><br>
                                                                                         <div class="text-end">
-                                                                                            <h6>Discount: ₹
+                                                                                            <h6>Discount:- ₹
                                                                                                 <%=order.discount.toFixed(2)
                                                                                                     %>
                                                                                             </h6>
                                                                                         </div><br>
                                                                                         <div class="text-end">
-                                                                                            <h6>Shipping Charge: ₹ <%= parseFloat(order.shippingCharge|| 0).toFixed(2) %>
+                                                                                            <h6>Shipping Charge: + ₹ <%=
+                                                                                                    parseFloat(order.shippingCharge||
+                                                                                                    0).toFixed(2) %>
                                                                                             </h6>
                                                                                         </div><br>
                                                                                         <div class="text-end">
-                                                                                            <h6>Discounted Price: ₹
-                                                                                                <%=order.finalAmount.toFixed(2)
-                                                                                                    %>
+                                                                                            <h6 id="finalAmount">Final
+                                                                                                Price: ₹
+                                                                                                <%=order.finalAmount.toFixed(2)%>
                                                                                             </h6>
                                                                                         </div>
                                                             </div>
@@ -621,6 +623,14 @@
                                                                         Download Invoice
                                                                     </button>
 
+                                                                    <% if (order.paymentDetails &&
+                                                                        order.paymentDetails.paymentStatus==='Failed' )
+                                                                        { %>
+                                                                        <button id="retryPaymentBtn"
+                                                                            class="btn btn-warning btn-sm">
+                                                                            Retry Payment
+                                                                        </button>
+                                                                        <% } %>
 
                                                         </div>
                                                         <% }); %>
@@ -717,57 +727,70 @@
                                     </div>
                                     <div class="tab-pane fade" id="account-detail" role="tabpanel"
                                         aria-labelledby="account-detail-tab">
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <h5>Account Details</h5>
-                                            </div>
-                                            <div class="card-body">
-                                                <p>Already have an account? <a href="page-login-register.html">Log in
-                                                        instead!</a></p>
-                                                <form method="post" name="enq">
-                                                    <div class="row">
-                                                        <div class="form-group col-md-6">
-                                                            <label>First Name <span class="required">*</span></label>
-                                                            <input required="" class="form-control square" name="name"
-                                                                type="text">
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div class="header-action-icon-2 text-center">
+                                                            <a href="#" class="d-block">
+                                                                <img class="svgInject mb-2" alt="Super Coins"
+                                                                    src="/uploads/sample-images/coin-stack.png"
+                                                                    style="width: 30px; height: 30px;">
+                                                            </a>
+                                                            <h6 class="text-muted">Super Coins</h6>
+                                                            <span class="badge bg-primary">
+                                                                <%= rewardPoints %>
+                                                            </span>
                                                         </div>
-                                                        <div class="form-group col-md-6">
-                                                            <label>Last Name <span class="required">*</span></label>
-                                                            <input required="" class="form-control square" name="phone">
+
+                                                        <div class="header-action-icon-2 text-center">
+                                                            <a href="/wallet" class="d-block">
+                                                                <img class="svgInject mb-2" alt="Wallet"
+                                                                    src="/uploads/sample-images/wallet (1).png"
+                                                                    style="width: 30px; height: 30px;">
+                                                            </a>
+                                                            <h6 class="text-muted">Wallet Balance</h6>
+                                                            <span class="badge bg-success">₹ <%=
+                                                                    walletBalance.toFixed(2) %></span>
                                                         </div>
-                                                        <div class="form-group col-md-12">
-                                                            <label>Display Name <span class="required">*</span></label>
-                                                            <input required="" class="form-control square" name="dname"
-                                                                type="text">
+
+                                                        <div class="header-action-icon-2 text-center">
+                                                            <a href="/wishlist" class="d-block">
+                                                                <img class="svgInject mb-2" alt="Wishlist"
+                                                                    src="/uploads/sample-images/folder.png"
+                                                                    style="width: 30px; height: 30px;">
+                                                            </a>
+                                                            <h6 class="text-muted">Wishlist</h6>
+                                                            <span class="badge bg-info">
+                                                                <%= wishlistCount %>
+                                                            </span>
                                                         </div>
-                                                        <div class="form-group col-md-12">
-                                                            <label>Email Address <span class="required">*</span></label>
-                                                            <input required="" class="form-control square" name="email"
-                                                                type="email">
+
+                                                        <div class="header-action-icon-2 text-center">
+                                                            <a href="/cart" class="d-block">
+                                                                <img class="svgInject mb-2" alt="Cart"
+                                                                    src="/uploads/sample-images/procurement.png"
+                                                                    style="width: 30px; height: 30px;">
+                                                            </a>
+                                                            <h6 class="text-muted">Cart</h6>
+                                                            <span class="badge bg-warning">
+                                                                <%= cartCount  %>
+                                                            </span>
                                                         </div>
-                                                        <div class="form-group col-md-12">
-                                                            <label>Current Password <span
-                                                                    class="required">*</span></label>
-                                                            <input required="" class="form-control square"
-                                                                name="password" type="password">
-                                                        </div>
-                                                        <div class="form-group col-md-12">
-                                                            <label>New Password <span class="required">*</span></label>
-                                                            <input required="" class="form-control square"
-                                                                name="npassword" type="password">
-                                                        </div>
-                                                        <div class="form-group col-md-12">
-                                                            <label>Confirm Password <span
-                                                                    class="required">*</span></label>
-                                                            <input required="" class="form-control square"
-                                                                name="cpassword" type="password">
-                                                        </div>
-                                                        <div class="col-md-12">
-                                                            <button type="submit" class="btn btn-fill-out submit"
-                                                                name="submit" value="Submit">Save</button>
+
+                                                        <div class="header-action-icon-2 text-center">
+                                                            <a href="/coupons" class="d-block">
+                                                                <img class="svgInject mb-2" alt="Coupons"
+                                                                    src="/uploads/sample-images/coupon.png"
+                                                                    style="width: 30px; height: 30px;">
+                                                            </a>
+                                                            <h6 class="text-muted">Coupons</h6>
+                                                            <span class="badge bg-danger">
+                                                                <%=  %>
+                                                            </span>
                                                         </div>
                                                     </div>
-                                                </form>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -779,6 +802,108 @@
             </div>
         </section>
     </main>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <script>
+        document.getElementById('retryPaymentBtn').addEventListener('click', async function () {
+            try {
+                const paymentOption = "ONLINE";
+                const amountText = document.getElementById('finalAmount').innerText.replace(/[^\d.]/g, '');
+                const amount = Math.round(parseFloat(amountText));
+                const response = await fetch('/create-razorpay-order', {
+                    method: "POST",
+                    headers: { 'content-type': 'application/json' },
+                    body: JSON.stringify({ amount, paymentOption })
+                });
+
+                const data = await response.json();
+                console.log('Response from server:', data);
+
+                if (!data.success) {
+                    throw new Error(data.error || "Failed to create Razorpay order for retry");
+                }
+
+
+                const options = {
+                    key: data.key,
+                    amount: data.amount,
+                    currency: data.currency,
+                    name: "Henza's Dry Store",
+                    description: 'Retry Payment For Order',
+                    order_id: data.order_id,
+                    handler: async function (response) {
+                        try {
+                            const verifyResponse = await fetch('/verify-payment', {
+                                method: "POST",
+                                headers: { 'content-type': 'application/json' },
+                                body: JSON.stringify({
+                                    razorpay_payment_id: response.razorpay_payment_id,
+                                    razorpay_order_id: response.razorpay_order_id,
+                                    razorpay_signature: response.razorpay_signature
+                                })
+                            });
+
+                            const verifyResult = await verifyResponse.json();
+
+                            if (verifyResult.success) {
+                                Swal.fire({
+                                    title: "Payment Success",
+                                    text: "Your retry payment has been processed successfully.",
+                                    icon: "success",
+                                    position: 'center',
+                                    toast: true,
+                                }).then(() => {
+                                    window.location.reload();
+                                });
+                            } else {
+                                throw new Error("Retry payment verification failed");
+                            }
+                        } catch (error) {
+                            Swal.fire({
+                                title: "Payment Failed",
+                                text: "Retry payment verification failed. Please try again",
+                                icon: "error",
+                                position: 'center',
+                                toast: true,
+                            });
+                        }
+                    },
+                    prefill: {
+                        name: data.prefill.name,
+                        email: data.prefill.email,
+                        contact: data.prefill.contact,
+                    },
+                    theme: {
+                        color: "#3399cc"
+                    },
+                    modal: {
+                        ondismiss: async function () {
+                            Swal.fire({
+                                title: "Payment Incomplete",
+                                text: "You canceled the retry payment.",
+                                icon: "warning",
+                                position: 'center',
+                                toast: true,
+                            });
+                        }
+                    }
+                };
+
+                const razorpayInstance = new Razorpay(options);
+                razorpayInstance.open();
+            } catch (error) {
+                console.error('Razorpay Retry Initialization Error', error);
+                Swal.fire({
+                    title: "Error",
+                    text: error.message || "Failed to initialize retry payment. Please try again",
+                    position: 'center',
+                    toast: true,
+                    icon: "error"
+                });
+            }
+        });
+    </script>
+
 
     <script>
         function confirmDelete(addressId) {

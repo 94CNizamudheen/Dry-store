@@ -173,7 +173,8 @@ const postNewPassword=async(req,res)=>{
                 user:userData,
                 userAddress:addressData,
                 userOrders:orders,
-            })
+            });
+            const coupons
             
         } catch (error) {
             console.error('Error for retrive profile Data. ',error);

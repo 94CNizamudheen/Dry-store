@@ -84,11 +84,11 @@ const getAllProducts= async(req,res)=>{
                 { productName: { $regex: new RegExp(".*" + search + ".*", "i") } },
                 { brand: { $regex: new RegExp(".*" + search + ".*", "i") } }
             ],
-        }) .sort({createdAt:-1})
-            .limit(limit*1)
+        })  .limit(limit*1)
            .skip((page-1)*limit)
            .populate('category')
-           .exec()
+           .sort({createdAt:-1})
+           
 
         const count= await Product.find({
             $or:[
@@ -126,11 +126,11 @@ const addProductOffer = async (req, res) => {
         const findProduct = await Product.findOne({ _id: productId });
         const findCategory = await Category.findOne({ _id: findProduct.category });
 
-        if (findCategory.categoryOffer > percentage) {
-            return res.json({ status: false, message: 'This product already has a Category Offer' });
+        if (findCategory.categoryOffer >= percentage) {
+            return res.json({ status: false, message: 'This product already has a Category Offer and is and its more than this % ' });
         }
 
-        findProduct.salePrice = findProduct.salePrice - Math.floor(findProduct.regularPrice * (percentage / 100));
+        findProduct.salePrice = findProduct.regularPrice - Math.floor(findProduct.regularPrice * (percentage / 100));
         findProduct.productOffer = parseInt(percentage);
 
         await findProduct.save();

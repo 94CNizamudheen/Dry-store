@@ -10,7 +10,7 @@
                 <header class="card-header">
                     <div class="row gx-3">
                         <div class="col-lg-4 col-md-6 me-auto">
-                            <input type="text" placeholder="Search..." class="form-control">
+                            <input  type="text" placeholder="Search..." class="form-control">
                         </div>
                         <div class="col-lg-2 col-md-3 col-6">
                             <select class="form-select">
@@ -37,10 +37,11 @@
                                 <th>Product Name</th>
                                 <th>Brand</th>
                                 <th>Category</th>
+                                <th>Category off</th>
                                 <th>Regular Price</th>
                                 <th>Sale Price</th>
-                                <th>Offer percentage</th>
-                                <th>Offer</th>
+                                <th>Product Off </th>
+                                <th>Product Off action</th>
                                 <th>Quantity</th>
                                 <th>Status</th>
                                 <th>Block/unBlock</th>
@@ -48,7 +49,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <% for (let i = data.length - 1; i >= 0; i--) { %>
+                            <% for (let i =0; i <data.length ; i++) { %>
                                 <tr>
                                     <!-- Product Image -->
                                     <td class="text-center">
@@ -68,6 +69,7 @@
                                     <td><%= data[i].productName %></td>
                                     <td><%= data[i].brand %></td>
                                     <td><%= data[i].category.name %></td>
+                                    <td><%= data[i].category.categoryOffer %> %</td>
                                     <td><%= data[i].regularPrice.toFixed(2) %></td>
                                     <td><%= data[i].salePrice ? data[i].salePrice.toFixed(2) : data[i].regularPrice.toFixed(2) %></td>
                     

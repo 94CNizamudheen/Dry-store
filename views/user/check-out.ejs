@@ -442,7 +442,8 @@
 
                                                         <tr>
                                                             <th>Shipping</th>
-                                                            <td id="shippingCharge" colspan="2"><em>Free Shipping</em></td>
+                                                            <td id="shippingCharge" colspan="2"><em>₹<%= shipping.toFixed(2)  %></em>
+                                                            </td>
                                                         </tr>
                                                         <tr>
 
@@ -550,6 +551,112 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Bootstrap Modal -->
+
+                    <div class="modal fade" id="paymentRetryModal" tabindex="-1" aria-labelledby="retryModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header bg-warning text-white">
+                                    <h5 class="modal-title" id="retryModalLabel">
+                                        "Payment unsuccessful. Please try placing your order again,
+                                         retry, or continue with a different payment method."
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-md-6 border-end">
+                                            <h5 class="mb-3">Order Summary</h5>
+                                            <div class="table-responsive order_table text-center">
+                                                <table class="table table-bordered">
+                                                    <thead class="table-light">
+                                                        <tr>
+                                                            <th colspan="2">Product</th>
+                                                            <th>Total</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <% cart.items.forEach(item=> { %>
+                                                            <tr>
+                                                                <td class="image product-thumbnail">
+                                                                    <img src="/uploads/images/<%= item.productId.productImage[0] %>"
+                                                                        alt="#" style="width: 80px; height: auto;" />
+                                                                </td>
+                                                                <td>
+                                                                    <h6 class="mb-1">
+                                                                        <%= item.productId.productName %>
+                                                                    </h6>
+                                                                    <small class="text-muted">Quantity: <%=
+                                                                            item.quantity %></small>
+                                                                </td>
+                                                                <td>₹<%= item.totalPrice.toFixed(2) %>
+                                                                </td>
+                                                            </tr>
+                                                            <% }) %>
+                                                                <tr>
+                                                                    <th colspan="2">Subtotal</th>
+                                                                    <td>₹<%= regularTotal.toFixed(2) %>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th colspan="2">Discount</th>
+                                                                    <td class="text-success">- ₹<%=
+                                                                            totalDiscount.toFixed(2) %>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th colspan="2">Shipping</th>
+                                                                    <td><em>Free Shipping</em></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th colspan="2" class="fw-bold">Total</th>
+                                                                    <td class="fw-bold text-success">
+                                                                        ₹<%= (discount===0 ? total.toFixed(2) :
+                                                                            discountedTotal.toFixed(2)) %>
+                                                                    </td>
+                                                                </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h5 class="mb-3">Select Payment Method</h5>
+                                            <form id="paymentMethodForm">
+                                                <div class="payment_method">
+                                                    <div class="custome-radio mb-3">
+                                                        <input class="form-check-input" type="radio"
+                                                            name="paymentOption" id="walletOption" value="WALLET" />
+                                                        <label class="form-check-label" for="walletOption">Wallet
+                                                            Payment</label>
+                                                    </div>
+                                                    <div class="custome-radio mb-3">
+                                                        <input class="form-check-input" type="radio"
+                                                            name="paymentOption" id="codOption" value="COD" />
+                                                        <label class="form-check-label" for="codOption">Cash On
+                                                            Delivery</label>
+                                                    </div>
+                                                    <div class="custome-radio mb-3">
+                                                        <input class="form-check-input" type="radio"
+                                                            name="paymentOption" id="onlineOption" value="ONLINE" />
+                                                        <label class="form-check-label" for="onlineOption">Online
+                                                            Payment</label>
+                                                    </div>
+                                                    <button type="button" class="btn btn-primary w-100 mt-4"
+                                                        id="retryPaymentBtn">
+                                                        Retry Payment
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
                     <% } %>
         </section>
     </main>
@@ -795,13 +902,14 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
-                                document.getElementById('shippingCharge').innerText=`₹ ${data.shippingCharge.toFixed(2)}`;
+                                document.getElementById('shippingCharge').innerText = `₹ ${data.shippingCharge.toFixed(2)}`;
                                 document.querySelectorAll('.card').forEach(card => {
                                     card.classList.remove('border-success');
 
                                 });
                                 const selectedCard = document.querySelector(`#address-${addressId}`);
-                                selectedCard.classList.add('border-success');
+                                selectedCard.classList.add('border-success')
+                                window.location.reload();
                                 // Swal.fire({
                                 //     title: "Success!",
                                 //     text: "Address selected successfully.",
@@ -983,14 +1091,14 @@
                     }
 
                     const options = {
-                        key: data.key_id,
-                        amount: data.order.amount,
-                        currency: data.order.currency,
+                        key: data.key,
+                        amount: data.amount,
+                        currency: data.currency,
                         name: "Henza's Dry Store",
-                        description: `Payment For Order`,
-                        orderId: data.order.id,
+                        description: 'Payment For Order',
+                        order_id: data.order_id,
                         handler: async function (response) {
-
+                            console.log('response from razorpay:', response);
                             try {
 
                                 const verifyResponse = await fetch('/verify-payment', {
@@ -1029,12 +1137,61 @@
                             }
                         },
                         prefill: {
-                            name: data.customerName,
-                            email: data.customerEmail,
-                            contact: data.customerPhone,
+                            name: data.prefill.name,
+                            email: data.prefill.email,
+                            contact: data.prefill.contact,
                         },
                         theme: {
                             color: "#3399cc"
+                        },
+                        modal: {
+                            ondismiss: async function () {
+                                try {
+                                    const verifyResponse = await fetch('/verify-payment', {
+                                        method: "POST",
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({})
+                                    });
+                                    const verifyResult = await verifyResponse.json();
+
+                                    // Handle unsuccessful verification
+                                    if (!verifyResult.success) {
+                                        
+                                        const paymentModal = new bootstrap.Modal(document.getElementById('paymentRetryModal'));
+                                    paymentModal.show();
+                                    const retryButton = document.getElementById('retryPaymentBtn');
+                                    retryButton.replaceWith(retryButton.cloneNode(true)); // Remove old listeners by replacing the button
+                                    document.getElementById('retryPaymentBtn').addEventListener('click', () => {
+                                        const selectedOption = document.querySelector('input[name="paymentOption"]:checked');
+                                        if (selectedOption) {
+                                            const paymentOption = selectedOption.value;
+                                            initializeRazorpay(amount, paymentOption); // Retry payment with selected option
+                                        } else {
+                                            Swal.fire({
+                                                title: "Error",
+                                                text: "Please select a payment option.",
+                                                icon: "warning",
+                                                position: 'center',
+                                                toast: true,
+                                            });
+                                        }
+                                    });
+                                    }
+
+                                  
+
+                                } catch (error) {
+                                    console.error('Error handling payment closure:', error);
+                                    Swal.fire({
+                                        title: "Error",
+                                        text: "An error occurred. Please contact support.",
+                                        icon: "error",
+                                        position: 'center',
+                                        toast: true,
+                                    });
+                                }
+                            }
+
                         }
                     }
                     const razorpayInstance = new Razorpay(options);
@@ -1138,41 +1295,6 @@
         });
 
     </script>
-    <!-- <script>
-        document.getElementById('pincode').addEventListener('blur', function () {
-            const pincode = this.value.trim();
-
-            if (pincode.length === 6) {
-                fetch(`https://api.postalpincode.in/pincode/${pincode}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data[0].Status === "Success") {
-                            const postOffice = data[0].PostOffice[0];
-                            document.getElementById('city').value = postOffice.District;
-                            document.getElementById('state').value = postOffice.State;
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                text: "Invalid pincode",
-                                toast: true,
-                                position: "center"
-                            })
-                        }
-                    })
-                    .catch(error => console.error('Error fetching location details:', error));
-            } else {
-                Swal.fire({
-                icon:'error',
-                text:"Please enter a valid 6-digit pincode.",
-                toast:true,
-                position:"center"
-            })
-            }
-        });
-    </script> -->
-
-    <button type="submit" class="btn btn-primary w-100">Add Address</button>
-    </form>
 
     <script>
         document.getElementById('pincode').addEventListener('blur', function () {
