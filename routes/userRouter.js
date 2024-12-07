@@ -94,6 +94,10 @@ router.patch('/cancel-order-item',userAuth,orderController.cancelOrderItem);
 router.get('/check-order-payment', userAuth, orderController.checkOrderPayment);
 router.post('/create-razorpay-order',userAuth,orderController.createRazorpayOrder);
 router.post('/verify-payment',userAuth,orderController.verifyRazorpayPaymentAndPlaceOrder);
+router.post('/failed-order-save',userAuth,orderController.failedOrderSave);
+router.patch('/verify-repay-payment',userAuth,orderController.repayPayment);
+
+
 
 
 

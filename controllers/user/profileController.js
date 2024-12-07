@@ -169,12 +169,16 @@ const postNewPassword=async(req,res)=>{
             })
             .sort({ createdOn: -1 });
             
+            
             res.render('user-profile',{
                 user:userData,
                 userAddress:addressData,
                 userOrders:orders,
             });
-            const coupons
+
+          
+
+            // const coupons
             
         } catch (error) {
             console.error('Error for retrive profile Data. ',error);

@@ -442,7 +442,8 @@
 
                                                         <tr>
                                                             <th>Shipping</th>
-                                                            <td id="shippingCharge" colspan="2"><em>₹<%= shipping.toFixed(2)  %></em>
+                                                            <td id="shippingCharge" colspan="2"><em>₹<%=
+                                                                        shipping.toFixed(2) %></em>
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -559,15 +560,14 @@
                             <div class="modal-content">
                                 <div class="modal-header bg-warning text-white">
                                     <h5 class="modal-title" id="retryModalLabel">
-                                        "Payment unsuccessful. Please try placing your order again,
-                                         retry, or continue with a different payment method."
+                                        "Payment unsuccessful. Please try placing your order again."
                                     </h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     <div class="row">
-                                        <div class="col-md-6 border-end">
+                                        <div class="container-fluid">
                                             <h5 class="mb-3">Order Summary</h5>
                                             <div class="table-responsive order_table text-center">
                                                 <table class="table table-bordered">
@@ -596,7 +596,7 @@
                                                             </tr>
                                                             <% }) %>
                                                                 <tr>
-                                                                    <th colspan="2">Subtotal</th>
+                                                                    <th colspan="2">Total</th>
                                                                     <td>₹<%= regularTotal.toFixed(2) %>
                                                                     </td>
                                                                 </tr>
@@ -608,10 +608,12 @@
                                                                 </tr>
                                                                 <tr>
                                                                     <th colspan="2">Shipping</th>
-                                                                    <td><em>Free Shipping</em></td>
+                                                                    <td><em>
+                                                                            <%= shipping.toFixed(2) %>
+                                                                        </em></td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <th colspan="2" class="fw-bold">Total</th>
+                                                                    <th colspan="2" class="fw-bold">Final Total</th>
                                                                     <td class="fw-bold text-success">
                                                                         ₹<%= (discount===0 ? total.toFixed(2) :
                                                                             discountedTotal.toFixed(2)) %>
@@ -620,36 +622,12 @@
                                                     </tbody>
                                                 </table>
                                             </div>
+                                            <button type="button " class="btn btn-primary w-100 mt-4 btn-sm"
+                                                id="retryPaymentBtn">
+                                                Retry Payment
+                                            </button>
                                         </div>
-                                        <div class="col-md-6">
-                                            <h5 class="mb-3">Select Payment Method</h5>
-                                            <form id="paymentMethodForm">
-                                                <div class="payment_method">
-                                                    <div class="custome-radio mb-3">
-                                                        <input class="form-check-input" type="radio"
-                                                            name="paymentOption" id="walletOption" value="WALLET" />
-                                                        <label class="form-check-label" for="walletOption">Wallet
-                                                            Payment</label>
-                                                    </div>
-                                                    <div class="custome-radio mb-3">
-                                                        <input class="form-check-input" type="radio"
-                                                            name="paymentOption" id="codOption" value="COD" />
-                                                        <label class="form-check-label" for="codOption">Cash On
-                                                            Delivery</label>
-                                                    </div>
-                                                    <div class="custome-radio mb-3">
-                                                        <input class="form-check-input" type="radio"
-                                                            name="paymentOption" id="onlineOption" value="ONLINE" />
-                                                        <label class="form-check-label" for="onlineOption">Online
-                                                            Payment</label>
-                                                    </div>
-                                                    <button type="button" class="btn btn-primary w-100 mt-4"
-                                                        id="retryPaymentBtn">
-                                                        Retry Payment
-                                                    </button>
-                                                </div>
-                                            </form>
-                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -1147,6 +1125,7 @@
                         modal: {
                             ondismiss: async function () {
                                 try {
+                                    // First, verify if payment was attempted
                                     const verifyResponse = await fetch('/verify-payment', {
                                         method: "POST",
                                         headers: { 'Content-Type': 'application/json' },
@@ -1154,32 +1133,70 @@
                                     });
                                     const verifyResult = await verifyResponse.json();
 
-                                    // Handle unsuccessful verification
+                                    // If payment verification fails, show retry modal
                                     if (!verifyResult.success) {
-                                        
                                         const paymentModal = new bootstrap.Modal(document.getElementById('paymentRetryModal'));
-                                    paymentModal.show();
-                                    const retryButton = document.getElementById('retryPaymentBtn');
-                                    retryButton.replaceWith(retryButton.cloneNode(true)); // Remove old listeners by replacing the button
-                                    document.getElementById('retryPaymentBtn').addEventListener('click', () => {
-                                        const selectedOption = document.querySelector('input[name="paymentOption"]:checked');
-                                        if (selectedOption) {
-                                            const paymentOption = selectedOption.value;
-                                            initializeRazorpay(amount, paymentOption); // Retry payment with selected option
-                                        } else {
-                                            Swal.fire({
-                                                title: "Error",
-                                                text: "Please select a payment option.",
-                                                icon: "warning",
-                                                position: 'center',
-                                                toast: true,
-                                            });
-                                        }
-                                    });
+                                        paymentModal.show();
+
+                                        // Add event listener for modal close to call failed-order-save
+                                        const paymentRetryModal = document.getElementById('paymentRetryModal');
+                                        paymentRetryModal.addEventListener('hidden.bs.modal', async () => {
+                                            try {
+                                                // Call failed-order-save controller
+                                                const failedOrderResponse = await fetch('/failed-order-save', {
+                                                    method: "POST",
+                                                    headers: { 'Content-Type': 'application/json' },
+                                                    body: JSON.stringify({
+                                                        amount: amount,
+                                                        paymentOption: paymentOption
+                                                    })
+                                                });
+                                                const failedOrderResult = await failedOrderResponse.json();
+
+                                                if (!failedOrderResult.success) {
+                                                    console.error('Failed to save order:', failedOrderResult.error);
+                                                    Swal.fire({
+                                                        title: "Error",
+                                                        text: "Unable to process your order. Please contact support.",
+                                                        icon: "error",
+                                                        position: 'center',
+                                                        toast: true,
+                                                    });
+                                                } else {
+                                                    
+                                                    window.location.href = failedOrderResult.redirectURL;
+                                                }
+                                            } catch (error) {
+                                                console.error('Error saving failed order:', error);
+                                                Swal.fire({
+                                                    title: "Error",
+                                                    text: "An error occurred. Please contact support.",
+                                                    icon: "error",
+                                                    position: 'center',
+                                                    toast: true,
+                                                });
+                                            }
+                                        });
+
+                                        // Setup retry payment button
+                                        const retryButton = document.getElementById('retryPaymentBtn');
+                                        retryButton.replaceWith(retryButton.cloneNode(true)); // Remove old listeners
+                                        document.getElementById('retryPaymentBtn').addEventListener('click', () => {
+                                            const selectedOption = document.querySelector('input[name="paymentOption"]:checked');
+                                            if (selectedOption) {
+                                                const paymentOption = selectedOption.value;
+                                                initializeRazorpay(amount, paymentOption);
+                                            } else {
+                                                Swal.fire({
+                                                    title: "Error",
+                                                    text: "Please select a payment option.",
+                                                    icon: "warning",
+                                                    position: 'center',
+                                                    toast: true,
+                                                });
+                                            }
+                                        });
                                     }
-
-                                  
-
                                 } catch (error) {
                                     console.error('Error handling payment closure:', error);
                                     Swal.fire({
@@ -1191,7 +1208,6 @@
                                     });
                                 }
                             }
-
                         }
                     }
                     const razorpayInstance = new Razorpay(options);

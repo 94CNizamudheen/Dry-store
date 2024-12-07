@@ -63,7 +63,7 @@ const orderSchema= new Schema({
             default: 'Pending'
         },
         paidAmount: { type: Number },
-        paidAt: { type: Date }
+        paidAt: { type: Date },
     },
     partialCancelledDetails:[{
         product:{

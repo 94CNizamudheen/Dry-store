@@ -362,20 +362,14 @@
                                                             <div
                                                                 class="d-flex justify-content-between align-items-start">
                                                                 <div>
-                                                                    <h5 class="mb-1">
+                                                                    <h5 class="mb-1" id="orderId">
                                                                         <%= order.orderId %>
                                                                     </h5>
                                                                     <p class="text-muted small">
-                                                                        <%= order.orderedItems.length %> • Order Placed
-                                                                            on <%= order.createdOn.toLocaleDateString()
-                                                                                %>
+                                                                        <%= order.orderedItems.length %> Items • Order Placed on <%= order.createdOn.toLocaleDateString() %>
                                                                     </p>
                                                                 </div>
-                                                                <div>
-                                                                    <h5>
-                                                                        <%= order.finalAmount.toFixed(2) %>
-                                                                    </h5>
-                                                                </div>
+                                                               
                                                             </div>
 
                                                             <!-- Progress Tracker -->
@@ -440,9 +434,7 @@
                                                                                 <p class="mb-0">Your order has been
                                                                                     cancelled.</p>
                                                                                 <small class="text-muted">
-                                                                                    <%= new
-                                                                                        Date(order.createdOn).toLocaleString()
-                                                                                        %>
+                                                                                    <%= new Date(order.createdOn).toLocaleString() %>
                                                                                 </small>
                                                                             </div>
                                                                         </div>
@@ -467,11 +459,10 @@
                                                                             <h6>₹<%= (item.price *
                                                                                     item.quantity).toFixed(2) %>
                                                                             </h6>
-                                                                            <% if (order.orderedItems.length> 1
-                                                                                &&!order.coupon) { %>
-                                                                                <a class="text-danger" href="#"
-                                                                                    onclick="cancelOrderItem('<%= order.orderId %>', '<%= item.product._id %>')">Cancel
-                                                                                    Item</a>
+                                                                            <% if(order.status==="Pending"||order.status==="Processing") {%>
+                                                                            <% if (order.orderedItems.length> 1&&!order.coupon) { %>
+                                                                                <a class="text-danger" href="#" onclick="cancelOrderItem('<%= order.orderId %>', '<%= item.product._id %>')">Cancel Item</a>
+                                                                                <% } %>
                                                                                 <% } %>
                                                                         </div>
                                                                     </div>
@@ -540,6 +531,18 @@
                                                                                                 <%=order.finalAmount.toFixed(2)%>
                                                                                             </h6>
                                                                                         </div>
+                                                                                        <% if
+                                                                                            (order.paymentDetails.paymentStatus==='Failed'
+                                                                                            ) { %>
+                                                                                            <div id="timer"
+                                                                                                class="text-danger mt-3">
+                                                                                                <h5>"We noticed an issue with your payment. Don’t worry, you have 1 day to resolve it.
+                                                                                                     If the payment isn’t completed within this time, your order will be automatically canceled.
+                                                                                                     Please reach out to us if you need any assistance!"</h5>
+
+                                                                                            </div>
+                                                                                            <% } %>
+
                                                             </div>
 
 
@@ -612,13 +615,10 @@
                                                                 <br>
                                                                 <p>orderId: <%= order.orderId %>
                                                                 </p>
-                                                                <a class="btn btn-secondary btn-sm" href="#"
-                                                                    onclick="cancelOrder('<%= order.orderId %>')">Cancel
-                                                                    Order</a>
+                                                                <a class="btn btn-secondary btn-sm" href="#" onclick="cancelOrder('<%= order.orderId %>')">Cancel Order</a>
                                                                 <% } %>
                                                                     <!-- Download Invoice Button -->
-                                                                    <button class="btn btn-primary btn-sm"
-                                                                        onclick="downloadInvoice('<%= order.orderId %>')">
+                                                                    <button class="btn btn-primary btn-sm"onclick="downloadInvoice('<%= order.orderId %>')">
                                                                         <i class="bi bi-file-earmark-arrow-down"></i>
                                                                         Download Invoice
                                                                     </button>
@@ -626,9 +626,7 @@
                                                                     <% if (order.paymentDetails &&
                                                                         order.paymentDetails.paymentStatus==='Failed' )
                                                                         { %>
-                                                                        <button id="retryPaymentBtn"
-                                                                            class="btn btn-warning btn-sm">
-                                                                            Retry Payment
+                                                                        <button id="retryPaymentBtn" class="btn btn-warning btn-sm">Retry Payment
                                                                         </button>
                                                                         <% } %>
 
@@ -774,7 +772,7 @@
                                                             </a>
                                                             <h6 class="text-muted">Cart</h6>
                                                             <span class="badge bg-warning">
-                                                                <%= cartCount  %>
+                                                                <%= cartCount %>
                                                             </span>
                                                         </div>
 
@@ -786,7 +784,7 @@
                                                             </a>
                                                             <h6 class="text-muted">Coupons</h6>
                                                             <span class="badge bg-danger">
-                                                                <%=  %>
+                                                                <%= %>
                                                             </span>
                                                         </div>
                                                     </div>
@@ -804,105 +802,7 @@
     </main>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-    <script>
-        document.getElementById('retryPaymentBtn').addEventListener('click', async function () {
-            try {
-                const paymentOption = "ONLINE";
-                const amountText = document.getElementById('finalAmount').innerText.replace(/[^\d.]/g, '');
-                const amount = Math.round(parseFloat(amountText));
-                const response = await fetch('/create-razorpay-order', {
-                    method: "POST",
-                    headers: { 'content-type': 'application/json' },
-                    body: JSON.stringify({ amount, paymentOption })
-                });
-
-                const data = await response.json();
-                console.log('Response from server:', data);
-
-                if (!data.success) {
-                    throw new Error(data.error || "Failed to create Razorpay order for retry");
-                }
-
-
-                const options = {
-                    key: data.key,
-                    amount: data.amount,
-                    currency: data.currency,
-                    name: "Henza's Dry Store",
-                    description: 'Retry Payment For Order',
-                    order_id: data.order_id,
-                    handler: async function (response) {
-                        try {
-                            const verifyResponse = await fetch('/verify-payment', {
-                                method: "POST",
-                                headers: { 'content-type': 'application/json' },
-                                body: JSON.stringify({
-                                    razorpay_payment_id: response.razorpay_payment_id,
-                                    razorpay_order_id: response.razorpay_order_id,
-                                    razorpay_signature: response.razorpay_signature
-                                })
-                            });
-
-                            const verifyResult = await verifyResponse.json();
-
-                            if (verifyResult.success) {
-                                Swal.fire({
-                                    title: "Payment Success",
-                                    text: "Your retry payment has been processed successfully.",
-                                    icon: "success",
-                                    position: 'center',
-                                    toast: true,
-                                }).then(() => {
-                                    window.location.reload();
-                                });
-                            } else {
-                                throw new Error("Retry payment verification failed");
-                            }
-                        } catch (error) {
-                            Swal.fire({
-                                title: "Payment Failed",
-                                text: "Retry payment verification failed. Please try again",
-                                icon: "error",
-                                position: 'center',
-                                toast: true,
-                            });
-                        }
-                    },
-                    prefill: {
-                        name: data.prefill.name,
-                        email: data.prefill.email,
-                        contact: data.prefill.contact,
-                    },
-                    theme: {
-                        color: "#3399cc"
-                    },
-                    modal: {
-                        ondismiss: async function () {
-                            Swal.fire({
-                                title: "Payment Incomplete",
-                                text: "You canceled the retry payment.",
-                                icon: "warning",
-                                position: 'center',
-                                toast: true,
-                            });
-                        }
-                    }
-                };
-
-                const razorpayInstance = new Razorpay(options);
-                razorpayInstance.open();
-            } catch (error) {
-                console.error('Razorpay Retry Initialization Error', error);
-                Swal.fire({
-                    title: "Error",
-                    text: error.message || "Failed to initialize retry payment. Please try again",
-                    position: 'center',
-                    toast: true,
-                    icon: "error"
-                });
-            }
-        });
-    </script>
+    
 
 
     <script>
@@ -1225,7 +1125,111 @@
 
         }
     </script>
+    <script>
+        document.getElementById('retryPaymentBtn').addEventListener('click', async function () {
+            try {
+                const paymentOption = "ONLINE";
+                const amountText = document.getElementById('finalAmount').innerText.replace(/[^\d.]/g, '');
+                const amount = Math.round(parseFloat(amountText));
+                const orderId= document.getElementById('orderId').textContent.trim();
+    
+                const response = await fetch('/create-razorpay-order', {
+                    method: "POST",
+                    headers: { 'content-type': 'application/json' },
+                    body: JSON.stringify({ amount, paymentOption })
+                });
 
+                const data = await response.json();
+                console.log('Response from server:', data);
+
+                if (!data.success) {
+                    throw new Error(data.error || "Failed to create Razorpay order for retry");
+                }
+
+
+                const options = {
+                    key: data.key,
+                    amount: data.amount,
+                    currency: data.currency,
+                    name: "Henza's Dry Store",
+                    description: 'Retry Payment For Order',
+                    order_id: data.order_id,
+                    
+                    handler: async function (response) {
+                        try {
+                            const verifyResponse = await fetch('/verify-repay-payment', {
+                                method: "PATCH",
+                                headers: { 'content-type': 'application/json' },
+                                body: JSON.stringify({
+                                    razorpay_payment_id: response.razorpay_payment_id,
+                                    razorpay_order_id: response.razorpay_order_id,
+                                    razorpay_signature: response.razorpay_signature,
+                                    orderId,
+                                    amount,
+                                    
+                                })
+                            });
+
+                            const verifyResult = await verifyResponse.json();
+
+                            if (verifyResult.success) {
+                                Swal.fire({
+                                    title: "Payment Success",
+                                    text: "Your retry payment has been processed successfully.",
+                                    icon: "success",
+                                    position: 'center',
+                                    toast: true,
+                                }).then(() => {
+                                    window.location.reload();
+                                });
+                            } else {
+                                throw new Error("Retry payment verification failed");
+                            }
+                        } catch (error) {
+                            Swal.fire({
+                                title: "Payment Failed",
+                                text: "Retry payment verification failed. Please try again",
+                                icon: "error",
+                                position: 'center',
+                                toast: true,
+                            });
+                        }
+                    },
+                    prefill: {
+                        name: data.prefill.name,
+                        email: data.prefill.email,
+                        contact: data.prefill.contact,
+                    },
+                    theme: {
+                        color: "#3399cc"
+                    },
+                    modal: {
+                        ondismiss: async function () {
+                            Swal.fire({
+                                title: "Payment Incomplete",
+                                text: "You canceled the retry payment.",
+                                icon: "warning",
+                                position: 'center',
+                                toast: true,
+                            });
+                        }
+                    }
+                };
+
+                const razorpayInstance = new Razorpay(options);
+                razorpayInstance.open();
+            } catch (error) {
+                console.error('Razorpay Retry Initialization Error', error);
+                Swal.fire({
+                    title: "Error",
+                    text: error.message || "Failed to initialize retry payment. Please try again",
+                    position: 'center',
+                    toast: true,
+                    icon: "error"
+                });
+            }
+        });
+    </script>
 
 
 
