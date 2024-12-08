@@ -1,484 +1,580 @@
 <%-include('../partials/admin/header.ejs') %>
+<style>
+    .card {
+            border: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .icontext .icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+        .card-header {
+            background-color: #efa1ed;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .dashboard-header {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .chart-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .chart-controls select, 
+        .chart-type-container {
+            margin-right: 10px;
+        }
+        .new-member-list .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .verti-timeline .event-timeline-dot {
+            position: relative;
+            padding-left: 20px;
+        }
+</style>
 
     <section class="content-main">
-        <div class="content-header">
-            <div>
-                <h2 class="content-title card-title">Dashboard </h2>
-                <p>Whole data about your business here</p>
-            </div>
-            <div>
-                <a href="#" class="btn btn-primary"><i class="text-muted material-icons md-post_add"></i>Create report</a>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-3">
-                <div class="card card-body mb-4">
-                    <article class="icontext">
-                        <span class="icon icon-sm rounded-circle bg-primary-light"><i class="fa fa-inr" aria-hidden="true"></i></span>
-                        <div class="text">
-                            <h6 class="mb-1 card-title">Revenue</h6>
-                            <span>₹13,456.5</span>
-                            <span class="text-sm">
-                                Shipping fees are not included
-                            </span>
-                        </div>
-                    </article>
+      
+            <div class="container-fluid px-4 py-4">
+                <!-- Dashboard Header -->
+                <div class="dashboard-header d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="mb-2">Dashboard</h2>
+                        <p class="text-muted mb-0">Overview of your business data</p>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Create Report
+                        </button>
+                    </div>
                 </div>
-            </div>
-            <div class="col-lg-3">
-                <div class="card card-body mb-4">
-                    <article class="icontext">
-                        <span class="icon icon-sm rounded-circle bg-success-light"><i class="text-success material-icons md-local_shipping"></i></span>
-                        <div class="text">
-                            <h6 class="mb-1 card-title">Orders</h6> <span>53.668</span>
-                            <span class="text-sm">
-                                Excluding orders in transit
-                            </span>
-                        </div>
-                    </article>
-                </div>
-            </div>
-            <div class="col-lg-3">
-                <div class="card card-body mb-4">
-                    <article class="icontext">
-                        <span class="icon icon-sm rounded-circle bg-warning-light"><i class="text-warning material-icons md-qr_code"></i></span>
-                        <div class="text">
-                            <h6 class="mb-1 card-title">Products</h6> <span>9.856</span>
-                            <span class="text-sm">
-                                In 19 Categories
-                            </span>
-                        </div>
-                    </article>
-                </div>
-            </div>
-            <div class="col-lg-3">
-                <div class="card card-body mb-4">
-                    <article class="icontext">
-                        <span class="icon icon-sm rounded-circle bg-info-light"><i class="text-info material-icons md-shopping_basket"></i></span>
-                        <div class="text">
-                            <h6 class="mb-1 card-title">Monthly Earning</h6> <span>₹6,982</span>
-                            <span class="text-sm">
-                                Based in your local time.
-                            </span>
-                        </div>
-                    </article>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xl-8 col-lg-12">
-                <div class="card mb-4">
-                    <article class="card-body">
-                        <h5 class="card-title">Sale statistics</h5>
-                        <canvas id="myChart" height="120px"></canvas>
-                    </article>
-                </div>
+        
+                <!-- Statistics Section -->
                 <div class="row">
-                    <div class="col-lg-5">
-                        <div class="card mb-4">
-                            <article class="card-body">
-                                <h5 class="card-title">New Members</h5>
-                                <div class="new-member-list">
-                                    <div class="d-flex align-items-center justify-content-between mb-4">
-                                        <div class="d-flex align-items-center">
-                                            <img src="assets/imgs/people/avatar4.jpg" alt="" class="avatar">
-                                            <div>
-                                                <h6>Patric Adams</h6>
-                                                <p class="text-muted font-xs">
-                                                    Sanfrancisco
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <a href="#" class="btn btn-xs"><i class="material-icons md-add"></i> Add</a>
-                                    </div>
-                                    <div class="d-flex align-items-center justify-content-between mb-4">
-                                        <div class="d-flex align-items-center">
-                                            <img src="assets/imgs/people/avatar2.jpg" alt="" class="avatar">
-                                            <div>
-                                                <h6>Dilan Specter</h6>
-                                                <p class="text-muted font-xs">
-                                                    Sanfrancisco
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <a href="#" class="btn btn-xs"><i class="material-icons md-add"></i> Add</a>
-                                    </div>
-                                    <div class="d-flex align-items-center justify-content-between mb-4">
-                                        <div class="d-flex align-items-center">
-                                            <img src="assets/imgs/people/avatar3.jpg" alt="" class="avatar">
-                                            <div>
-                                                <h6>Tomas Baker</h6>
-                                                <p class="text-muted font-xs">
-                                                    Sanfrancisco
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <a href="#" class="btn btn-xs"><i class="material-icons md-add"></i> Add</a>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="icontext bg-primary-subtle rounded-circle me-3 p-3">
+                                    <i class="fas fa-rupee-sign text-primary"></i>
+                                </div>
+                                <div>
+                                    <h6 class="card-title text-muted mb-1">Revenue</h6>
+                                    <h4 class="mb-0">₹<%= totalRevenue %></h4>
+                                    <small class="text-muted">Shipping fees included</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="icontext bg-success-subtle rounded-circle me-3 p-3">
+                                    <i class="fas fa-shipping-fast text-success"></i>
+                                </div>
+                                <div>
+                                    <h6 class="card-title text-muted mb-1">Orders</h6>
+                                    <h4 class="mb-0"><%= ordersCount %></h4>
+                                    <small class="text-muted">Excluding orders in transit</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="icontext bg-warning-subtle rounded-circle me-3 p-3">
+                                    <i class="fas fa-box text-warning"></i>
+                                </div>
+                                <div>
+                                    <h6 class="card-title text-muted mb-1">Products</h6>
+                                    <h4 class="mb-0"><%= productCount %></h4>
+                                    <small class="text-muted">In <%= categoryCount %> categories</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="icontext bg-info-subtle rounded-circle me-3 p-3">
+                                    <i class="fas fa-tags text-info"></i>
+                                </div>
+                                <div>
+                                    <h6 class="card-title text-muted mb-1">Brands</h6>
+                                    <h4 class="mb-0"><%= brandCount %></h4>
+                                    <small class="text-muted">Total brands</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <!-- Charts and Activities -->
+                <div class="row mt-4">
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">Sales Statistics</h5>
+                                <div class="chart-controls">
+                                    <select id="dataType" class="form-select form-select-sm">
+                                        <option value="products">Top Products</option>
+                                        <option value="categories">Top Categories</option>
+                                        <option value="brands">Top Brands</option>
+                                    </select>
+                                    <select id="timeFilter" class="form-select form-select-sm">
+                                        <option value="all">All Time</option>
+                                        <option value="monthly">Last Month</option>
+                                        <option value="quarterly">Last Quarter</option>
+                                        <option value="yearly">Last Year</option>
+                                    </select>
+                                    <div class="chart-type-container">
+                                        <label class="form-check-label">
+                                            <input type="radio" name="chartType" value="bar" class="form-check-input" checked> Bar
+                                        </label>
+                                        <label class="form-check-label">
+                                            <input type="radio" name="chartType" value="line" class="form-check-input"> Line
+                                        </label>
                                     </div>
                                 </div>
-                            </article>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="salesChart"></canvas>
+                            </div>
+                        </div>
+        
+                        <!-- Recent Activities & Admins -->
+                        <div class="row mt-4">
+                            <div class="col-lg-5">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title">Admins</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="new-member-list">
+                                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                                <% admins.forEach(admin=> {%>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="/uploads/sample-images/software-engineer.png" alt="" class="avatar">
+                                                    <div>
+                                                        <h6><%= admin.name %></h6>
+                                                        <p class="text-muted font-xs"><%= admin.email %></p>
+                                                    </div>
+                                                </div>
+                                                <% }) %>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-7">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title">Recent Activities</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <ul class="list-group list-group-flush">
+                                          
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <h6 class="mb-1"><%= %></h6>
+                                                    <small class="text-muted"><%=  %></small>
+                                                </div>
+                                                <span class="badge  rounded-pill">
+                                                   
+                                                </span>
+                                            </li>
+                                         
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-lg-7">
-                        <div class="card mb-4">
-                            <article class="card-body">
-                                <h5 class="card-title">Recent activities</h5>
-                                <ul class="verti-timeline list-unstyled font-sm">
-                                    <li class="event-list">
-                                        <div class="event-timeline-dot">
-                                            <i class="material-icons md-play_circle_outline font-xxl"></i>
-                                        </div>
-                                        <div class="media">
-                                            <div class="me-3">
-                                                <h6><span>Today</span> <i class="material-icons md-trending_flat text-brand ml-15 d-inline-block"></i></h6>
-                                            </div>
-                                            <div class="media-body">
-                                                <div>
-                                                    Lorem ipsum dolor sit amet consectetur
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="event-list active">
-                                        <div class="event-timeline-dot">
-                                            <i class="material-icons md-play_circle_outline font-xxl animation-fade-right"></i>
-                                        </div>
-                                        <div class="media">
-                                            <div class="me-3">
-                                                <h6><span>17 May</span> <i class="material-icons md-trending_flat text-brand ml-15 d-inline-block"></i></h6>
-                                            </div>
-                                            <div class="media-body">
-                                                <div>
-                                                    Debitis nesciunt voluptatum dicta reprehenderit
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="event-list">
-                                        <div class="event-timeline-dot">
-                                            <i class="material-icons md-play_circle_outline font-xxl"></i>
-                                        </div>
-                                        <div class="media">
-                                            <div class="me-3">
-                                                <h6><span>13 May</span> <i class="material-icons md-trending_flat text-brand ml-15 d-inline-block"></i></h6>
-                                            </div>
-                                            <div class="media-body">
-                                                <div>
-                                                    Accusamus voluptatibus voluptas.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="event-list">
-                                        <div class="event-timeline-dot">
-                                            <i class="material-icons md-play_circle_outline font-xxl"></i>
-                                        </div>
-                                        <div class="media">
-                                            <div class="me-3">
-                                                <h6><span>05 April</span> <i class="material-icons md-trending_flat text-brand ml-15 d-inline-block"></i></h6>
-                                            </div>
-                                            <div class="media-body">
-                                                <div>
-                                                    At vero eos et accusamus et iusto odio dignissi
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="event-list">
-                                        <div class="event-timeline-dot">
-                                            <i class="material-icons md-play_circle_outline font-xxl"></i>
-                                        </div>
-                                        <div class="media">
-                                            <div class="me-3">
-                                                <h6><span>26 Mar</span> <i class="material-icons md-trending_flat text-brand ml-15 d-inline-block"></i></h6>
-                                            </div>
-                                            <div class="media-body">
-                                                <div>
-                                                    Responded to need “Volunteer Activities
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </article>
+        
+                    <!-- Revenue by Area and Ledger -->
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">Payment Method</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="revenueByAreaChart"></canvas>
+                            </div>
+                        </div>
+        
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h5 class="card-title">Ledger Actions</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-primary" id="generateMonthlyLedger" data-bs-toggle="modal" data-bs-target="#ledgerModal">Generate
+                                        Monthly Ledger</button>
+                                    <button class="btn btn-secondary" id="generateQuarterlyReport" data-bs-toggle="modal"
+                                        data-bs-target="#ledgerModal">Generate Quarterly Report</button>
+                                    <button class="btn btn-success" id="generateYearlyLedger" data-bs-toggle="modal" data-bs-target="#ledgerModal">Generate
+                                        Yearly Ledger</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="ledgerModal" tabindex="-1" aria-labelledby="ledgerModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="ledgerModalLabel">Ledger</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <h3 id="ledgerTitle" class="text-center mb-3"></h3>
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Description</th>
+                                            <th>Debit (₹)</th>
+                                            <th>Credit (₹)</th>
+                                            <th>Balance (₹)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="ledgerBody">
+                                        <!-- Dynamic ledger rows go here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Best Selling Sections -->
+                <div class="row mt-4">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card">
+                            <div class="card-header" data-bs-toggle="collapse" data-bs-target="#collapseProducts" aria-expanded="false" style="cursor: pointer;">
+                                <h5 class="card-title mb-0">Top Products</h5>
+                            </div>
+                            <div id="collapseProducts" class="collapse">
+                                <div class="card-body">
+                                    <ul class="list-group">
+                                        <% topProducts.forEach((product, index) => { %>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <%= product.productName %>
+                                                <span class="badge <%= index === 0 ? 'bg-primary' : 'bg-secondary' %> rounded-pill">
+                                                    <%= product.totalQuantityOrdered %>
+                                                </span>
+                                            </li>
+                                        <% }) %>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card">
+                            <div class="card-header" data-bs-toggle="collapse" data-bs-target="#collapseCategories" aria-expanded="false" style="cursor: pointer;">
+                                <h5 class="card-title mb-0">Top Categories</h5>
+                            </div>
+                            <div id="collapseCategories" class="collapse">
+                                <div class="card-body">
+                                    <ul class="list-group">
+                                        <% topCategories.forEach((category, index) => { %>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <%= category.name %>
+                                                <span class="badge <%= index === 0 ? 'bg-success' : 'bg-secondary' %> rounded-pill">
+                                                    <%= category.totalQuantityOrdered %>
+                                                </span>
+                                            </li>
+                                        <% }) %>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card">
+                            <div class="card-header" data-bs-toggle="collapse" data-bs-target="#collapseBrands" aria-expanded="false" style="cursor: pointer;">
+                                <h5 class="card-title mb-0">Top Brands</h5>
+                            </div>
+                            <div id="collapseBrands" class="collapse">
+                                <div class="card-body">
+                                    <ul class="list-group">
+                                        <% topBrands.forEach((brand, index) => { %>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <%= brand.brandName %>
+                                                <span class="badge <%= index === 0 ? 'bg-warning' : 'bg-secondary' %> rounded-pill">
+                                                    <%= brand.totalQuantityOrdered %>
+                                                </span>
+                                            </li>
+                                        <% }) %>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-xl-4 col-lg-12">
-                <div class="card mb-4">
-                    <article class="card-body">
-                        <h5 class="card-title">Revenue Base on Area</h5>
-                        <canvas id="myChart2" height="217"></canvas>
-                    </article>
-                </div>
-                <div class="card mb-4">
-                    <article class="card-body">
-                        <h5 class="card-title">Marketing Chanel</h5>
-                        <span class="text-muted font-xs">Facebook</span>
-                        <div class="progress mb-3">
-                            <div class="progress-bar" role="progressbar" style="width: 15%">15%</div>
-                        </div>
-                        <span class="text-muted font-xs">Instagram</span>
-                        <div class="progress mb-3">
-                            <div class="progress-bar" role="progressbar" style="width: 65%">65% </div>
-                        </div>
-                        <span class="text-muted font-xs">Google</span>
-                        <div class="progress mb-3">
-                            <div class="progress-bar" role="progressbar" style="width: 51%"> 51% </div>
-                        </div>
-                        <span class="text-muted font-xs">Twitter</span>
-                        <div class="progress mb-3">
-                            <div class="progress-bar" role="progressbar" style="width: 80%"> 80%</div>
-                        </div>
-                        <span class="text-muted font-xs">Other</span>
-                        <div class="progress mb-3">
-                            <div class="progress-bar" role="progressbar" style="width: 80%"> 80%</div>
-                        </div>
-                    </article>
-                </div>
-            </div>
-        </div>
-        <div class="card mb-4">
-            <header class="card-header">
-                <h4 class="card-title">Latest orders</h4>
-                <div class="row align-items-center">
-                    <div class="col-md-3 col-12 me-auto mb-md-0 mb-3">
-                        <div class="custom_select">
-                            <select class="form-select select-nice">
-                                <option selected>All Categories</option>
-                                <option>Women's Clothing</option>
-                                <option>Men's Clothing</option>
-                                <option>Cellphones</option>
-                                <option>Computer & Office</option>
-                                <option>Consumer Electronics</option>
-                                <option>Jewelry & Accessories</option>
-                                <option>Home & Garden</option>
-                                <option>Luggage & Bags</option>
-                                <option>Shoes</option>
-                                <option>Mother & Kids</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-2 col-6">
-                        <input type="date" value="02.05.2022" class="form-control">
-                    </div>
-                    <div class="col-md-2 col-6">
-                        <div class="custom_select">
-                            <select class="form-select select-nice">
-                                <option selected>Status</option>
-                                <option>All</option>
-                                <option>Paid</option>
-                                <option>Chargeback</option>
-                                <option>Refund</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </header>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <div class="table-responsive">
-                        <table class="table align-middle table-nowrap mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th scope="col" class="text-center">
-                                        <div class="form-check align-middle">
-                                            <input class="form-check-input" type="checkbox" id="transactionCheck01">
-                                            <label class="form-check-label" for="transactionCheck01"></label>
-                                        </div>
-                                    </th>
-                                    <th class="align-middle" scope="col">Order ID</th>
-                                    <th class="align-middle" scope="col">Billing Name</th>
-                                    <th class="align-middle" scope="col">Date</th>
-                                    <th class="align-middle" scope="col">Total</th>
-                                    <th class="align-middle" scope="col">Payment Status</th>
-                                    <th class="align-middle" scope="col">Payment Method</th>
-                                    <th class="align-middle" scope="col">View Details</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="text-center">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="transactionCheck02">
-                                            <label class="form-check-label" for="transactionCheck02"></label>
-                                        </div>
-                                    </td>
-                                    <td><a href="#" class="fw-bold">#SK2540</a> </td>
-                                    <td>Neal Matthews</td>
-                                    <td>
-                                        07 Oct, 2022
-                                    </td>
-                                    <td>
-                                        ₹400
-                                    </td>
-                                    <td>
-                                        <span class="badge badge-pill badge-soft-success">Paid</span>
-                                    </td>
-                                    <td>
-                                        <i class="material-icons md-payment font-xxl text-muted mr-5"></i> Mastercard
-                                    </td>
-                                    <td>
-                                        <a href="#" class="btn btn-xs"> View details</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="transactionCheck03">
-                                            <label class="form-check-label" for="transactionCheck03"></label>
-                                        </div>
-                                    </td>
-                                    <td><a href="#" class="fw-bold">#SK2541</a> </td>
-                                    <td>Jamal Burnett</td>
-                                    <td>
-                                        07 Oct, 2022
-                                    </td>
-                                    <td>
-                                        ₹380
-                                    </td>
-                                    <td>
-                                        <span class="badge badge-pill badge-soft-danger">Chargeback</span>
-                                    </td>
-                                    <td>
-                                        <i class="material-icons md-payment font-xxl text-muted mr-5"></i> Visa
-                                    </td>
-                                    <td>
-                                        <a href="#" class="btn btn-xs"> View details</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="transactionCheck04">
-                                            <label class="form-check-label" for="transactionCheck04"></label>
-                                        </div>
-                                    </td>
-                                    <td><a href="#" class="fw-bold">#SK2542</a> </td>
-                                    <td>Juan Mitchell</td>
-                                    <td>
-                                        06 Oct, 2022
-                                    </td>
-                                    <td>
-                                        ₹384
-                                    </td>
-                                    <td>
-                                        <span class="badge badge-pill badge-soft-success">Paid</span>
-                                    </td>
-                                    <td>
-                                        <i class="material-icons md-payment font-xxl text-muted mr-5"></i> Paypal
-                                    </td>
-                                    <td>
-                                        <a href="#" class="btn btn-xs"> View details</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="transactionCheck05">
-                                            <label class="form-check-label" for="transactionCheck05"></label>
-                                        </div>
-                                    </td>
-                                    <td><a href="#" class="fw-bold">#SK2543</a> </td>
-                                    <td>Barry Dick</td>
-                                    <td>
-                                        05 Oct, 2022
-                                    </td>
-                                    <td>
-                                        ₹412
-                                    </td>
-                                    <td>
-                                        <span class="badge badge-pill badge-soft-success">Paid</span>
-                                    </td>
-                                    <td>
-                                        <i class="material-icons md-payment font-xxl text-muted mr-5"></i> Mastercard
-                                    </td>
-                                    <td>
-                                        <a href="#" class="btn btn-xs"> View details</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="transactionCheck06">
-                                            <label class="form-check-label" for="transactionCheck06"></label>
-                                        </div>
-                                    </td>
-                                    <td><a href="#" class="fw-bold">#SK2544</a> </td>
-                                    <td>Ronald Taylor</td>
-                                    <td>
-                                        04 Oct, 2022
-                                    </td>
-                                    <td>
-                                        ₹404
-                                    </td>
-                                    <td>
-                                        <span class="badge badge-pill badge-soft-warning">Refund</span>
-                                    </td>
-                                    <td>
-                                        <i class="material-icons md-payment font-xxl text-muted mr-5"></i> Visa
-                                    </td>
-                                    <td>
-                                        <a href="#" class="btn btn-xs"> View details</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-center">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="transactionCheck07">
-                                            <label class="form-check-label" for="transactionCheck07"></label>
-                                        </div>
-                                    </td>
-                                    <td><a href="#" class="fw-bold">#SK2545</a> </td>
-                                    <td>Jacob Hunter</td>
-                                    <td>
-                                        04 Oct, 2022
-                                    </td>
-                                    <td>
-                                        ₹392
-                                    </td>
-                                    <td>
-                                        <span class="badge badge-pill badge-soft-success">Paid</span>
-                                    </td>
-                                    <td>
-                                        <i class="material-icons md-payment font-xxl text-muted mr-5"></i> Paypal
-                                    </td>
-                                    <td>
-                                        <a href="#" class="btn btn-xs"> View details</a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div> <!-- table-responsive end// -->
-            </div>
-        </div>
-        <div class="pagination-area mt-30 mb-50">
-            <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-start">
-                    <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                    <li class="page-item"><a class="page-link" href="#">02</a></li>
-                    <li class="page-item"><a class="page-link" href="#">03</a></li>
-                    <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                    <li class="page-item"><a class="page-link" href="#">16</a></li>
-                    <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
-                </ul>
-            </nav>
-        </div>
-    </section> <!-- content-main end// -->
-    <footer class="main-footer font-xs">
-        <div class="row pb-30 pt-15">
-            <div class="col-sm-6">
-                <script>
-                document.write(new Date().getFullYear())
-                </script> ©, Evara - HTML Ecommerce Template .
-            </div>
-            <div class="col-sm-6">
-                <div class="text-sm-end">
-                    All rights reserved
-                </div>
-            </div>
-        </div>
-    </footer>
-<%-include('../partials/admin/footer.ejs') %>
+        
+         
+    </section>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    async function loadChartData() {
+        try {
+
+            const response = await fetch('/admin/paymentData'); 
+            const data = await response.json();
+
+            const labels = data.map(item => item.method);
+            const values = data.map(item => item.total);
+            const total = data.map(item=>item.totalAmount);
+
+            // Create the chart
+             //  use 'bar' or 'doughnut' 'pie'
+            const ctx = document.getElementById('revenueByAreaChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: data.map(item => item.method), 
+                    datasets: [
+                        {
+                            data: data.map(item => item.total), 
+                            backgroundColor: ['#36A2EB', '#FF6384', '#FFCE56'], 
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    const method = context.label; 
+                                    const total = context.raw; 
+                                    const totalAmount = data[context.dataIndex].totalAmount; 
+                                    return `${method}: ${total} orders, ₹ ${totalAmount.toFixed(2)}`;
+                                }
+                            }
+                        },
+                        legend: {
+                            position: 'top',
+                        }
+                    }
+                }
+            });
+
+        } catch (error) {
+            console.error("Error loading chart data:", error);
+        }
+    }
+
+    // Call the function to load and render the chart
+    loadChartData();
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        let salesChart;
+
+        // Function to create or update chart
+        function createChart(data, label, chartType) {
+            // Destroy existing chart if it exists
+            if (salesChart) {
+                salesChart.destroy();
+            }
+
+            // Define a vibrant color palette
+            const vibrantColors = [
+                '#FF5733', // Bright Red
+                '#33FF57', // Bright Green
+                '#3357FF', // Bright Blue
+                '#FF33A1', // Hot Pink
+                '#FFD700', // Gold
+                '#40E0D0', // Turquoise
+                '#800080', // Purple
+                '#FFA500', // Orange
+                '#FF6347', // Tomato
+                '#ADFF2F', // Green Yellow
+                '#00CED1', // Dark Turquoise
+                '#8A2BE2', // Blue Violet
+                '#FF69B4', // Hot Pink
+                '#7FFF00', // Chartreuse
+                '#1E90FF'  // Dodger Blue
+            ];
+
+            // Prepare chart configuration
+            const chartConfig = {
+                type: chartType,
+                data: {
+                    labels: data.map(item =>
+                        item.name ||
+                        item.productName ||
+                        item.brandName ||
+                        'Unknown'
+                    ),
+                    datasets: [{
+                        label: label,
+                        data: data.map(item => item.totalSales || 0),
+                        backgroundColor: chartType === 'pie' || chartType === 'doughnut'
+                            ? vibrantColors
+                            : vibrantColors.slice(0, data.length), // Use only as many colors as needed
+                        borderColor: chartType === 'bar' || chartType === 'line'
+                            ? 'rgba(75, 192, 192, 1)'
+                            : '#FFFFFF', // White border for pie/doughnut charts
+                        borderWidth: chartType === 'bar' || chartType === 'line' ? 1 : 2,
+                        fill: chartType === 'line'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: chartType === 'bar' || chartType === 'line' ? {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Total Sales (₹)'
+                            }
+                        } : undefined // Remove scales for pie/doughnut charts
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    const dataItem = data[context.dataIndex];
+                                    return `Total Sales: ₹ ${context.parsed.y ? context.parsed.y.toFixed(2) : dataItem.totalSales.toFixed(2)}`;
+                                }
+                            }
+                        },
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: '#333', // Dark text for better contrast
+                                font: {
+                                    size: 14,
+                                    family: 'Arial'
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            // Create new chart
+            salesChart = new Chart(ctx, chartConfig);
+        }
+
+        // Function to fetch data
+        async function fetchChartData() {
+            const dataType = document.getElementById('dataType').value;
+            const timeFilter = document.getElementById('timeFilter').value;
+            const chartType = document.querySelector('input[name="chartType"]:checked').value;
+
+            try {
+                const response = await fetch(`/admin/dashboardData?type=${dataType}&timeFilter=${timeFilter}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+
+                // Determine label based on data type
+                let label;
+                switch (dataType) {
+                    case 'products':
+                        label = 'Top Products Sales';
+                        break;
+                    case 'categories':
+                        label = 'Top Categories Sales';
+                        break;
+                    case 'brands':
+                        label = 'Top Brands Sales';
+                        break;
+                }
+
+                // Create chart
+                createChart(data, label, chartType);
+            } catch (error) {
+                console.error('Error fetching chart data:', error);
+                alert('Failed to load chart data');
+            }
+        }
+
+        // Initial load
+        fetchChartData();
+
+        // Event listeners for controls
+        document.getElementById('dataType').addEventListener('change', fetchChartData);
+        document.getElementById('timeFilter').addEventListener('change', fetchChartData);
+
+        // Add event listeners for chart type radio buttons
+        document.querySelectorAll('input[name="chartType"]').forEach(radio => {
+            radio.addEventListener('change', fetchChartData);
+        });
+    });
+</script>
+<script>
+        document.addEventListener('DOMContentLoaded', function () {
+    const ledgerTitle = document.getElementById('ledgerTitle');
+    const ledgerBody = document.getElementById('ledgerBody');
+
+    // Event listeners for buttons
+    document.getElementById('generateMonthlyLedger').addEventListener('click', () => fetchLedger('monthly'));
+    document.getElementById('generateQuarterlyReport').addEventListener('click', () => fetchLedger('quarterly'));
+    document.getElementById('generateYearlyLedger').addEventListener('click', () => fetchLedger('yearly'));
+
+    async function fetchLedger(type) {
+        try {
+            const response = await fetch(`/admin/ledgerGenerate?type=${type}`);
+            if (!response.ok) throw new Error('Failed to fetch ledger');
+            const data = await response.json();
+
+            // Update ledger title
+            ledgerTitle.textContent = `${type.charAt(0).toUpperCase() + type.slice(1)} Ledger`;
+
+            // Populate ledger table
+            ledgerBody.innerHTML = '';
+            let balance = 0;
+
+            data.forEach((entry) => {
+                balance += entry.credit - entry.debit;
+                ledgerBody.innerHTML += `
+                    <tr>
+                        <td>${entry.date}</td>
+                        <td>${entry.description}</td>
+                        <td>${entry.debit.toFixed(2)}</td>
+                        <td>${entry.credit.toFixed(2)}</td>
+                        <td>${balance.toFixed(2)}</td>
+                    </tr>`;
+            });
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Could not generate the ledger. Please try again.');
+        }
+    }
+});
+
+</script>
+
+
+    <%-include('../partials/admin/footer.ejs') %>

@@ -10,6 +10,7 @@ const loadCart = async (req, res) => {
             return res.redirect("/logIn");
         }
         const userId = req.session.user;
+
         const cartedProducts = await Cart.findOne({ userId }).populate({
             path: "items.productId",
             model: "Product",

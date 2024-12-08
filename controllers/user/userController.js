@@ -111,8 +111,7 @@ const loadHomepage = async (req, res) => {
             .sort({ createdAt: -1 });
         productData.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
         productData = productData.slice(0, 4);
-        const cart = await Cart.find({});
-
+        
         if (user) {
             const userData = await User.findOne({ _id: user._id });
             return res.render("home", { user: userData, products: productData });
@@ -489,7 +488,7 @@ const getProductDetials = async (req, res) => {
     try {
         const productId = req.query.id;
         const user = req.session.user;
-        console.log(user);
+    
         const productData = await Product.findById(productId)
             .populate("category")
             .populate("brand");

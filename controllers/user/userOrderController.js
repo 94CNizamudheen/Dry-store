@@ -10,7 +10,8 @@ const env = require('dotenv').config();
 const { error } = require('console');
 const Coupon= require('../../models/couponSchema');
 const { session } = require('passport');
-const ShippingData= require('../../models/shippingData')
+const ShippingData= require('../../models/shippingData');
+
 
 
 
@@ -61,58 +62,78 @@ const razorpay = new Razorpay({
 
 
 const loadCheckOutPage = async (req, res) => {
-
     try {
         const userId = req.session.user;
+        const productId = req.query.productId; 
+        const coupons = await Coupon.find();
         const userData = await User.findById(userId);
-        const coupons= await Coupon.find();
         const addressData = await Address.findOne({ userId: userId });
-        const cartedProducts = await Cart.findOne({ userId }).populate({
-            path: "items.productId",
-            model: "Product",
-            select: "productName productImage salePrice description regularPrice",
-        });
-        
-        const cart = await Cart.findOne({ userId }).populate("items.productId");
-        if (!cart) {
-            return res.render('cart',{
-                isEmpty: !cartedProducts || cartedProducts.items.length === 0,
-            })
-        }
-        const subtotal = cart.items.reduce((acc, item) => acc + item.totalPrice, 0);
 
-        const shipping = req.session.shippingCharge||0;
+        let cartedProducts;
+        if (productId) {
+            const product = await Product.findById(productId);
+            if (!product) {
+                return res.redirect('/productDetails'); 
+            }
+
+            cartedProducts = {
+                items: [{
+                    productId: product,
+                    quantity: 1,
+                    totalPrice: product.salePrice || product.regularPrice,
+                }],
+            };
+        } else {
+            // Regular cart flow
+            cartedProducts = await Cart.findOne({ userId }).populate({
+                path: "items.productId",
+                model: "Product",
+                select: "productName productImage salePrice description regularPrice",
+            });
+
+            if (!cartedProducts || cartedProducts.items.length === 0) {
+                return res.render('cart', { isEmpty: true });
+            }
+        }
+
+       
+        const subtotal = cartedProducts.items.reduce((acc, item) => acc + item.totalPrice, 0);
+        const shipping = req.session.shippingCharge || 0;
         const total = subtotal + shipping;
-        const discount=req.session.discount ||0;
-        const discountedTotal=req.session.discountedTotal||0;
-        const regularTotal= cart.items.reduce((sum,item)=>(sum+item.productId?.regularPrice||0)*item.quantity,0);
-        const totalDiscount = cart.items.reduce((sum, item) => {
+        const discount = req.session.discount || 0;
+        const discountedTotal = req.session.discountedTotal || 0;
+        const regularTotal = cartedProducts.items.reduce(
+            (sum, item) => sum + (item.productId?.regularPrice || 0) * item.quantity,
+            0
+        );
+        const totalDiscount = cartedProducts.items.reduce((sum, item) => {
             const regularPrice = item.productId?.regularPrice || 0;
             const salePrice = item.productId?.salePrice || 0;
-            return sum + ((regularPrice - salePrice) * item.quantity);
+            return sum + (regularPrice - salePrice) * item.quantity;
         }, 0);
 
-
+        // Render checkout page
         res.render('check-out', {
             user: userData,
             userAddress: addressData,
             cart: cartedProducts,
             isEmpty: !cartedProducts || cartedProducts.items.length === 0,
-            total: total,
-            subtotal: subtotal,
-            selectedAddress: req.session.selectedAddress || null, 
-            discount:discount,
-            discountedTotal:discountedTotal,
+            total,
+            subtotal,
+            selectedAddress: req.session.selectedAddress || null,
+            discount,
+            discountedTotal,
             coupons,
             totalDiscount,
             regularTotal,
-            shipping
+            shipping,
         });
     } catch (error) {
         console.error('Error loading checkout page:', error);
         res.redirect('/pageNotFound').status(500).json({ error: "Internal server error" });
     }
 };
+
 
 const postAddAddress=async(req,res)=>{
     try {

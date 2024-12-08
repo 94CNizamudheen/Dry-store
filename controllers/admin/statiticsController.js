@@ -4,6 +4,7 @@ const Coupon = require('../../models/couponSchema');
 
 const { generatePDF } = require('../../utilities/pdf');
 const { generateExcel } = require('../../utilities/excel');
+const Product = require('../../models/productSchema');
 
 
 
@@ -142,8 +143,194 @@ const downloadReports = async (req, res) => {
     }
 };
 
+const getDashboardData = async (req, res) => {
+    try {
+        const { type, timeFilter } = req.query;
+
+        // Base aggregation pipeline
+        let aggregationPipeline;
+
+        // Add time-based filtering
+        const now = new Date();
+        let timeFilterMatch = {};
+        switch (timeFilter) {
+            case 'monthly':
+                timeFilterMatch = {
+                    createdOn: {
+                        $gte: new Date(now.getFullYear(), now.getMonth(), 1), // Start of the current month
+                        $lt: new Date(now.getFullYear(), now.getMonth() + 1, 1) // Start of the next month
+                    }
+                };
+                break;
+            case 'quarterly':
+                const startQuarterMonth = Math.floor(now.getMonth() / 3) * 3; // Start month of the current quarter
+                timeFilterMatch = {
+                    createdOn: {
+                        $gte: new Date(now.getFullYear(), startQuarterMonth, 1), // Start of the quarter
+                        $lt: new Date(now.getFullYear(), startQuarterMonth + 3, 1) // Start of the next quarter
+                    }
+                };
+                break;
+            case 'yearly':
+                timeFilterMatch = {
+                    createdOn: {
+                        $gte: new Date(now.getFullYear(), 0, 1), // Start of the current year
+                        $lt: new Date(now.getFullYear() + 1, 0, 1) // Start of the next year
+                    }
+                };
+                break;
+            default: // all time
+                timeFilterMatch = {};
+        };
+        
+        switch (type) {
+            case 'products':
+                aggregationPipeline = [
+                    { $match: timeFilterMatch },
+                    { $unwind: "$orderedItems" },
+                    {
+                        $group: {
+                            _id: "$orderedItems.product",
+                            totalSales: { $sum: { $multiply: ["$orderedItems.quantity", "$orderedItems.price"] } },
+                            totalQuantity: { $sum: "$orderedItems.quantity" }
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: "products",
+                            localField: "_id",
+                            foreignField: "_id",
+                            as: "productDetails"
+                        }
+                    },
+                    { $unwind: "$productDetails" },
+                    { $sort: { totalSales: -1 } },
+                    { $limit: 10 },
+                    {
+                        $project: {
+                            productName: "$productDetails.productName",
+                            totalSales: 1,
+                            totalQuantity: 1
+                        }
+                    }
+                ];
+                break;
+
+            case 'categories':
+                aggregationPipeline = [
+                    { $match: timeFilterMatch },
+                    { $unwind: "$orderedItems" },
+                    {
+                        $lookup: {
+                            from: "products",
+                            localField: "orderedItems.product",
+                            foreignField: "_id",
+                            as: "productDetails"
+                        }
+                    },
+                    { $unwind: "$productDetails" },
+                    {
+                        $group: {
+                            _id: "$productDetails.category",
+                            totalSales: { $sum: { $multiply: ["$orderedItems.quantity", "$orderedItems.price"] } },
+                            totalQuantity: { $sum: "$orderedItems.quantity" }
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: "categories",
+                            localField: "_id",
+                            foreignField: "_id",
+                            as: "categoryDetails"
+                        }
+                    },
+                    { $unwind: "$categoryDetails" },
+                    { $sort: { totalSales: -1 } },
+                    { $limit: 10 },
+                    {
+                        $project: {
+                            name: "$categoryDetails.name",
+                            totalSales: 1,
+                            totalQuantity: 1
+                        }
+                    }
+                ];
+                break;
+
+            case 'brands':
+                aggregationPipeline = [
+                    { $match: timeFilterMatch },
+                    { $unwind: "$orderedItems" },
+                    {
+                        $lookup: {
+                            from: "products",
+                            localField: "orderedItems.product",
+                            foreignField: "_id",
+                            as: "productDetails"
+                        }
+                    },
+                    { $unwind: "$productDetails" },
+                    {
+                        $group: {
+                            _id: "$productDetails.brand",
+                            totalSales: { $sum: { $multiply: ["$orderedItems.quantity", "$orderedItems.price"] } },
+                            totalQuantity: { $sum: "$orderedItems.quantity" }
+                        }
+                    },
+                    { $sort: { totalSales: -1 } },
+                    { $limit: 10 },
+                    {
+                        $project: {
+                            brandName: "$_id",
+                            totalSales: 1,
+                            totalQuantity: 1
+                        }
+                    }
+                ];
+                break;
+
+            default:
+                return res.status(400).json({ error: 'Invalid type' });
+        }
+
+        // Execute aggregation
+        const result = await Order.aggregate(aggregationPipeline);
+
+        res.json(result);
+    } catch (error) {
+        console.error('Dashboard data error:', error);
+        res.status(500).json({ error: 'Failed to fetch dashboard data' });
+    }
+};
+
+const getOrderPaymentData = async (req, res) => {
+    try {
+        const paymentData = await Order.aggregate([
+            {$group: {_id: "$paymentDetails.method", total: { $sum: 1 },totalAmount:{$sum:"$finalAmount"} } }
+        ]);
+
+        const chartData = paymentData.map((item) => ({
+            method: item._id,
+            total: item.total,
+            totalAmount:item.totalAmount,
+        }));
+
+        res.json(chartData);
+    } catch (error) {
+        console.error("Error fetching payment data:", error);
+        res.status(500).json({ message: "Error fetching payment data" });
+    }
+};
+
+module.exports = { getOrderPaymentData };
+
+
+
 module.exports = {
     LoadReportsPage,
     generateReports,
-    downloadReports
+    downloadReports,
+    getDashboardData,
+    getOrderPaymentData
+
 }
