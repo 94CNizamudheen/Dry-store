@@ -1,61 +1,61 @@
 <%-include ("../partials/user/header.ejs")%>
     <style>
-        .added i {
-            color: green !important;
-        }
+    .added i {
+        color: green;
+    }
 
-        .custom-container {
-            background-image: url('/public/uploads/sample-images/home_banner_4.20211014223424.webp');
-            /* Replace with your background image URL */
-            background-size: cover;
-            background-position: center;
-            border-radius: 10px;
-            color: #fff;
-            position: relative;
-            padding: 50px;
-        }
+    .custom-section {
+        background-image: url('/uploads/sample-images/close-up-bunch-nuts-dried-fruits-generative-ai_1034459-52273.webp');
+        background-size: cover;
+        background-position: center;
+        padding: 50px 0;
+        color: #230303;
+        border: 1px solid #800040;
+        min-height: 600px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
 
-        .custom-overlay {
-            background-color: rgba(0, 0, 0, 0.6);
-            /* Semi-transparent overlay */
-            border-radius: 10px;
-            padding: 30px;
-        }
+    .custom-overlay {
+        background-color: rgba(238, 192, 226, 0.6);
+        padding: 50px;
+        border-radius: 10px;
+    }
 
-        .custom-section {
-            background-image: url('your-background-image.jpg');
-            /* Replace with your image URL */
-            background-size: cover;
-            background-position: center;
-            padding: 50px 0;
-            color: #fff;
-            border: #800040;
-        }
+    .custom-button {
+        background-color: #b30059;
+        border: none;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-weight: bold;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
 
-        .custom-overlay {
-            background-color: rgba(0, 0, 0, 0.6);
-            padding: 50px;
-            border-radius: 10px;
-        }
+    .custom-button:hover {
+        background-color: #99004d;
+        transform: scale(1.05);
+    }
 
-        .custom-button {
-            background-color: #b30059;
-            border: none;
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 5px;
-        }
+    .custom-footer {
+        background-color: #800040;
+        color: #fff;
+        padding: 15px;
+        text-align: center;
+        border-radius: 0 0 10px 10px;
+        position: static;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+    }
+</style>
 
-        .custom-footer {
-            background-color: #800040;
-            color: #fff;
-            padding: 15px;
-            text-align: center;
-            border-radius: 0 0 10px 10px;
-        }
-    </style>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- <main class="main">        -->
+    <main class="main">       
     <!-- <section class="home-slider position-relative pt-50" >
             <div class="hero-slider-1 dot-style-1 dot-style-1-position-1" style="background-image: -webkit-image-set();">
                 <div class="single-hero-slider single-animation-wrap">
@@ -133,10 +133,7 @@
                         <a href="/shop" class="custom-button">Shop Now</a>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <img src="/uploads/sample-images/About-Us-GIF_ec327cb1-9e10-4610-af1e-186cbba04482_600x.webp"
-                        alt="Dry Fruits" class="img-fluid rounded">
-                </div>
+                
             </div>
         </div>
     </div>
@@ -546,7 +543,7 @@
                 </div>
             </div>
         </section> -->
-    <!-- </main> -->
+    </main>
 
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -674,7 +671,7 @@
                                 toast: true,
                                 position: 'center',
 
-                            }).then(()=>window.location.reload())
+                            }).then(()=>location.reload())
 
                             // Update cart count if a new item is added
                             if (!data.isExisting) {

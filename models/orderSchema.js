@@ -25,6 +25,11 @@ const orderSchema= new Schema({
             type:Number,
             default:0,
         },
+        returnDetails: {
+            status: { type: String, default: 'Not Requested', enum: ['Not Requested', 'Return Requested', 'Approved', 'Returned', 'Refunded','Rejected'] },
+            returnRequestedOn: { type: Date },
+            returnedOn: { type: Date },
+        }
     }],
     totalPrice:{
         type:Number,
@@ -64,6 +69,7 @@ const orderSchema= new Schema({
         },
         paidAmount: { type: Number },
         paidAt: { type: Date },
+        
     },
     partialCancelledDetails:[{
         product:{
@@ -105,7 +111,7 @@ const orderSchema= new Schema({
     status:{
         type:String,
         required:true,
-        enum:['Pending','Processing','Shipped','Delivered','Cancelled','Partially Cancelled','Retern Request','Returned']
+        enum:['Pending','Processing','Shipped','Delivered','Cancelled','Partially Cancelled','Return Request','Returned']
     },
     createdOn:{
         type:Date,

@@ -9,7 +9,7 @@ const crypto= require('crypto');
 const env = require('dotenv').config();
 const { error } = require('console');
 const Coupon= require('../../models/couponSchema');
-const { session } = require('passport');
+const { session, initialize } = require('passport');
 const ShippingData= require('../../models/shippingData');
 
 
@@ -933,7 +933,36 @@ const repayPayment= async(req,res)=>{
         res.status(500).json({success:false,message:"Internal Error for Updating order"});
     }
 };
-
+const initializeReturn=async(req,res)=>{
+    try {
+        const {orderId,productId}=req.body;
+        
+        const order= await Order.findOne({orderId:orderId});
+        console.log('order:',order);
+        if(!order){
+            return res.status(404).json({success:false,message:"Order not Found"});
+        }
+        const orderItem=order.orderedItems.find(item=>item.product.toString()===productId);
+        if(!orderItem){
+            return res.status(404).json({success:false,message:"Product not found"});
+        }
+        if(orderItem.returnDetails.status!=="Not Requested"){
+            return res.status(404).json({success:false,message:"Already requested or returned"});
+        }
+        console.log("ordered item",orderItem);
+        const daysSinceOrder= (new Date()-order.deliveredOn)/(1000*60*60*24);
+        if(daysSinceOrder>2){
+            return res.status(400).json({success:false,message:'Return window has expired'});
+        }
+        orderItem.returnDetails.status="Return Requested";
+        orderItem.returnDetails.returnRequestedOn= new Date();
+        await order.save();
+        res.status(200).json({success:true,})
+    } catch (error) {
+        console.error('error for return request',error);
+        res.status(500).json({success:false,message:"Internal server error"})
+    }
+}
 
 module.exports={
     loadCheckOutPage,
@@ -949,6 +978,7 @@ module.exports={
     cancelOrderItem,
     failedOrderSave,
     repayPayment,
+    initializeReturn
    
 
 }

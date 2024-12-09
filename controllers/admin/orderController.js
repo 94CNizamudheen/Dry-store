@@ -7,53 +7,57 @@ const Address= require('../../models/addressSchema');
 
 const loadOrderDetails = async (req, res) => {
     try {
-        const page= parseInt(req.query.page)||1;
-        const limit= parseInt(req.query.limit)||5;
-        const skip= (page-1)*limit;
-        const totalOrders= await Order.countDocuments();
+            const page= parseInt(req.query.page)||1;
+            const limit= parseInt(req.query.limit)||5;
+            const skip= (page-1)*limit;
+            const totalOrders= await Order.countDocuments();
 
-        const orders = await Order.find()
-            .populate({
-                path: 'orderedItems.product',
-                select: 'productName productImage '
-            })
-            .populate({
-                path: 'user',
-                select: 'name email' 
-            })
-            .sort({ createdOn: -1 }).skip(skip).limit(limit); 
+            const orders = await Order.find()
+                .populate({
+                    path: 'orderedItems.product',
+                    select: 'productName productImage '
+                })
+                .populate({
+                    path: 'user',
+                    select: 'name email' 
+                })
+                .sort({ createdOn: -1 }).skip(skip).limit(limit); 
+            
 
-        const formattedOrders = orders.map(order => ({
-            orderId: order.orderId,
-            customerName: order.user.name,
-            customerEmail: order.user.email,
-            totalPrice: order.totalPrice,
-            finalAmount: order.finalAmount,
-            discount: order.discount,
-            status: order.status,
-            createdOn: order.createdOn.toLocaleDateString(),
-            shippingAddress: order.shippingAddress,
-            items: order.orderedItems.map(item => ({
-                productName: item.product.productName,
-                quantity: item.quantity,
-                price: item.price
-            })),
-            couponApplied: order.coupenApplid
-        }));
-     
+            const formattedOrders = orders.map(order => ({
+                orderId: order.orderId,
+                customerName: order.user.name,
+                customerEmail: order.user.email,
+                totalPrice: order.totalPrice,
+                finalAmount: order.finalAmount,
+                discount: order.discount,
+                status: order.status,
+                createdOn: order.createdOn.toLocaleDateString(),
+                shippingAddress: order.shippingAddress,
+                items: order.orderedItems.map(item => ({
+                    productName: item.product.productName,
+                    quantity: item.quantity,
+                    price: item.price,
+                    returnDetails: item.returnDetails,
+                    productId: item.product ? item.product._id : null,
+                })),
+                couponApplied: order.coupenApplid,
+         
+            }));
+        
 
-        res.render('orderList', { 
-            orders: formattedOrders,
-            statusOptions: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Retern Request', 'Returned'],
-            totalPages:Math.ceil(totalOrders/limit),
-            currentPage:page,
-        });
+            res.render('orderList', { 
+                orders: formattedOrders,
+                statusOptions: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'],
+                totalPages:Math.ceil(totalOrders/limit),
+                currentPage:page,
+            });
 
-    } catch (error) {
-        console.error('Error loading order details:', error);
-        res.status(500).json({ message: "Internal server error" });
-    }
-};
+        } catch (error) {
+            console.error('Error loading order details:', error);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    };
 const getOrderDetails = async (req, res) => {
     try {
         const orderId = req.params.orderId;
@@ -121,6 +125,10 @@ const updateOrderStatus = async (req, res) => {
 
         order.status = status;
         await order.save();
+        if(order.status==="Delivered"){
+            order.deliveredOn= new Date();
+            await order.save();
+        };
 
         return res.json({
             success: true,
@@ -170,13 +178,53 @@ const cancelOrder=async(req,res)=>{
     }
 }
 
-
-
+const handleReturnRequest = async (req, res) => {
+    try {
+      const { orderId, itemId, returnAction } = req.body;
+      console.log({ orderId, itemId, returnAction } )
+  
+      if (!orderId || !itemId || !returnAction) {
+        return res.status(400).json({ success: false, message: 'Invalid request data' });
+      }
+  
+      const updateFields = {};
+      switch (returnAction) {
+        case 'approve':
+          updateFields["orderedItems.$.returnDetails.status"] = 'Approved';
+          break;
+        case 'reject':
+          updateFields["orderedItems.$.returnDetails.status"] = 'Rejected';
+          break;
+        case 'complete':
+          updateFields["orderedItems.$.returnDetails.status"] = 'Refunded';
+          updateFields["orderedItems.$.returnDetails.returnedOn"] = new Date();
+          break;
+        default:
+          return res.status(400).json({ success: false, message: 'Invalid action' });
+      }
+  
+      const order = await Order.findOneAndUpdate(
+        { orderId, "orderedItems.product": itemId },
+        { $set: updateFields },
+        { new: true }
+      );
+  
+      if (order) {
+        return res.status(200).json({ success: true, message: 'Action performed successfully' });
+      } else {
+        return res.status(404).json({ success: false, message: 'Order or item not found' });
+      }
+    } catch (error) {
+      console.error('Error handling return request:', error);
+      res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+  };
 
 module.exports={
     loadOrderDetails,
     getOrderDetails,
     updateOrderStatus,
-    cancelOrder
+    cancelOrder,
+    handleReturnRequest
 
 }

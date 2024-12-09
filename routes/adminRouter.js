@@ -14,6 +14,7 @@ const referralController =require('../controllers/admin/referralCodeController')
 const shippingContoller= require('../controllers/admin/shippingController');
 const multer= require('multer');
 const storage= require('../helpers/multer');
+const { rotate } = require('pdfkit');
 const uploads= multer({storage:storage});
 
 
@@ -73,6 +74,7 @@ router.get('/orderList',adminAuth,orderController.loadOrderDetails);
 router.post('/orderList/update-status', adminAuth, orderController.updateOrderStatus);
 router.get('/orderList/:orderId',adminAuth,orderController.getOrderDetails);
 router.post('/cancelOrder/:orderId',adminAuth,orderController.cancelOrder);
+router.patch('/returnRequestHandle',adminAuth,orderController.handleReturnRequest);
 
 //coupon managment 
 router.get('/coupon',adminAuth,coupenController.loadCouponPage);

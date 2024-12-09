@@ -37,79 +37,109 @@
     </style>
 </head>
 
-<section>
+
     <br><br><br>
 <!-- Main Content -->
 <div class="container-fluid py-4">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Order Management</h3>
-                    <div class="float-start">
-                        <input type="text" id="orderSearch" class="form-control" placeholder="Search orders...">
-                    </div>
+   <div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Order Management</h3>
+                <div class="float-start">
+                    <input type="text" id="orderSearch" class="form-control" placeholder="Search orders...">
                 </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Order ID</th>
-                                    <th>Customer</th>
-                                    <th>Date</th>
-                                    <th>Total Amount</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% orders.forEach(order => { %>
-                                <tr>
-                                    <td><%= order.orderId %></td>
-                                    <td>
-                                        <%= order.customerName %><br>
-                                        <small class="text-muted"><%= order.customerEmail %></small>
-                                    </td>
-                                    <td><%= order.createdOn %></td>
-                                    <td>
-                                        ₹<%= order.finalAmount.toFixed(2) %>
-                                        <% if (order.discount > 0) { %>
-                                            <br><small class="text-success">Saved ₹<%= order.discount.toFixed(2) %></small>
-                                        <% } %>
-                                    </td>
-                                    <td>
-                                        <select class="form-select form-select-sm status-select" 
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th>Total Amount</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                                <th>Return Requests</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% orders.forEach(order => { %>
+                            <tr>
+                                <td><%= order.orderId %></td>
+                                <td>
+                                    <%= order.customerName %><br>
+                                    <small class="text-muted"><%= order.customerEmail %></small>
+                                </td>
+                                <td><%= order.createdOn %></td>
+                                <td>
+                                    ₹<%= order.finalAmount.toFixed(2) %>
+                                    <% if (order.discount > 0) { %>
+                                        <br><small class="text-success">Saved ₹<%= order.discount.toFixed(2) %></small>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <select class="form-select form-select-sm status-select" 
+                                            data-order-id="<%= order.orderId %>">
+                                        <% statusOptions.forEach(status => { %>
+                                            <option value="<%= status %>" 
+                                                    <%= order.status === status ? 'selected' : '' %>>
+                                                <%= status %>
+                                            </option>
+                                        <% }); %>
+                                    </select>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary view-details" 
+                                            data-order-id="<%= order.orderId %>">
+                                        <i class="fas fa-eye"></i> View
+                                    </button>
+                                    <% if (order.status === 'Pending') { %>
+                                        <button class="btn btn-sm btn-danger cancel-order"
                                                 data-order-id="<%= order.orderId %>">
-                                            <% statusOptions.forEach(status => { %>
-                                                <option value="<%= status %>" 
-                                                        <%= order.status === status ? 'selected' : '' %>>
-                                                    <%= status %>
-                                                </option>
-                                            <% }); %>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-sm btn-primary view-details" 
-                                                data-order-id="<%= order.orderId %>">
-                                            <i class="fas fa-eye"></i> View
+                                            <i class="fas fa-times"></i> Cancel Order
                                         </button>
-                                        <% if (order.status === 'Pending') { %>
-                                            <button class="btn btn-sm btn-danger cancel-order"
-                                                    data-order-id="<%= order.orderId %>">
-                                                <i class="fas fa-times"></i> Cancel Order
-                                            </button>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <% order.items.forEach(item => { %>
+                                        <% if (item.returnDetails && (item.returnDetails.status === 'Return Requested' ||  item.returnDetails.status === 'Approved')) { %>
+                                            <div>
+                                                <p><%= item.productName %></p>
+                                                <% if (item.returnDetails.status !== 'Rejected') { %>
+                                                    <select class="form-select return-action" 
+                                                            data-order-id="<%= order.orderId %>" data-item-id="<%= item.productId %>">
+                                                        <option value="">Select Action</option>
+                                                        <% if (item.returnDetails.status !== 'Approved') { %>
+                                                            <option value="approve">Approve Return</option>
+                                                        <% } %>
+                                                        <% if (item.returnDetails.status !== 'Rejected') { %>
+                                                            <option value="reject">Reject Return</option>
+                                                        <% } %>
+                                                        <% if (item.returnDetails.status !== 'Rejected' && item.returnDetails.status !== 'Refunded') { %>
+                                                            <option value="complete">Complete Refund</option>
+                                                        <% } %>
+                                                    </select>
+                                                <% } %>
+                                            </div>
                                         <% } %>
-                                    </td>
-                                </tr>
-                                <% }); %>
-                            </tbody>
-                        </table>
-                    </div>
+                                    <% }); %>
+                                </td>
+                                
+                            </tr>
+
+                            <!-- Return-Requested Items Section -->
+                                
+                            <% }); %>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
 </div>
 <div class="pagination-area mt-15 mb-50">
     <nav aria-label="Page navigation example">
@@ -155,7 +185,7 @@
         </div>
     </div>
 </div>
-
+</section>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -369,7 +399,79 @@
         });
     });
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const returnActions = document.querySelectorAll('.return-action');
 
+        returnActions.forEach(select => {
+            select.addEventListener('change', async (event) => {
+                const returnAction = event.target.value;
+                const orderId = event.target.dataset.orderId;
+                const itemId = event.target.dataset.itemId;
+                console.log("itemId:",itemId);
+                console.log("orderId:",orderId);
+                console.log("returnAction:",returnAction);
+
+                if (returnAction) {
+                    const confirmResult = await Swal.fire({
+                        title: 'Confirm Action',
+                        text: `Are you sure you want to ${returnAction} this return request?`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes',
+                        cancelButtonText: 'No',
+                        toast:true,
+                        position:"center"
+                    });
+
+                    if (confirmResult.isConfirmed) {
+                        try {
+                            const response = await fetch('/admin/returnRequestHandle', {
+                                method: 'PATCH',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ orderId, itemId, returnAction })
+                            });
+
+                            const data = await response.json();
+
+                            if (data.success) {
+                                Swal.fire({
+                                    icon:"success",
+                                    text:data.message,
+                                    title:'Success!',
+                                    toast:true,
+                                    position:"center"
+                                }).then(()=>location.reload())
+                            } else {
+                                Swal.fire({
+                                    icon:"error",
+                                    text:data.message,
+                                    title:'Error!',
+                                    toast:true,
+                                    position:"center"
+                                })
+                            }
+                        } catch (error) {
+                            console.error('Error handling return request:', error);
+                            Swal.fire({
+                                    icon:"error",
+                                    text: 'Something went wrong!',
+                                    title:'Error!',
+                                    toast:true,
+                                    position:"center"
+                                })
+                        }
+                    } else {
+                        // Reset dropdown to default if action is canceled
+                        event.target.value = '';
+                    }
+                }
+            });
+        });
+    });
+
+
+</script>
 
 
 

@@ -357,8 +357,6 @@
                                                     <% userOrders.forEach((order, index)=> { %>
                                                         <div class="order-card <%= index === 0 ? 'active' : 'inactive' %>"
                                                             data-order-index="<%= index %>">
-
-
                                                             <div
                                                                 class="d-flex justify-content-between align-items-start">
                                                                 <div>
@@ -369,9 +367,7 @@
                                                                         <%= order.orderedItems.length %> Items • Order Placed on <%= order.createdOn.toLocaleDateString() %>
                                                                     </p>
                                                                 </div>
-                                                               
                                                             </div>
-
                                                             <!-- Progress Tracker -->
                                                             <div class="progress-tracker">
                                                                 <div class="progress-line"></div>
@@ -387,7 +383,6 @@
                                                                                 class="step-label text-danger">Cancelled</span>
                                                                         </div>
                                                                         <% } else { %>
-
                                                                             <div
                                                                                 class="step <%= order.status === 'Pending' || order.status === 'Processing' || order.status === 'Shipped' || order.status === 'Delivered' ? 'placed' : '' %>">
                                                                                 <span class="step-label">Order
@@ -414,39 +409,76 @@
                                                             <!-- Activity Feed -->
                                                             <div class="activity-feed">
                                                                 <h6 class="mb-3">Order Activity</h6>
-                                                                <% if (order.status==='Delivered' ) { %>
+                                                            
+                                                                <% if (order.status === 'Delivered') { %>
                                                                     <div class="activity-item bg-light">
                                                                         <div class="activity-icon text-success">✓</div>
                                                                         <div>
-                                                                            <p class="mb-0">Your order has been
-                                                                                delivered. Thank you for shopping!</p>
+                                                                            <p class="mb-0">Your order has been delivered. Thank you for shopping!</p>
                                                                             <small class="text-muted">
-                                                                                <%= new
-                                                                                    Date(order.invoiceDate).toLocaleString()%>
+                                                                                <%= new Date(order.invoiceDate).toLocaleString() %>
                                                                             </small>
                                                                         </div>
                                                                     </div>
-                                                                    <% } else if (order.status==='Cancelled' ) { %>
+                                                                <% } else if (order.status === 'Cancelled') { %>
+                                                                    <div class="activity-item bg-light">
+                                                                        <div class="activity-icon text-danger">✕</div>
+                                                                        <div>
+                                                                            <p class="mb-0">Your order has been cancelled.</p>
+                                                                            <small class="text-muted">
+                                                                                <%= new Date(order.cancelledOn).toLocaleString() %>
+                                                                            </small>
+                                                                        </div>
+                                                                    </div>
+                                                                <% } %>
+                                                            
+                                                                <% order.orderedItems.forEach(item => { %>
+                                                                    <% if (item.returnDetails.status !== 'Not Requested') { %>
                                                                         <div class="activity-item bg-light">
-                                                                            <div class="activity-icon text-danger">✕
+                                                                            <div class="activity-icon 
+                                                                                <% if (item.returnDetails.status === 'Return Requested') { %> text-warning <% } %>
+                                                                                <% if (item.returnDetails.status === 'Approved') { %> text-primary <% } %>
+                                                                                <% if (item.returnDetails.status === 'Returned') { %> text-success <% } %>
+                                                                                <% if (item.returnDetails.status === 'Refunded') { %> text-info <% } %>
+                                                                            ">
+                                                                                <!-- Use appropriate symbols for each status -->
+                                                                                <% if (item.returnDetails.status === 'Return Requested') { %> ⌛ <% } %>
+                                                                                <% if (item.returnDetails.status === 'Approved') { %> ✔ <% } %>
+                                                                                <% if (item.returnDetails.status === 'Returned') { %> ↩ <% } %>
+                                                                                <% if (item.returnDetails.status === 'Refunded') { %> 💵 <% } %>
                                                                             </div>
                                                                             <div>
-                                                                                <p class="mb-0">Your order has been
-                                                                                    cancelled.</p>
+                                                                                <p class="mb-0">
+                                                                                    <% if (item.returnDetails.status === 'Return Requested') { %>
+                                                                                        Return requested for <strong><%= item.product.productName %></strong>.
+                                                                                    <% } else if (item.returnDetails.status === 'Approved') { %>
+                                                                                        Return approved for <strong><%= item.product.productName %></strong>.
+                                                                                    <% } else if (item.returnDetails.status === 'Returned') { %>
+                                                                                        Item <strong><%= item.product.productName %></strong> has been returned.
+                                                                                    <% } else if (item.returnDetails.status === 'Refunded') { %>
+                                                                                        Refund processed for <strong><%= item.product.productName %></strong>.
+                                                                                    <% } %>
+                                                                                </p>
                                                                                 <small class="text-muted">
-                                                                                    <%= new Date(order.createdOn).toLocaleString() %>
+                                                                                    <% if (item.returnDetails.status === 'Return Requested') { %>
+                                                                                        <%= new Date(item.returnDetails.returnRequestedOn).toLocaleString() %>
+                                                                                    <% } else if (item.returnDetails.status === 'Returned') { %>
+                                                                                        <%= new Date(item.returnDetails.returnedOn).toLocaleString() %>
+                                                                                    <% } %>
                                                                                 </small>
                                                                             </div>
                                                                         </div>
-                                                                        <% } %>
+                                                                    <% } %>
+                                                                <% }); %>
                                                             </div>
+                                                            
 
                                                             <!-- Order Items -->
                                                             <div class="order-items">
-                                                                <% order.orderedItems.forEach(item=> { %>
+                                                                <% order.orderedItems.forEach(item => { %>
                                                                     <div class="item-row">
                                                                         <img src="/uploads/images/<%= item.product.productImage[0] %>"
-                                                                            alt="Product" class="item-image">
+                                                                             alt="Product" class="item-image">
                                                                         <div class="flex-grow-1">
                                                                             <h6 class="mb-1">
                                                                                 <%= item.product.productName %>
@@ -456,129 +488,81 @@
                                                                             </p>
                                                                         </div>
                                                                         <div class="text-end">
-                                                                            <h6>₹<%= (item.price *
-                                                                                    item.quantity).toFixed(2) %>
-                                                                            </h6>
-                                                                            <% if(order.status==="Pending"||order.status==="Processing") {%>
-                                                                            <% if (order.orderedItems.length> 1&&!order.coupon) { %>
-                                                                                <a class="text-danger" href="#" onclick="cancelOrderItem('<%= order.orderId %>', '<%= item.product._id %>')">Cancel Item</a>
+                                                                            <h6>₹<%= (item.price * item.quantity).toFixed(2) %></h6>
+                                                                            
+                                                                            <% if (order.status === "Pending" || order.status === "Processing") { %>
+                                                                                <% if (order.orderedItems.length > 1 && !order.coupon) { %>
+                                                                                    <a class="text-danger" href="#" onclick="cancelOrderItem('<%= order.orderId %>', '<%= item.product._id %>')">Cancel Item</a>
                                                                                 <% } %>
+                                                                            <% } else if (order.status === "Delivered") { %>
+                                                                                <% if (!item.returnDetails || item.returnDetails.status === 'Not Requested') { %>
+                                                                                    <a class="text-danger" href="#" onclick="ReturnItem('<%= order.orderId %>', '<%= item.product._id %>')">Return Item</a>
+                                                                                <% } else { %>
+                                                                                    <span class="text-muted">Return already requested</span>
                                                                                 <% } %>
+                                                                            <% } %>
                                                                         </div>
                                                                     </div>
+                                                                <% }) %>
+                                                            
+                                                                <% if (order.partialCancelledDetails.length > 0) { %>
+                                                                    <h5 class="mt-4 text-warning">Partially Cancelled Items</h5>
+                                                                    <% order.partialCancelledDetails.forEach(cancelled => { %>
+                                                                        <div class="item-row">
+                                                                            <img src="/uploads/images/<%= cancelled.product.productImage[0] %>"
+                                                                                 alt="Product" class="item-image">
+                                                                            <div class="flex-grow-1">
+                                                                                <h6 class="mb-1">
+                                                                                    <%= cancelled.product.productName %>
+                                                                                </h6>
+                                                                                <p class="mb-0 text-muted">
+                                                                                    Original Quantity: <%= cancelled.originalQuantity %><br>
+                                                                                    Cancelled Quantity: <%= cancelled.quantity %>
+                                                                                </p>
+                                                                            </div>
+                                                                            <div class="text-end">
+                                                                                <h6>Refund: ₹ <%= cancelled.refundAmount.toFixed(2) %></h6>
+                                                                                <p class="text-muted">Cancelled On: <%= new Date(cancelled.cancelledOn).toLocaleDateString() %></p>
+                                                                            </div>
+                                                                        </div>
                                                                     <% }) %>
-
-                                                                        <% if (order.partialCancelledDetails.length> 0)
-                                                                            { %>
-                                                                            <h5 class="mt-4 text-warning">Partially
-                                                                                Cancelled Items</h5>
-                                                                            <%
-                                                                                order.partialCancelledDetails.forEach(cancelled=>
-                                                                                {%>
-                                                                                <div class="item-row">
-                                                                                    <img src="/uploads/images/<%= cancelled.product.productImage[0] %>"
-                                                                                        alt="Product"
-                                                                                        class="item-image">
-                                                                                    <div class="flex-grow-1">
-                                                                                        <h6 class="mb-1">
-                                                                                            <%= cancelled.product.productName
-                                                                                                %>
-                                                                                        </h6>
-                                                                                        <p class="mb-0 text-muted">
-                                                                                            Original Quantity: <%=
-                                                                                                cancelled.originalQuantity
-                                                                                                %><br>
-                                                                                                Cancelled Quantity:
-                                                                                                <%=cancelled.quantity%>
-                                                                                        </p>
-                                                                                    </div>
-                                                                                    <div class="text-end">
-                                                                                        <h6>Refund: ₹
-                                                                                            <%=cancelled.refundAmount.toFixed(2)%>
-                                                                                        </h6>
-                                                                                        <p class="text-muted">Cancelled
-                                                                                            On: <%= new
-                                                                                                Date(cancelled.cancelledOn).toLocaleDateString()
-                                                                                                %>
-                                                                                        </p>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <% }) %>
-                                                                                    <% } %>
-
-                                                                                        <br>
-                                                                                        <div class="text-end">
-                                                                                            <h6>Total: ₹
-                                                                                                <%=order.totalPrice.toFixed(2)
-                                                                                                    %>
-                                                                                            </h6>
-                                                                                        </div><br>
-                                                                                        <div class="text-end">
-                                                                                            <h6>Discount:- ₹
-                                                                                                <%=order.discount.toFixed(2)
-                                                                                                    %>
-                                                                                            </h6>
-                                                                                        </div><br>
-                                                                                        <div class="text-end">
-                                                                                            <h6>Shipping Charge: + ₹ <%=
-                                                                                                    parseFloat(order.shippingCharge||
-                                                                                                    0).toFixed(2) %>
-                                                                                            </h6>
-                                                                                        </div><br>
-                                                                                        <div class="text-end">
-                                                                                            <h6 id="finalAmount">Final
-                                                                                                Price: ₹
-                                                                                                <%=order.finalAmount.toFixed(2)%>
-                                                                                            </h6>
-                                                                                        </div>
-                                                                                        <% if
-                                                                                            (order.paymentDetails.paymentStatus==='Failed'
-                                                                                            ) { %>
-                                                                                            <div id="timer"
-                                                                                                class="text-danger mt-3">
-                                                                                                <h5>"We noticed an issue with your payment. Don’t worry, you have 1 day to resolve it.
-                                                                                                     If the payment isn’t completed within this time, your order will be automatically canceled.
-                                                                                                     Please reach out to us if you need any assistance!"</h5>
-
-                                                                                            </div>
-                                                                                            <% } %>
-
+                                                                <% } %>
+                                                                <br>
+                                                                <div class="text-end">
+                                                                    <h6>Total: ₹ <%= order.totalPrice.toFixed(2) %></h6>
+                                                                </div><br>
+                                                                <div class="text-end">
+                                                                    <h6>Discount: - ₹ <%= order.discount.toFixed(2) %></h6>
+                                                                </div><br>
+                                                                <div class="text-end">
+                                                                    <h6>Shipping Charge: + ₹ <%= parseFloat(order.shippingCharge || 0).toFixed(2) %></h6>
+                                                                </div><br>
+                                                                <div class="text-end">
+                                                                    <h6 id="finalAmount">Final Price: ₹ <%= order.finalAmount.toFixed(2) %></h6>
+                                                                </div>
+                                                            
+                                                                <% if (order.paymentDetails.paymentStatus === 'Failed') { %>
+                                                                    <div id="timer" class="text-danger mt-3">
+                                                                        <h5>"We noticed an issue with your payment. Don’t worry, you have 1 day to resolve it. 
+                                                                            If the payment isn’t completed within this time, your order will be automatically canceled. 
+                                                                            Please reach out to us if you need any assistance!"</h5>
+                                                                    </div>
+                                                                <% } %>
                                                             </div>
-
-
                                                             <!-- Address Information -->
                                                             <div class="row mt-4">
-
-
                                                                 <!-- Shipping Address -->
                                                                 <div class="col-md-4">
                                                                     <div class="address-card">
                                                                         <h6 class="mb-3">Shipping Address</h6>
-                                                                        <span class="address-type">
-                                                                            <%= order.shippingAddress.addressType %>
-                                                                        </span>
+                                                                        <span class="address-type"> <%= order.shippingAddress.addressType %></span>
 
-                                                                        <div class="address-details">
-                                                                            <div class="name">
-                                                                                <%= user.name %>
-                                                                            </div>
+                                                                        <div class="address-details"><div class="name"><%= user.name %> </div>
 
-                                                                            <div class="location">
-                                                                                <div>
-                                                                                    <%= order.shippingAddress.name %>
-                                                                                </div>
-                                                                                <div>
-                                                                                    <%= order.shippingAddress.landmark
-                                                                                        %>
-                                                                                </div>
-                                                                                <div>
-                                                                                    <%= order.shippingAddress.city %>
-                                                                                </div>
-                                                                                <div>
-                                                                                    <%= order.shippingAddress.state %> -
-                                                                                        <%= order.shippingAddress.pincode
-                                                                                            %>
-                                                                                </div>
+                                                                            <div class="location"><div><%= order.shippingAddress.name %> </div>
+                                                                                <div><%= order.shippingAddress.landmark%></div>
+                                                                                <div> <%= order.shippingAddress.city %></div>
+                                                                                <div><%= order.shippingAddress.state %> -<%= order.shippingAddress.pincode %></div>
                                                                             </div>
 
                                                                             <div class="contact">
@@ -588,10 +572,7 @@
                                                                                         xmlns="http://www.w3.org/2000/svg"
                                                                                         fill="none" viewBox="0 0 24 24"
                                                                                         stroke="currentColor">
-                                                                                        <path stroke-linecap="round"
-                                                                                            stroke-linejoin="round"
-                                                                                            stroke-width="2"
-                                                                                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                                                                        <path stroke-linecap="round"stroke-linejoin="round"stroke-width="2"d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                                                                     </svg>
                                                                                     <%= user.email %>
                                                                                 </div>
@@ -603,18 +584,14 @@
                                                                 <!-- Order Notes -->
                                                                 <div class="col-md-4">
                                                                     <h6>Order Notes</h6>
-                                                                    <p class="mb-0">
-                                                                        <%= order.notes || 'No special instructions.' %>
-                                                                    </p>
+                                                                    <p class="mb-0"><%= order.notes || 'No special instructions.' %></p>
                                                                 </div>
 
                                                             </div>
 
-                                                            <% if (!['Cancelled', 'Delivered' ].includes(order.status))
-                                                                { %>
+                                                            <% if (!['Cancelled', 'Delivered' ].includes(order.status)) {%>
                                                                 <br>
-                                                                <p>orderId: <%= order.orderId %>
-                                                                </p>
+                                                                <p>orderId: <%= order.orderId %></p>
                                                                 <a class="btn btn-secondary btn-sm" href="#" onclick="cancelOrder('<%= order.orderId %>')">Cancel Order</a>
                                                                 <% } %>
                                                                     <!-- Download Invoice Button -->
@@ -623,21 +600,51 @@
                                                                         Download Invoice
                                                                     </button>
 
-                                                                    <% if (order.paymentDetails &&
-                                                                        order.paymentDetails.paymentStatus==='Failed' )
-                                                                        { %>
+                                                                    <% if (order.paymentDetails && order.paymentDetails.paymentStatus==='Failed' ) { %>
                                                                         <button id="retryPaymentBtn" class="btn btn-warning btn-sm">Retry Payment
                                                                         </button>
-                                                                        <% } %>
-
+                                                                     <% } %>
                                                         </div>
                                                         <% }); %>
                                                 </div>
                                                 <% } else { %>
-                                                    < h3>NO orders</h3>
+                                                    <h3>NO orders</h3>
                                                         <% } %>
                                         </div>
                                     </div>
+                                    <!-- Modal Structure -->
+                                    <div class="modal fade" id="returnModal" tabindex="-1" aria-labelledby="returnModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content bg-light">
+                                                <div class="modal-header bg-primary text-white">
+                                                    <h5 class="modal-title" id="returnModalLabel">Return Request Processed</h5>
+                                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p class="text-success">
+                                                        <strong><i class="bi bi-check-circle-fill me-2"></i>Return Request Confirmed</strong>
+                                                    </p>
+                                                    <p>Dear Customer,</p>
+                                                    <p>We have successfully processed your return request. Our delivery partner will contact you shortly to arrange a pickup at your convenience.</p>
+                                                    
+                                                    <div class="alert alert-warning" role="alert">
+                                                        <h6 class="alert-heading">Important Return Instructions:</h6>
+                                                        <ul class="mb-0">
+                                                            <li>Ensure the item is securely packed for return.</li>
+                                                            <li>Damaged or broken packets will not be accepted.</li>
+                                                        </ul>
+                                                    </div>
+                                    
+                                                    <p class="mt-3">Thank you for your understanding and cooperation. For any queries, feel free to contact our support team.</p>
+                                                    <p class="text-muted">Best regards,<br>Henza's Dry Store</p>
+                                                </div>
+                                                <div class="modal-footer bg-light">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
 
                                     <div class="tab-pane fade" id="track-orders" role="tabpanel"
                                         aria-labelledby="track-orders-tab">
@@ -673,8 +680,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="tab-pane fade" id="address" role="tabpanel"
+                                </div>
+                                <div class="tab-pane fade" id="address" role="tabpanel"
                                         aria-labelledby="address-tab">
                                         <div>
                                             <a href="/add-address">
@@ -722,8 +729,8 @@
                                                             </div>
                                                             <% } %>
                                         </div>
-                                    </div>
-                                    <div class="tab-pane fade" id="account-detail" role="tabpanel"
+                                </div>
+                                <div class="tab-pane fade" id="account-detail" role="tabpanel"
                                         aria-labelledby="account-detail-tab">
                                         <div class="container">
                                             <div class="row">
@@ -791,15 +798,15 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                     </div>
+                 </div>
             </div>
-        </section>
-    </main>
+        </div>
+    </section>
+</main>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     
@@ -868,7 +875,7 @@
                 .then(orderData => {
                     if (orderData.isOnlinePayment) {
                         Swal.fire({
-                            title: 'Select Refund Method',
+                            title:  'Are you sure?',
                             text: "How would you like to receive your refund?",
                             icon: "question",
                             showCancelButton: true,
@@ -997,7 +1004,7 @@
                 .then(orderData => {
                     if (orderData.isOnlinePayment) {
                         Swal.fire({
-                            title: 'Select Refund Method',
+                            title: 'Are you sure?',
                             text: "How would you like to receive your refund?",
                             icon: "question",
                             showCancelButton: true,
@@ -1230,7 +1237,40 @@
             }
         });
     </script>
-
+    <script>
+        async function ReturnItem(orderId, productId) {
+            try {
+                const response = await fetch('/returnProduct', {
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ orderId: orderId, productId: productId })
+                });
+                const data = await response.json()
+                if (data.success) {
+                    const modal = new bootstrap.Modal(document.getElementById('returnModal'));
+                    modal.show()
+                    document.getElementById('returnModal').addEventListener('hidden.bs.modal', function () {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        text: data.message || "Failed to return item",
+                        toast: true,
+                        position: "center",
+                    })
+                }
+            } catch (error) {
+                console.error(' Error returning  item', error);
+                Swal.fire({
+                    icon: "error",
+                    text: 'An error occurred while processing  your return',
+                    toast: true,
+                    position: "center",
+                })
+            }
+        }
+    </script>
 
 
     <%- include('../partials/user/footer.ejs') %>

@@ -96,6 +96,7 @@ router.post('/create-razorpay-order',userAuth,orderController.createRazorpayOrde
 router.post('/verify-payment',userAuth,orderController.verifyRazorpayPaymentAndPlaceOrder);
 router.post('/failed-order-save',userAuth,orderController.failedOrderSave);
 router.patch('/verify-repay-payment',userAuth,orderController.repayPayment);
+router.post('/returnProduct',userAuth,orderController.initializeReturn);
 
 
 
