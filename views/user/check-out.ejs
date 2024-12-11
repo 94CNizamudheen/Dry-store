@@ -45,70 +45,7 @@
                 </div>
                 <% }else {%>
                     <div class="container">
-                        <div class="row">
-                            <div class="col-lg-6 mb-sm-15">
-                                <div class="toggle_info">
-                                    <span><i class="fi-rs-user mr-10"></i><span class="text-muted">Already have an
-                                            account?</span>
-                                        <a href="#loginform" data-bs-toggle="collapse" class="collapsed"
-                                            aria-expanded="false">Click here to login</a></span>
-                                </div>
-                                <div class="panel-collapse collapse login_form" id="loginform">
-                                    <div class="panel-body">
-                                        <p class="mb-30 font-sm">
-                                            If you have shopped with us before, please enter your details
-                                            below. If you are a new customer, please proceed to the Billing
-                                            &amp; Shipping section.
-                                        </p>
-                                        <form method="post">
-                                            <div class="form-group">
-                                                <input type="text" name="email" placeholder="Username Or Email" />
-                                            </div>
-                                            <div class="form-group">
-                                                <input type="password" name="password" placeholder="Password" />
-                                            </div>
-                                            <div class="login_footer form-group">
-                                                <div class="chek-form">
-                                                    <div class="custome-checkbox">
-                                                        <input class="form-check-input" type="checkbox" name="checkbox"
-                                                            id="remember" value="" />
-                                                        <label class="form-check-label" for="remember"><span>Remember
-                                                                me</span></label>
-                                                    </div>
-                                                </div>
-                                                <a href="#">Forgot password?</a>
-                                            </div>
-                                            <div class="form-group">
-                                                <button class="btn btn-md" name="login">Log in</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="toggle_info">
-                                    <span><i class="fi-rs-label mr-10"></i><span class="text-muted">Have a
-                                            coupon?</span>
-                                        <a href="#coupon" data-bs-toggle="collapse" class="collapsed"
-                                            aria-expanded="false">Click here to enter your code</a></span>
-                                </div>
-                                <div class="panel-collapse collapse coupon_form" id="coupon">
-                                    <div class="panel-body">
-                                        <p class="mb-30 font-sm">
-                                            If you have a coupon code, please apply it below.
-                                        </p>
-                                        <form method="post">
-                                            <div class="form-group">
-                                                <input type="text" placeholder="Enter Coupon Code..." />
-                                            </div>
-                                            <div class="form-group">
-                                                <button class="btn btn-md" name="login">Apply Coupon</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
                         <div class="row">
                             <div class="col-12">
                                 <div class="divider mt-50 mb-50"></div>
@@ -304,22 +241,33 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        Coupon Section
-                                        <div class="coupon-section mt-3">
-                                            <div class="input-group">
-                                                <input type="text" id="couponInput" class="form-control"
-                                                    style="border-color: black;" placeholder="Enter coupon code"
-                                                    aria-label="Coupon code">
-                                                <button id="applyBtn"
-                                                    class="btn btn-primary <%= discount > 0 ? 'd-none' : '' %>">
-                                                    Apply Coupon
-                                                </button>
-                                                <button id="removeBtn"
-                                                    class="btn btn-danger <%= discount > 0 ? '' : 'd-none' %>">
-                                                    Remove Coupon
-                                                </button>
+                                        <div class="">
+                                            <div class="toggle_info">
+                                                <span><i class="fi-rs-label mr-10"></i><span class="text-muted">Have a
+                                                        coupon?</span>
+                                                    <a href="#coupon" data-bs-toggle="collapse" class="collapsed"
+                                                        aria-expanded="false">Click here to enter your code</a></span>
+                                            </div>
+                                            <div class="panel-collapse collapse coupon_form" id="coupon">
+                                                <div class="panel-body">
+
+                                                    <div class="input-group">
+                                                        <input type="text" id="couponInput" class="form-control"
+                                                            style="border-color: black;" placeholder="Enter coupon code"
+                                                            aria-label="Coupon code">
+                                                        <button id="applyBtn"
+                                                            class="btn btn-primary <%= discount > 0 ? 'd-none' : '' %>">
+                                                            Apply Coupon
+                                                        </button>
+                                                        <button id="removeBtn"
+                                                            class="btn btn-danger <%= discount > 0 ? '' : 'd-none' %>">
+                                                            Remove Coupon
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
+
                                         <div class="container mt-4">
                                             <div class="row ">
                                                 <% if(coupons.length<=0) {%>
@@ -608,10 +556,18 @@
                                                                 </tr>
                                                                 <tr>
                                                                     <th colspan="2">Shipping</th>
-                                                                    <td><em>
-                                                                            <%= shipping.toFixed(2) %>
-                                                                        </em></td>
+                                                                    <td>
+                                                                        <% if (discountedTotal > 1000) { %>
+                                                                            <em>
+                                                                                <del>₹<%= shipping.toFixed(2) %></del>
+                                                                                Free
+                                                                            </em>
+                                                                        <% } else { %>
+                                                                            <em>₹<%= shipping.toFixed(2) %></em>
+                                                                        <% } %>
+                                                                    </td>
                                                                 </tr>
+                                                                
                                                                 <tr>
                                                                     <th colspan="2" class="fw-bold">Final Total</th>
                                                                     <td class="fw-bold text-success">
@@ -750,7 +706,6 @@
     </script>
 
     <script>
-
         const paymentOptions = document.querySelectorAll('input[name="paymentOption"]');
         const placeOrderButton = document.getElementById('placeOrderButton');
 
@@ -763,9 +718,10 @@
     <script>
         document.getElementById('applyBtn').addEventListener("click", function () {
             const couponInput = document.getElementById('couponInput').value.trim();
-            const totalAmount = parseFloat(document.getElementById('subtotal').textContent || '0');
-            console.log(document.getElementById('subtotal').textContent);
-            console.log('totalAmount:', totalAmount)
+            const totalAmountElement = document.querySelector('.fw-bold.text-success');
+            const totalAmount = parseFloat(totalAmountElement.textContent.replace('₹', '').trim() || '0');
+
+            console.log('Total Amount:', totalAmount);
             const loadingSpinner = document.getElementById('loadingSpinner');
 
             if (!couponInput) {
@@ -793,6 +749,7 @@
                 .then((data) => {
 
                     if (data.success) {
+
                         Swal.fire({
                             icon: "success",
                             title: 'Success',
@@ -867,7 +824,6 @@
         });
     </script>
     <script>
-
         document.addEventListener('DOMContentLoaded', () => {
             // Handle address selection
             const selectButtons = document.querySelectorAll('.select-btn');
@@ -876,45 +832,92 @@
                     event.preventDefault();
                     const addressId = button.getAttribute('data-id');
 
+                    // Disable buttons and show loading state
+                    selectButtons.forEach(btn => {
+                        btn.disabled = true;
+                        btn.classList.add('disabled');
+                    });
+
+                    // Show loading indicator for shipping charge with emoji
+                    const shippingChargeElement = document.getElementById('shippingCharge');
+                    const originalText = shippingChargeElement.innerText;
+                    shippingChargeElement.innerHTML = `⏳ Calculating... 🚚`;
+
                     fetch(`/select-address/?id=${addressId}`, { method: 'GET' })
                         .then(response => response.json())
                         .then(data => {
                             if (data.success) {
-                                document.getElementById('shippingCharge').innerText = `₹ ${data.shippingCharge.toFixed(2)}`;
-                                document.querySelectorAll('.card').forEach(card => {
-                                    card.classList.remove('border-success');
+                                // Prepare for reload with loading state
+                                sessionStorage.setItem('loadingShippingCharge', JSON.stringify({
+                                    addressId: addressId,
+                                    shippingCharge: data.shippingCharge
+                                }));
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 2000);
 
-                                });
-                                const selectedCard = document.querySelector(`#address-${addressId}`);
-                                selectedCard.classList.add('border-success')
-                                window.location.reload();
-                                // Swal.fire({
-                                //     title: "Success!",
-                                //     text: "Address selected successfully.",
-                                //     icon: "success",
-                                // });
                             } else {
+                                // Restore buttons and show error
+                                selectButtons.forEach(btn => {
+                                    btn.disabled = false;
+                                    btn.classList.remove('disabled');
+                                });
+
+                                shippingChargeElement.innerText = originalText;
+
                                 Swal.fire({
                                     title: "Error",
                                     text: data.error || "Failed to select the address. Please try again.",
                                     icon: "error",
+                                    toast:true,
+                                    position:"center"
+
                                 });
                             }
                         })
                         .catch(error => {
                             console.error('Error selecting address:', error);
+
+                            // Restore buttons and show error
+                            selectButtons.forEach(btn => {
+                                btn.disabled = false;
+                                btn.classList.remove('disabled');
+                            });
+
+                            shippingChargeElement.innerText = originalText;
+
                             Swal.fire({
                                 title: "Error",
                                 text: "An error occurred while selecting the address. Please try again.",
                                 icon: "error",
+                                toast:true,
+                                position:"center"
                             });
                         });
                 });
             });
+
+
+            const loadingData = sessionStorage.getItem('loadingShippingCharge');
+            if (loadingData) {
+                const { addressId, shippingCharge } = JSON.parse(loadingData);
+
+                sessionStorage.removeItem('loadingShippingCharge');
+
+               
+                const shippingChargeElement = document.getElementById('shippingCharge');
+                shippingChargeElement.innerText = `₹ ${shippingCharge.toFixed(2)}`;
+
+                
+                document.querySelectorAll('.card').forEach(card => {
+                    card.classList.remove('border-success');
+                });
+                const selectedCard = document.querySelector(`#address-${addressId}`);
+                if (selectedCard) {
+                    selectedCard.classList.add('border-success');
+                }
+            }
         });
-
-
-
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -1163,7 +1166,7 @@
                                                         toast: true,
                                                     });
                                                 } else {
-                                                    
+
                                                     window.location.href = failedOrderResult.redirectURL;
                                                 }
                                             } catch (error) {

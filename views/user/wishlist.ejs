@@ -91,10 +91,9 @@
                         },
                         body: JSON.stringify({ productId })
                     });
-    
+
                     const result = await response.json();
-                    console.log('result:', result);
-    
+
                     if (response.ok) {
                         Swal.fire({
                             title: 'Success',
@@ -104,9 +103,21 @@
                             position: "center",
                             timer: 2000,
                             showConfirmButton: false,
-                        }).then(() => {
-                            location.reload(); 
                         });
+
+                        // Remove the product row from the DOM
+                        const productRow = button.closest('tr');
+                        productRow.remove();
+
+                        // Check if the wishlist is empty and update the UI
+                        if (document.querySelectorAll('tbody tr').length === 0) {
+                            document.querySelector('.table-responsive').innerHTML = `
+                        <div class="text-center my-5">
+                            <h2>Your Wishlist is Empty</h2>
+                            <p>Looks like you haven't added any items to your cart yet.</p>
+                            <a href="/shop" class="btn btn-primary">Continue Shopping</a>
+                        </div>`;
+                        }
                     } else {
                         Swal.fire({
                             title: "Error",
@@ -132,8 +143,9 @@
                 }
             });
         });
+
     </script>
-    
+
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -149,7 +161,7 @@
 
                     try {
                         const response = await fetch('/add-to-cart', {
-                            method: 'POST',
+                            method: 'PATCH',
                             headers: {
                                 'Content-Type': 'application/json',
                             },
@@ -157,61 +169,64 @@
                         });
 
                         const data = await response.json();
+                        console.log(data);
 
-                        if (!response.ok) {
-                            throw new Error(data.message || "Failed to add item to cart");
+                        if (response.status === 401) {
+                            Swal.fire({
+                                title: 'Login Required!',
+                                text: 'Please login to add items to your cart.',
+                                icon: 'info',
+                                toast: true,
+                                position: 'center',
+
+                            });
+
                         }
-
-
                         if (data.success) {
                             Swal.fire({
                                 title: data.isExisting ? 'Notice!' : 'Success!',
                                 text: data.message,
                                 icon: data.isExisting ? 'info' : 'success',
                                 timer: 2000,
-                                showConfirmButton: false,
-                                position: 'center',
+                                showConfirmButton: true,
                                 toast: true,
-                            }).then(()=>window.location.reload())
+                                position: 'center',
 
+                            })
                             if (!data.isExisting) {
-                                const cartCountElement = document.querySelector('.cart-count');
-                                if (cartCountElement) {
-                                    cartCountElement.textContent = data.cartCount;
-                                }
-                            }
+                                // Select all possible cart count elements
+                                const cartCountElements = document.querySelectorAll('#cartCountDisplay, .header-action-icon-2 .pro-count.blue');
 
+                                // Update all found cart count elements
+                                cartCountElements.forEach(element => {
+                                    element.textContent = data.cartCount;
+                                });
+                            }
+                            // Update stock count
                             const stockElement = document.querySelector(`[data-stock-id="${productId}"]`);
                             if (stockElement && data.remainingStock !== undefined) {
                                 stockElement.textContent = `Stock: ${data.remainingStock}`;
                             }
-                        }
-                    } catch (error) {
-                        let errorMessage = error.message;
-
-                        if (response.status === 401) {
-
-                            Swal.fire({
-                                title: 'Login Required!',
-                                text: message,
-                                icon: 'warning',
-                                toast: true,
-                                position: "center"
-                            }); 5
-                            setTimeout(() => {
-                                window.location.href = '/login';
-                            }, 2000);
                         } else {
                             Swal.fire({
                                 title: 'Error!',
-                                text: errorMessage,
+                                text: data.message || 'Unable to add item to cart.',
                                 icon: 'error',
                                 toast: true,
-                                position: "center"
+                                position: 'center',
                             });
                         }
-                    } finally {
+                    } catch (error) {
+                        console.error("Fetch error:", error);
 
+                        Swal.fire({
+                            title: 'Network Error!',
+                            text: 'Something went wrong. Please try again.',
+                            icon: 'error',
+                            toast: true,
+                            position: 'center',
+                        });
+                    } finally {
                         button.disabled = false;
                     }
                 }

@@ -101,6 +101,7 @@ const loadHomepage = async (req, res) => {
         const user = req.session.user;
 
         const categories = await Category.find({ isListed: true });
+        const brands= await Brand.find({isBlocked:false})
         let productData = await Product.find({
             category: { $in: categories.map((category) => category._id) },
             quantity: { $gte: 0 },
@@ -114,10 +115,11 @@ const loadHomepage = async (req, res) => {
         
         if (user) {
             const userData = await User.findOne({ _id: user._id });
-            return res.render("home", { user: userData, products: productData });
+            return res.render("home", { user: userData, products: productData,brands:brands });
         } else {
             return res.render("home", {
                 products: productData,
+                brands:brands
             });
         }
     } catch (error) {
@@ -426,11 +428,16 @@ const verifyOtp = async (req, res) => {
             await saveUserData.save();
             await addReferralReward(saveUserData._id); 
             req.session.user = saveUserData;
-            res.redirect(303, '/');;
+            return res.status(200).json({ 
+                success: true, 
+                redirectUrl: '/' 
+            });
+          
         } else {
-            res
-                .status(400)
-                .render("verifyOtp",{ success: false, message: "Invalid OTP please try again" });
+            return res.status(400).json({ 
+                success: false, 
+                message: "Invalid OTP please try again" 
+            });
         }
     } catch (error) {
         console.error("Error verifying Otp", error);
@@ -534,7 +541,6 @@ const addToWishlist = async (req, res) => {
         let wishlist = await Wishlist.findOne({ userId });
 
         if (!wishlist) {
-
             wishlist = new Wishlist({
                 userId,
                 products: [{ productId }],
@@ -545,6 +551,7 @@ const addToWishlist = async (req, res) => {
                 success: true,
                 message: "Product added to wishlist.",
                 isExisting: false,
+                wishlistCount: 1, // New wishlist, so count is 1
             });
         }
 
@@ -557,6 +564,7 @@ const addToWishlist = async (req, res) => {
                 success: false,
                 message: "Product already exists in wishlist.",
                 isExisting: true,
+                wishlistCount: wishlist.products.length, // Return current count
             });
         }
 
@@ -567,6 +575,7 @@ const addToWishlist = async (req, res) => {
             success: true,
             message: "Product added to wishlist.",
             isExisting: false,
+            wishlistCount: wishlist.products.length, // Return updated count
         });
     } catch (error) {
         console.error("Error adding to wishlist:", error);

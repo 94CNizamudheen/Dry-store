@@ -140,7 +140,7 @@
             <div class="card-body">
                 <h4 class="card-title mb-4">Add Address</h4>
 
-                <form id="addressForm" action="/check-out-add-address" method="POST" class="container">
+                <form id="addressForm" action="/add-address" method="POST" class="container">
                     <div class="row">
                         <!-- First Column -->
                         <div class="col-md-6">
@@ -387,7 +387,9 @@
                 Swal.fire({
                     title: 'Error',
                     text: 'Name should contain alphabets only.',
-                    icon: 'error'
+                    icon: 'error',
+                    position: 'center',
+                    toast: true,
                 });
                 isValid = false;
             }
@@ -395,7 +397,9 @@
                 Swal.fire({
                     title: 'Error',
                     text: 'City should contain alphabets only.',
-                    icon: 'error'
+                    icon: 'error',
+                    position: 'center',
+                    toast: true,
                 });
                 isValid = false;
             }
@@ -403,7 +407,9 @@
                 Swal.fire({
                     title: 'Error',
                     text: 'Landmark should contain alphabets only.',
-                    icon: 'error'
+                    icon: 'error',
+                    position: 'center',
+                    toast: true,
                 });
                 isValid = false;
             }
@@ -411,7 +417,9 @@
                 Swal.fire({
                     title: 'Error',
                     text: 'State should contain alphabets only.',
-                    icon: 'error'
+                    icon: 'error',
+                    position: 'center',
+                    toast: true,
                 });
                 isValid = false;
             }
@@ -419,7 +427,9 @@
                 Swal.fire({
                     title: 'Error',
                     text: 'Pincode should be a 6-digit number.',
-                    icon: 'error'
+                    icon: 'error',
+                    position: 'center',
+                    toast: true,
                 });
                 isValid = false;
             }
@@ -427,7 +437,9 @@
                 Swal.fire({
                     title: 'Error',
                     text: 'Phone number should be a 10-digit number.',
-                    icon: 'error'
+                    icon: 'error',
+                    position: 'center',
+                    toast: true,
                 });
                 isValid = false;
             }
@@ -436,7 +448,9 @@
                 Swal.fire({
                     title: 'Error',
                     text: 'Alternate phone number should be a 10-digit number.',
-                    icon: 'error'
+                    icon: 'error',
+                    position: 'center',
+                    toast: true,
                 });
                 isValid = false;
             }
@@ -444,14 +458,13 @@
                 Swal.fire({
                     title: 'Error',
                     text: 'Phone number and alternate phone number should be different.',
-                    icon: 'error'
+                    icon: 'error',
+                    position: 'center',
+                    toast: true,
                 });
                 isValid = false;
             }
 
             return isValid;
         }
-    </script>
-    <script>
-
     </script>

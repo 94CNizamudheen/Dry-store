@@ -64,26 +64,26 @@
                                     </div>
                                 </div>
 
-                               
+
                                 <div class="mb-4">
                                     <label class="form-label">Quantity</label>
                                     <input placeholder="packets" name="quantity" type="text"
                                         class="form-control border">
                                     <div id="quantity-error" class="error-message"></div>
                                 </div>
-                                <div class="col-lg-4">
+                                <!-- <div class="col-lg-4">
                                     <label class="form-label">Currency</label>
                                     <select class="form-select">
                                         <option> ₹ </option>
                                         <option> $ </option>
 
                                     </select>
-                                </div>
+                                </div> -->
                             </div>
-                            <div class="mb-4">
+                            <!-- <div class="mb-4">
                                 <label class="form-label">Tax rate</label>
                                 <input type="text" placeholder="%" class="form-control" id="productName">
-                            </div>
+                            </div> -->
 
                             <div class="card mb-4">
                                 <div class="card-header">
@@ -118,9 +118,9 @@
                                 </div>
                             </div> <!-- card end// -->
 
-                             <!-- card end// -->
+                            <!-- card end// -->
 
-                             <div class="card mb-4">
+                            <div class="card mb-4">
                                 <div class="card-header">
                                     <h4 class="mb-0">Media</h4>
                                 </div>
@@ -134,58 +134,73 @@
                                                 <!-- Image 1 -->
                                                 <div class="col-12 col-md-4 mb-3">
                                                     <div class="d-flex flex-column align-items-center">
-                                                        <img src="" alt="Image 1 Preview" id="imgView1" class="img-fluid mb-2" >
-                                                        <input class="form-control mb-2" type="file" name="images" id="input1" accept="image/png, image/jpeg, image/jpg"
-                                                               onchange="viewImage1(event), viewImage(event, 1)">
-                                                        <div id="images-error-1" class="error-message text-danger mt-2"></div>
+                                                        <img src="" alt="Image 1 Preview" id="imgView1"
+                                                            class="img-fluid mb-2">
+                                                        <input class="form-control mb-2" type="file" name="images"
+                                                            id="input1" accept="image/png, image/jpeg, image/jpg"
+                                                            onchange="viewImage1(event), viewImage(event, 1)">
+                                                        <div id="images-error-1" class="error-message text-danger mt-2">
+                                                        </div>
                                                     </div>
-                                                    <div class="image-cropper d-flex justify-content-center mt-2" >
-                                                        <img src="" id="croppedImg1" alt="Cropped Image 1" class="img-fluid mb-2">
-                                                        <button type="button" id="saveButton1" class="btn btn-sm btn-primary mt-2">Save</button>
+                                                    <div class="image-cropper d-flex justify-content-center mt-2">
+                                                        <img src="" id="croppedImg1" alt="Cropped Image 1"
+                                                            class="img-fluid mb-2">
+                                                        <button type="button" id="saveButton1"
+                                                            class="btn btn-sm btn-primary mt-2">Save</button>
                                                     </div>
                                                 </div>
-                            
+
                                                 <!-- Image 2 -->
                                                 <div class="col-12 col-md-4 mb-3">
                                                     <div class="d-flex flex-column align-items-center">
-                                                        <img src="" alt="Image 2 Preview" id="imgView2" class="img-fluid mb-2" >
-                                                        <input class="form-control mb-2" type="file" name="images" id="input2" accept="image/png, image/jpeg, image/jpg"
-                                                               onchange="viewImage2(event), viewImage(event, 2)">
-                                                        <div id="images-error-2" class="error-message text-danger mt-2"></div>
+                                                        <img src="" alt="Image 2 Preview" id="imgView2"
+                                                            class="img-fluid mb-2">
+                                                        <input class="form-control mb-2" type="file" name="images"
+                                                            id="input2" accept="image/png, image/jpeg, image/jpg"
+                                                            onchange="viewImage2(event), viewImage(event, 2)">
+                                                        <div id="images-error-2" class="error-message text-danger mt-2">
+                                                        </div>
                                                     </div>
-                                                    <div class="image-cropper d-flex justify-content-center mt-2" >
-                                                        <img src="" id="croppedImg2" alt="Cropped Image 2" class="img-fluid mb-2">
-                                                        <button type="button" id="saveButton2" class="btn btn-sm btn-primary mt-2">Save</button>
+                                                    <div class="image-cropper d-flex justify-content-center mt-2">
+                                                        <img src="" id="croppedImg2" alt="Cropped Image 2"
+                                                            class="img-fluid mb-2">
+                                                        <button type="button" id="saveButton2"
+                                                            class="btn btn-sm btn-primary mt-2">Save</button>
                                                     </div>
                                                 </div>
-                            
+
                                                 <!-- Image 3 -->
                                                 <div class="col-12 col-md-4 mb-3">
                                                     <div class="d-flex flex-column align-items-center">
-                                                        <img src="" alt="Image 3 Preview" id="imgView3" class="img-fluid mb-2" >
-                                                        <input class="form-control mb-2" type="file" name="images" id="input3" accept="image/png, image/jpeg, image/jpg"
-                                                               onchange="viewImage3(event), viewImage(event, 3)">
-                                                        <div id="images-error-3" class="error-message text-danger mt-2"></div>
+                                                        <img src="" alt="Image 3 Preview" id="imgView3"
+                                                            class="img-fluid mb-2">
+                                                        <input class="form-control mb-2" type="file" name="images"
+                                                            id="input3" accept="image/png, image/jpeg, image/jpg"
+                                                            onchange="viewImage3(event), viewImage(event, 3)">
+                                                        <div id="images-error-3" class="error-message text-danger mt-2">
+                                                        </div>
                                                     </div>
-                                                    <div class="image-cropper d-flex justify-content-center mt-2" >
-                                                        <img src="" id="croppedImg3" alt="Cropped Image 3" class="img-fluid mb-2">
-                                                        <button type="button" id="saveButton3" class="btn btn-sm btn-primary mt-2">Save</button>
+                                                    <div class="image-cropper d-flex justify-content-center mt-2">
+                                                        <img src="" id="croppedImg3" alt="Cropped Image 3"
+                                                            class="img-fluid mb-2">
+                                                        <button type="button" id="saveButton3"
+                                                            class="btn btn-sm btn-primary mt-2">Save</button>
                                                     </div>
                                                 </div>
                                             </div>
-                            
+
                                             <!-- Global error message -->
                                             <div id="images-error" class="error-message text-danger mt-3"></div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            
-                            
+
+
                             <div id="submit-error" class="error-message" style="margin-bottom: 10px;"></div>
                             <div>
-                                <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to
-                                    draft</button>
+                                <!-- <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to
+                                    draft</button> -->
                                 <button class="btn btn-md rounded font-sm hover-up">Publish</button>
                             </div>
 
@@ -301,7 +316,7 @@
                     text: 'Product added successfully!',
                     icon: 'success',
                     confirmButtonText: 'OK',
-                    toast:true,
+                    toast: true,
                     position: "center"
                 }).then((result) => {
                     if (result.isConfirmed) {
@@ -329,7 +344,7 @@
                 displayErrorMessage('productName-error', 'Please enter a product name.');
                 isValid = false;
             } else if (!/^[a-zA-Z][a-zA-Z0-9\s]*$/.test(name)) {
-                displayErrorMessage('productName-error', 'Product name should contain only alphabetic characters.');
+                displayErrorMessage('productName-error', 'Product name must start with a letter and can contain letters, numbers, and spaces.');
                 isValid = false;
             }
 

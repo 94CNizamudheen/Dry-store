@@ -1,323 +1,473 @@
 <%- include('../partials/user/header.ejs') %>
-<!-- <link rel="stylesheet" href="/evara-frontend/assets/css/main.css?v=3.4"> -->
 <style>
     /* Content layout styling */
-.content-main {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    background-color: #f9fafb;
-}
-
-/* Card and form styling */
-.card-address {
-    border-radius: 12px;
-    border: none;
-    max-width: 600px;
-    width: 100%;
-}
-
-/* Title styling */
-.card-title {
-    font-weight: bold;
-    color: #333;
-    text-align: center;
-}
-
-/* Input styling */
-.form-control {
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    box-shadow: none;
-    transition: border-color 0.2s;
-}
-
-.form-control:focus {
-    border-color: #5a67d8;
-    box-shadow: 0px 0px 4px rgba(90, 103, 216, 0.5);
-}
-
-.form-label {
-    font-weight: 500;
-    color: #4a5568;
-}
-
-.btn-primary {
-    background-color: #5a67d8;
-    border-color: #5a67d8;
-    font-weight: bold;
-    border-radius: 8px;
-    transition: background-color 0.3s, transform 0.2s;
-}
-
-.btn-primary:hover {
-    background-color: #4c51bf;
-    transform: translateY(-2px);
-}
-
-    /* Centering and spacing for the main card */
-.content-main {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    background-color: #f9fafb;
-}
-
-/* Card styling */
-.card {
-    border-radius: 12px;
-    border: none;
-    overflow: hidden;
-}
-
-/* Form title styling */
-.card-title {
-    font-weight: bold;
-    color: #333;
-    text-align: center;
-}
-
-/* Input field styling */
-.form-control {
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    box-shadow: none;
-    transition: border-color 0.2s;
-}
-
-/* Input focus effect */
-.form-control:focus {
-    border-color: #5a67d8;
-    box-shadow: 0px 0px 4px rgba(90, 103, 216, 0.5);
-}
-
-/* Label styling */
-.form-label {
-    font-weight: 500;
-    color: #4a5568;
-}
-
-/* Dropdown styling */
-.form-select {
-    border-radius: 8px;
-    border: 1px solid #ddd;
-}
-
-.btn-primary {
-    background-color: #5a67d8;
-    border-color: #5a67d8;
-    font-weight: bold;
-    border-radius: 8px;
-    transition: background-color 0.3s, transform 0.2s;
-}
-
-
-.btn-primary:hover {
-    background-color: #4c51bf;
-    transform: translateY(-2px);
-}
-
-
-.text-danger {
-    font-size: 0.875rem;
-    font-weight: 400;
-}
-
-
-@media (max-width: 576px) {
     .content-main {
-        padding: 15px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        background-color: #f9fafb;
     }
 
-    .card {
+    /* Card and form styling */
+    .card-address {
+        border-radius: 12px;
+        border: none;
+        max-width: 600px;
         width: 100%;
     }
-}
 
+    /* Title styling */
+    .card-title {
+        font-weight: bold;
+        color: #333;
+        text-align: center;
+    }
+
+    /* Input styling */
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        box-shadow: none;
+        transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+        border-color: #5a67d8;
+        box-shadow: 0px 0px 4px rgba(90, 103, 216, 0.5);
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #4a5568;
+    }
+
+    .btn-primary {
+        background-color: #5a67d8;
+        border-color: #5a67d8;
+        font-weight: bold;
+        border-radius: 8px;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .btn-primary:hover {
+        background-color: #4c51bf;
+        transform: translateY(-2px);
+    }
+
+    /* Centering and spacing for the main card */
+    .content-main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        background-color: #f9fafb;
+    }
+
+    /* Card styling */
+    .card {
+        border-radius: 12px;
+        border: none;
+        overflow: hidden;
+    }
+
+    /* Form title styling */
+    .card-title {
+        font-weight: bold;
+        color: #333;
+        text-align: center;
+    }
+
+    /* Input field styling */
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        box-shadow: none;
+        transition: border-color 0.2s;
+    }
+
+    /* Input focus effect */
+    .form-control:focus {
+        border-color: #5a67d8;
+        box-shadow: 0px 0px 4px rgba(90, 103, 216, 0.5);
+    }
+
+    /* Label styling */
+    .form-label {
+        font-weight: 500;
+        color: #4a5568;
+    }
+
+    /* Dropdown styling */
+    .form-select {
+        border-radius: 8px;
+        border: 1px solid #ddd;
+    }
+
+    .btn-primary {
+        background-color: #5a67d8;
+        border-color: #5a67d8;
+        font-weight: bold;
+        border-radius: 8px;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+
+    .btn-primary:hover {
+        background-color: #4c51bf;
+        transform: translateY(-2px);
+    }
+
+
+    .text-danger {
+        font-size: 0.875rem;
+        font-weight: 400;
+    }
+
+
+    @media (max-width: 576px) {
+        .content-main {
+            padding: 15px;
+        }
+
+        .card {
+            width: 100%;
+        }
+    }
 </style>
 <section class="content-main">
     <div class="card mx-auto card-address">
         <div class="card-body">
-            <h4 class="card-title mb-4">Edit your Address</h4>
+            <h4 class="card-title mb-4">Update Address</h4>
 
-            <form id="addressForm" action="/edit-address?id=<%= address._id%>" method="POST">
-                <!-- First Row -->
-                <div class="row mb-3">
+            <form id="addressForm" action="/edit-address?id=<%= address._id%>" method="post" class="container">
+                <div class="row">
+                    <!-- First Column -->
                     <div class="col-md-6">
-                        <label for="addressType" class="form-label">Address Type</label>
-                        <input type="text" id="addressType" name="addressType" class="form-control" value="<%= address.addressType %>" required>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label for="addressType" class="form-label">Address Type</label>
+                                <input type="text" id="addressType" name="addressType" class="form-control"
+                                    placeholder="e.g., Home, Office"value="<%= address.addressType %>"  required />
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label for="name" class="form-label">Full Name</label>
+                                <input type="text" id="name" name="name" class="form-control"
+                                    placeholder="Full Name" value="<%= address.name %>" required />
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label for="pincode" class="form-label">Pincode</label>
+                                <input type="text" id="pincode" name="pincode" class="form-control"
+                                    placeholder="6-digit Pincode"  value="<%= address.pincode %>" required />
+                                <div id="pincode-validation-message" class="text-muted small mt-1"></div>
+                            </div>
+                        </div>
+
+                        <!-- Towns Selection - Initially Hidden -->
+                        <div id="townsContainer" class="row mb-3" style="display: none;">
+                            <div class="col-12">
+                                <label for="towns" class="form-label">Select City</label>
+                                <select id="towns" name="towns[]" class="form-select" multiple required>
+                                    <!-- Options will be dynamically populated -->
+                                </select>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Second Column -->
                     <div class="col-md-6">
-                        <label for="name" class="form-label">Full Name</label>
-                        <input type="text" id="name" name="name" class="form-control" value="<%= address.name %>" required>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label for="landmark" class="form-label">Landmark</label>
+                                <input type="text" id="landmark" name="landmark" class="form-control"
+                                    placeholder="Landmark" value="<%= address.landmark %>" />
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label for="city" class="form-label">City</label>
+                                <input type="text" id="city" name="city" class="form-control" placeholder="City" value="<%= address.city %>"
+                                    required readonly />
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label for="state" class="form-label">State</label>
+                                <input type="text" id="state" name="state" class="form-control" placeholder="State" value="<%= address.state %>" 
+                                    required readonly />
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label for="phone" class="form-label">Phone</label>
+                                <input type="tel" id="phone" name="phone" class="form-control"
+                                    placeholder="Phone Number"  value="<%= address.phone %>"  required pattern="[0-9]{10}" />
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label for="altPhone" class="form-label">Alternative Phone</label>
+                                <input type="tel" id="altPhone" name="altPhone" class="form-control"
+                                    placeholder="Alternative Phone" value="<%= address.altPhone %>"  pattern="[0-9]{10}" />
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="city" class="form-label">City</label>
-                        <input type="text" id="city" name="city" class="form-control" value="<%= address.city %>" required>
+                <!-- Submit Button -->
+                <div class="row">
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary w-100">
+                          Update Address
+                        </button>
                     </div>
-                    <div class="col-md-6">
-                        <label for="landmark" class="form-label">Landmark</label>
-                        <input type="text" id="landmark" name="landmark" class="form-control" value="<%= address.landmark %>">
-                    </div>
-                </div>
-
-                <!-- Second Row -->
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="state" class="form-label">State</label>
-                        <input type="text" id="state" name="state" class="form-control" value="<%= address.state %>" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="pincode" class="form-label">Pincode</label>
-                        <input type="text" id="pincode" name="pincode" class="form-control" value="<%= address.pincode %>" required>
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="phone" class="form-label">Phone</label>
-                        <input type="text" id="phone" name="phone" class="form-control" value="<%= address.phone %>" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="altPhone" class="form-label">Alternative Phone</label>
-                        <input type="text" id="altPhone" name="altPhone" class="form-control" value="<%= address.altPhone %>">
-                    </div>
-                </div>
-
-                <div class="mb-4">
-                    <button type="submit" class="btn btn-primary w-100">Update Address</button>
                 </div>
             </form>
         </div>
     </div>
 </section>
 
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-   document.getElementById('addressForm').addEventListener('submit', function(event) {
-       if (!validateForm()) {
-           event.preventDefault();
-       }
-   });
+    document.addEventListener('DOMContentLoaded', () => {
+        const pincodeInput = document.getElementById('pincode');
+        const townsContainer = document.getElementById('townsContainer');
+        const townsDropdown = document.getElementById('towns');
+        const cityInput = document.getElementById('city');
+        const stateInput = document.getElementById('state');
+        const validationMessage = document.getElementById('pincode-validation-message');
 
-   function validateForm() {
-       let isValid = true;
-       const requiredFields = ["addressType", "name", "city", "landmark", "state", "pincode", "phone", "altPhone"];
-       requiredFields.forEach(function(field) {
-           const input = document.getElementById(field);
-           const inputValue = input.value.trim();
-           const errorElement = document.getElementById(field + '-error');
+        // Cache to store pincode results
+        const pincodeCache = new Map();
 
-           if (inputValue === "" && field !== 'landmark' && field !== 'altPhone') {
-               if (!errorElement) {
-                   const errorMessage = "This field is required.";
-                   const errorDiv = document.createElement('div');
-                   errorDiv.className = "text-danger";
-                   errorDiv.textContent = errorMessage;
-                   errorDiv.id = field + '-error';
-                   input.parentNode.appendChild(errorDiv);
-               }
-               isValid = false;
-           } else {
-               if (errorElement) {
-                   errorElement.remove();
-               }
-           }
-       });
+        // Debounce function
+        function debounce(func, delay) {
+            let timeoutId;
+            return function () {
+                const context = this;
+                const args = arguments;
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => {
+                    func.apply(context, args);
+                }, delay);
+            };
+        }
 
-       const namePattern = /^[A-Za-z\s]+$/;
-       const pincodePattern = /^\d{6}$/;
-       const phonePattern = /^\d{10}$/;
+        // Fetch pincode details
+        const fetchPincodeDetails = debounce(async function () {
+            const pincode = pincodeInput.value.trim();
 
-       if (!namePattern.test(document.getElementById('name').value)) {
-           Swal.fire({
-               title: 'Error',
-               text: 'Name should contain alphabets only.',
-               icon: 'error',
-               position: 'center',
-               toast: true,
-           });
-           isValid = false;
-       }
-       if (!namePattern.test(document.getElementById('city').value)) {
-           Swal.fire({
-               title: 'Error',
-               text: 'City should contain alphabets only.',
-               icon: 'error',
-               position: 'center',
-               toast: true,
-           });
-           isValid = false;
-       }
-       if (document.getElementById('landmark').value && !namePattern.test(document.getElementById('landmark').value)) {
-           Swal.fire({
-               title: 'Error',
-               text: 'Landmark should contain alphabets only.',
-               icon: 'error',
-               position: 'center',
-               toast: true,
-           });
-           isValid = false;
-       }
-       if (!namePattern.test(document.getElementById('state').value)) {
-           Swal.fire({
-               title: 'Error',
-               text: 'State should contain alphabets only.',
-               icon: 'error',
-               position: 'center',
-               toast: true,
-           });
-           isValid = false;
-       }
-       if (!pincodePattern.test(document.getElementById('pincode').value)) {
-           Swal.fire({
-               title: 'Error',
-               text: 'Pincode should be a 6-digit number.',
-               icon: 'error',
-               position: 'center',
-               toast: true,
-           });
-           isValid = false;
-       }
-       if (!phonePattern.test(document.getElementById('phone').value)) {
-           Swal.fire({
-               title: 'Error',
-               text: 'Phone number should be a 10-digit number.',
-               icon: 'error',
-               position: 'center',
-               toast: true,
-           });
-           isValid = false;
-       }
-       const altPhoneValue = document.getElementById('altPhone').value;
-       if (altPhoneValue && !phonePattern.test(altPhoneValue)) {
-           Swal.fire({
-               title: 'Error',
-               text: 'Alternate phone number should be a 10-digit number.',
-               icon: 'error',
-               position: 'center',
-               toast: true,
-           });
-           isValid = false;
-       }
-       if (document.getElementById('phone').value === altPhoneValue) {
-           Swal.fire({
-               title: 'Error',
-               text: 'Phone number and alternate phone number should be different.',
-               icon: 'error',
-               position: 'center',
-               toast: true,
-           });
-           isValid = false;
-       }
+            // Reset UI
+            townsContainer.style.display = 'none';
+            validationMessage.textContent = '';
+            pincodeInput.classList.remove('is-valid', 'is-invalid');
+            townsDropdown.innerHTML = '';
+            cityInput.value = '';
+            stateInput.value = '';
 
-       return isValid;
-   }
+            // Validate pincode
+            if (!/^\d{6}$/.test(pincode)) {
+                validationMessage.textContent = 'Please enter a valid 6-digit pincode';
+                pincodeInput.classList.add('is-invalid');
+                return;
+            }
+
+            // Check cache first
+            if (pincodeCache.has(pincode)) {
+                updateTownsAndLocation(pincodeCache.get(pincode));
+                return;
+            }
+
+            try {
+                // Show loading state
+                validationMessage.textContent = 'Fetching location details...';
+                validationMessage.classList.add('text-primary');
+
+                const response = await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
+                const data = await response.json();
+
+                if (data[0].Status === "Success" && data[0].PostOffice.length > 0) {
+                    // Cache the result
+                    pincodeCache.set(pincode, data[0]);
+                    updateTownsAndLocation(data[0]);
+
+                    // Success validation
+                    validationMessage.textContent = 'Pincode verified successfully';
+                    validationMessage.classList.remove('text-primary', 'text-danger');
+                    validationMessage.classList.add('text-success');
+                    pincodeInput.classList.add('is-valid');
+                } else {
+                    throw new Error('No data found');
+                }
+            } catch (error) {
+                console.error('Error fetching town details:', error);
+                validationMessage.textContent = 'Invalid Pincode. Please check and try again.';
+                validationMessage.classList.remove('text-primary', 'text-success');
+                validationMessage.classList.add('text-danger');
+                pincodeInput.classList.add('is-invalid');
+            }
+        }, 500);
+
+        // Update towns dropdown and location details
+        function updateTownsAndLocation(pincodeData) {
+            // Populate towns dropdown
+            const uniqueTowns = [...new Set(pincodeData.PostOffice.map(po => po.Name))];
+            uniqueTowns.forEach(town => {
+                const option = document.createElement('option');
+                option.value = town;
+                option.textContent = town;
+                townsDropdown.appendChild(option);
+            });
+
+            // Show towns container
+            townsContainer.style.display = 'block';
+
+            // Set state (assuming all post offices in the same pincode are in the same state)
+            stateInput.value = pincodeData.PostOffice[0].State;
+        }
+
+        // Event listeners
+        pincodeInput.addEventListener('blur', fetchPincodeDetails);
+
+        townsDropdown.addEventListener('change', function () {
+            const selectedTowns = Array.from(this.selectedOptions).map(option => option.value);
+            cityInput.value = selectedTowns.join(', ');
+        });
+    });
+</script>
+
+
+<script>
+    document.getElementById('addressForm').addEventListener('submit', function (event) {
+        if (!validateForm()) {
+            event.preventDefault();
+        }
+    });
+
+    function validateForm() {
+        let isValid = true;
+        const requiredFields = ["addressType", "name", "city", "landmark", "state", "pincode", "phone", "altPhone"];
+        requiredFields.forEach(function (field) {
+            const input = document.getElementById(field);
+            const inputValue = input.value.trim();
+            const errorElement = document.getElementById(field + '-error');
+
+            if (inputValue === "" && field !== 'landmark' && field !== 'altPhone') {
+                if (!errorElement) {
+                    const errorMessage = "This field is required.";
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = "text-danger";
+                    errorDiv.textContent = errorMessage;
+                    errorDiv.id = field + '-error';
+                    input.parentNode.appendChild(errorDiv);
+                }
+                isValid = false;
+            } else {
+                if (errorElement) {
+                    errorElement.remove();
+                }
+            }
+        });
+
+        const namePattern = /^[A-Za-z\s]+$/;
+        const pincodePattern = /^\d{6}$/;
+        const phonePattern = /^\d{10}$/;
+
+        if (!namePattern.test(document.getElementById('name').value)) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Name should contain alphabets only.',
+                icon: 'error',
+                position: 'center',
+                toast: true,
+            });
+            isValid = false;
+        }
+        if (!namePattern.test(document.getElementById('city').value)) {
+            Swal.fire({
+                title: 'Error',
+                text: 'City should contain alphabets only.',
+                icon: 'error',
+                position: 'center',
+                toast: true,
+            });
+            isValid = false;
+        }
+        if (document.getElementById('landmark').value && !namePattern.test(document.getElementById('landmark').value)) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Landmark should contain alphabets only.',
+                icon: 'error',
+                position: 'center',
+                toast: true,
+            });
+            isValid = false;
+        }
+        if (!namePattern.test(document.getElementById('state').value)) {
+            Swal.fire({
+                title: 'Error',
+                text: 'State should contain alphabets only.',
+                icon: 'error',
+                position: 'center',
+                toast: true,
+            });
+            isValid = false;
+        }
+        if (!pincodePattern.test(document.getElementById('pincode').value)) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Pincode should be a 6-digit number.',
+                icon: 'error',
+                position: 'center',
+                toast: true,
+            });
+            isValid = false;
+        }
+        if (!phonePattern.test(document.getElementById('phone').value)) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Phone number should be a 10-digit number.',
+                icon: 'error',
+                position: 'center',
+                toast: true,
+            });
+            isValid = false;
+        }
+        const altPhoneValue = document.getElementById('altPhone').value;
+        if (altPhoneValue && !phonePattern.test(altPhoneValue)) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Alternate phone number should be a 10-digit number.',
+                icon: 'error',
+                position: 'center',
+                toast: true,
+            });
+            isValid = false;
+        }
+        if (document.getElementById('phone').value === altPhoneValue) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Phone number and alternate phone number should be different.',
+                icon: 'error',
+                position: 'center',
+                toast: true,
+            });
+            isValid = false;
+        }
+
+        return isValid;
+    }
 </script>
 
 

@@ -40,5 +40,21 @@ app.use(express.static(path.join(__dirname,"public")))
 app.use("/",userRouter,);
 app.use('/admin',adminRouter);
 
+app.use((req, res, next) => {
+    res.status(404).render('404', {
+      url: req.originalUrl
+    });
+  });
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).render('500', { 
+        message: 'Something went wrong!',
+        error: process.env.NODE_ENV === 'development' ? err : {}
+    });
+});
+
+
 app.listen(process.env.PORT,()=>console.log("server running"));
+
 module.exports=app;

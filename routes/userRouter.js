@@ -45,20 +45,20 @@ router.delete('/removeFromWishlist',userAuth,userController.removeFromWishlistPa
 
 //profile management
 
-router.get('/forgot-password',profileController.getForgotPasswordPage);
+router.get('/forgot-password',headerData,profileController.getForgotPasswordPage);
 router.post('/forgot-email-valid',profileController.forgotEmailValid);
 router.post('/verify-passForgot-otp',profileController.verifyPassForgotOtp)
-router.get('/reset-password',profileController.getResetPasswordPage);
+router.get('/reset-password',headerData,profileController.getResetPasswordPage);
 router.post('/resend-forgot-otp',profileController.resendOtp);
 router.post('/reset-password',profileController.postNewPassword);
 router.get('/user-profile',headerData,userAuth,profileController.userProfilePage);
-router.get('/change-email',userAuth,profileController.changeEmail);
+router.get('/change-email',headerData,userAuth,profileController.changeEmail);
 router.post('/change-email',userAuth,profileController.changeEmailValid);
-router.get('/new-email',userAuth,profileController.loadNewEmailPage);
+router.get('/new-email',headerData,userAuth,profileController.loadNewEmailPage);
 router.post('/verify-change-email-otp',userAuth,profileController.verifyEmailChangeOtp);
 router.post('/resend-verify-email-otp',userAuth,profileController.resendEmailChangeOtp);
 router.post('/update-email',userAuth,profileController.updateEmail);
-router.get('/change-password',userAuth,profileController.changePasswordPage);
+router.get('/change-password',headerData,userAuth,profileController.changePasswordPage);
 router.post('/change-password',userAuth,profileController.changePasswordValid);
 router.post('/verify-change-password-otp',userAuth,profileController.verifyPasswordChangeOtp);
 router.post('/resend-verify-password-otp',userAuth,profileController.resendPasswordChangeOtp);
@@ -67,15 +67,15 @@ router.post('/resend-verify-password-otp',userAuth,profileController.resendPassw
 
 router.get('/add-address',headerData,userAuth,profileController.addAddressPage);
 router.post('/add-address',userAuth,profileController.postAddAddress);
-router.get('/edit-address',userAuth,profileController.editAddress);
+router.get('/edit-address',headerData,userAuth,profileController.editAddress);
 router.post('/edit-address',userAuth,profileController.postEditAddress);
 router.delete('/delete-address',userAuth,profileController.deleteAddess);
 
 //cart mgt
 
 router.get('/cart',headerData,userAuth,cartController.loadCart);
-router.post('/add-to-cart',cartController.addToCart);
-router.post('/update-quantity',userAuth,cartController.updateQuantity);
+router.patch('/add-to-cart',headerData,cartController.addToCart);
+router.patch('/update-quantity',userAuth,cartController.updateQuantity);
 router.post('/remove-item',userAuth,cartController.removeItem);
 // coupon mgt
 router.post('/apply-coupon',userAuth,cartController.applyCoupon);

@@ -3997,9 +3997,9 @@ body.offcanvas-active {
 }
 
 .navbar-aside .aside-top .logo {
-  max-width: 120px;
+  max-width: 70px;
   margin-top: 5px;
-  min-width: 120px;
+  min-width: 70px;
 }
 
 .main-header {

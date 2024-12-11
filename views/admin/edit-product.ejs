@@ -199,8 +199,8 @@
                             </div>
                             <div id="submit-error" class="error-message" style="margin-bottom: 10px;"></div>
                             <div>
-                                <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to
-                                    draft</button>
+                                <!-- <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to
+                                    draft</button> -->
                                 <button class="btn btn-md rounded font-sm hover-up"
                                     onclick="validateForm()">Publish</button>
                             </div>
@@ -332,10 +332,9 @@
                 displayErrorMessage('productName-error', 'Please enter a product name.');
                 isValid = false;
             } else if (!/^[a-zA-Z][a-zA-Z0-9\s]*$/.test(name)) {
-                displayErrorMessage('productName-error', 'Product name should contain only alphabetic characters.');
+                displayErrorMessage('productName-error', 'Product name must start with a letter and can contain letters, numbers, and spaces.');
                 isValid = false;
             }
-
             if (description === "") {
                 displayErrorMessage('description-error', 'Please enter a product description.');
                 isValid = false;

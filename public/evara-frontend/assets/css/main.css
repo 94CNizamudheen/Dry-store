@@ -5322,8 +5322,8 @@ h6.post-title {
 }
 
 .logo.logo-width-1 a img {
-  width: 120px;
-  min-width: 120px;
+  width: 70px;
+  min-width: 70px;
 }
 
 .search-style-1 form {
@@ -7546,7 +7546,7 @@ span.fi-rs-apps {
 }
 
 .newsletter {
-  background-color: #aeccc5;
+  background-color: #efa1ed;
 }
 
 .newsletter .icon-email {

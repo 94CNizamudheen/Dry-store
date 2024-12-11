@@ -203,10 +203,8 @@ const selectAddress = async (req, res) => {
             if (!selectedAddressId) {
                 return res.status(400).json({ error: "Please select a delivery address" });
             }   
-
-        
             const total = cart.items.reduce((acc, item) => acc + item.totalPrice, 0);
-
+          
             let finalAmount=0;
             const shipping = req.session.shippingCharge;
             if(coupon){
@@ -214,8 +212,9 @@ const selectAddress = async (req, res) => {
             }else{
                 finalAmount =total+shipping;
             } 
-            if(paymentOption==="COD" && finalAmount<1000){
-                return res.status(400).json({error:"Minimum amount for Cash On Delivery is ₹1000/- "})
+            
+            if(paymentOption==="COD" && finalAmount> 1000){
+                return res.status(400).json({error:"Maximum amount for Cash On Delivery is ₹1000/- "})
             };
 
             console.log("paymentOption selected:",paymentOption);
@@ -260,18 +259,18 @@ const placeOrderForCODandWALLET = async (req, res) => {
         const code=req.session.couponCode;
         const coupon= await Coupon.findOne({code});
         const cart = await Cart.findOne({ userId }).populate('items.productId');
-        console.log("Selected shippingAddress:",selectedAddressId);
 
         const total = cart.items.reduce((acc, item) => acc + item.totalPrice, 0);
         const discount= req.session.discount;
         let finalAmount=0;
         const shipping = req.session.shippingCharge;
         if(coupon){
-             finalAmount = req.session.discountedTotal;
+             finalAmount = req.session.discountedTotal+shipping;
+             
         }else{
             finalAmount =total+shipping;
         };
-       
+      
         if (paymentMethod === 'WALLET') {
             const user = await User.findById(userId);
             if (user.wallet.balance < finalAmount) {
@@ -687,7 +686,7 @@ const verifyRazorpayPaymentAndPlaceOrder= async(req,res)=>{
                 const shipping = req.session.shippingCharge;
                 let finalAmount=0;
                 if(coupon){
-                    finalAmount=req.session.discountedTotal;
+                    finalAmount=req.session.discountedTotal+shipping;
                 }else{
                     finalAmount = total + shipping;
                 }

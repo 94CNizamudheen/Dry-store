@@ -400,7 +400,7 @@ const editAddress= async(req,res)=>{
 
 const postEditAddress=async(req,res)=>{
     try {
-        
+        console.log("edit address invoked");
         const data=req.body;
         const addressId=req.query.id;
         const user= req.session.user;

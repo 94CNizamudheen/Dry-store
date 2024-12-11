@@ -1,239 +1,286 @@
-<%- include('../partials/user/header.ejs') %>
-<style>
-    .form-control-sm {
-        height: calc(2rem + 2px);
-        padding: 0.25rem 0.5rem;
-        font-size: 0.875rem;
-        border-radius: 0.25rem;
-    }
-    
-    .btn-sm {
-        padding: 0.25rem 0.5rem;
-        font-size: 0.875rem;
-    }
-    
-    .card {
-        background-color: #ffffff;
-        transition: transform 0.2s;
-        max-width: 400px; /* Added max-width constraint */
-        margin: 0 auto;
-    }
-    
-    .card:hover {
-        transform: translateY(-2px);
-    }
-    
-    .form-control {
-        border: 1px solid #e5e5e5;
-    }
-    
-    .form-control:focus {
-        box-shadow: 0 0 0 0.2rem rgba(29, 161, 242, 0.1);
-        border-color: #1da1f2;
-    }
-    
-    .btn-primary {
-        background-color: #1da1f2;
-        border-color: #1da1f2;
-    }
-    
-    .btn-primary:hover {
-        background-color: #1a91da;
-        border-color: #1a91da;
-    }
-    
-    /* Smaller error messages */
-    .error-message {
-        font-size: 0.75rem;
-        margin-top: 0.1rem;
-        display: block;
-    }
-    
-    /* Reduced spacing for form groups */
-    .form-group {
-        margin-bottom: 0.5rem;
-    }
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup Page</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            background-image: url('/uploads/sample-images/amazonayurvedicoils_35.webp');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .signup-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .signup-header {
+            background: linear-gradient(to right, #efa1ed, #e52e71);
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .form-control {
+            border-radius: 25px;
+            border: 1px solid #ced4da;
+        }
+
+        .btn-signup {
+            background: linear-gradient(to right, #efa1ed, #e52e71);
+            border: none;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-signup:hover {
+            transform: scale(1.05);
+        }
+
+        .social-login .btn {
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .divider {
+            position: relative;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            border-top: 1px solid #dee2e6;
+            z-index: 1;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 10px;
+            position: relative;
+            z-index: 2;
+            color: #6c757d;
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            z-index: 10;
+        }
     </style>
-        <!-- Bootstrap 5 CSS -->
+</head>
 
-
-        <!-- Font Awesome CSS -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
-
-  
-
-
-
-        <div class="container container-sm">
-            <div class="row justify-content-center">
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-lg rounded-4">
-                        <div class="card-body p-4">
-                            <!-- Twitter Logo -->
-                            <div class="text-center mb-1">
-                                <img src="/uploads/sample-images/About-Us-GIF_ec327cb1-9e10-4610-af1e-186cbba04482_600x.webp" alt="logo" class="mb-3" style="width: 100px;">
-                                <h4 class="mb-4">Create an Account</h4>
-                            </div>
-
-                            <form method="post" action="/signUp" id="signInForm" onsubmit="return submitForm();">
-                                <!-- Name Input -->
-                                <div class="form-floating mb-1">
-                                    <input type="text" class="form-control rounded-2" id="name" name="name" placeholder="Name" onblur="validateName()" required>
-                                    <label for="name">Name</label>
-                                    <span id="nameError" class="text-danger small"></span>
-                                </div>
-
-                                <!-- Email Input -->
-                                <div class="form-floating mb-1">
-                                    <input type="email" class="form-control rounded-2" id="email" name="email" placeholder="Email" onblur="validateEmail()" required>
-                                    <label for="email">Email</label>
-                                    <span id="emailError" class="text-danger small"></span>
-                                </div>
-
-                                <!-- Phone Input -->
-                                <div class="form-floating mb-1">
-                                    <input type="tel" class="form-control rounded-2" id="phone" name="phone" placeholder="Mobile Number" onblur="validatePhone()" required>
-                                    <label for="phone">Mobile Number</label>
-                                    <span id="phoneError" class="text-danger small"></span>
-                                </div>
-
-                                <!-- Password Input -->
-                                <div class="form-floating mb-1">
-                                    <input type="password" class="form-control rounded-2" id="password" name="password" placeholder="Password" onblur="validatePassword()" required>
-                                    <label for="password">Password</label>
-                                    <span id="passwordError" class="text-danger small"></span>
-                                </div>
-
-                                <!-- Confirm Password Input -->
-                                <div class="form-floating mb-1">
-                                    <input type="password" class="form-control rounded-2" id="cPassword" name="cPassword" placeholder="Confirm password" onblur="validateConfirmPassword()" required>
-                                    <label for="cPassword">Confirm Password</label>
-                                    <span id="cPasswordError" class="text-danger small"></span>
-                                </div>
-                                <div class="form-floating mb-1">
-                                    <input type="text" class="form-control rounded-2" id="referralCode" name="referralCode" placeholder="Referral Code">
-                                    <label for="referralCode">Referral Code (Optional)</label>
-                                    <span id="referralCodeError" class="text-danger small">
-                                        <% if (message) { %>
-                                            <%= message %>
+<body>
+    <div class="container">
+        <div class="signup-container">
+            <div class="signup-header">
+                <h2>Create Your Account</h2>
+                <p>Join our community today!</p>
+            </div>
+            <div class="p-4">
+                <form method="post" action="/signUp" id="signInForm" onsubmit="return submitForm();">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control rounded-2" id="name" name="name" placeholder="Name"
+                                onblur="validateName()" required>
+                            <span id="nameError" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="email" class="form-control rounded-2" id="email" name="email"
+                                placeholder="Email" onblur="validateEmail()" required>
+                            <span id="emailError" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="tel" class="form-control rounded-2" id="phone" name="phone"
+                                placeholder="Mobile Number" onblur="validatePhone()" required>
+                            <span id="phoneError" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control rounded-2" id="referralCode" name="referralCode"
+                                placeholder="Referral Code">
+                            <span id="referralCodeError" class="text-danger small">
+                                <% if (message) { %>
+                                    <%= message %>
                                         <% } %>
-                                    </span>
-                                </div>
-
-                                <!-- Terms Checkbox -->
-                                <div class="mb-1">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="checkbox" id="terms">
-                                        <label class="form-check-label small" for="terms">
-                                            I agree to terms & Policy.
-                                        </label>
-                                    </div>
-                                    <span id="termsError" class="text-danger small"></span>
-                                    <a href="page-privacy-policy.html" class="small text-decoration-none">Learn more</a>
-                                </div>
-
-                                <!-- Submit Button -->
-                                <button type="submit" class="btn btn-primary w-100 py-2 mb-1 rounded-2">
-                                    Submit & Register
-                                </button>
-
-                                <!-- Divider -->
-                                <div class="position-relative mb-1">
-                                    <hr class="my-4">
-                                    <span class="position-absolute top-50 start-50 translate-middle px-3 bg-white text-muted small">
-                                        or
-                                    </span>
-                                </div>
-
-                                <!-- Social Login Buttons -->
-                                <div class="d-grid gap-3 mb-4">
-                                    <a href="#" class="btn btn-outline-dark rounded-2">
-                                        <i class="fab fa-facebook me-2"></i>Login with Facebook
-                                    </a>
-                                    <a href="/auth/google" class="btn btn-outline-dark rounded-2">
-                                        <i class="fab fa-google me-2"></i>Login with Google
-                                    </a>
-                                </div>
-
-                                <!-- Sign In Link -->
-                                <p class="text-center text-muted small">
-                                    Already have an account? <a href="/logIn" class="text-decoration-none">Sign in now</a>
-                                </p>
-                            </form>
+                            </span>
+                        </div>
+                        <div class="col-md-6 position-relative">
+                            <input type="password" class="form-control rounded-2 pe-5" id="password" name="password"
+                                placeholder="Password" onblur="validatePassword()" required>
+                            <span class="password-toggle" onclick="togglePasswordVisibility('password')">👁️</span>
+                            <span id="passwordError" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 position-relative">
+                            <input type="password" class="form-control rounded-2" id="cPassword" name="cPassword"
+                                placeholder="Confirm password" onblur="validateConfirmPassword()" required>
+                            <span class="password-toggle" onclick="togglePasswordVisibility('password')">👁️</span>
+                            <span id="cPasswordError" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="terms">
+                                <label class="form-check-label" for="terms">
+                                    I agree to the Terms & Conditions
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-signup w-100 text-white py-2">
+                                Create Account
+                            </button>
                         </div>
                     </div>
-                </div>
+
+                    <div class="divider">
+                        <span>or continue with</span>
+                    </div>
+
+                    <div class="row social-login g-2">
+                        <div class="col-6">
+                            <a href="/" class="btn btn-outline-dark w-100">
+                                <i class="fab fa-user"></i>Guest Mode
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <a href="/auth/google" class="btn btn-outline-danger w-100">
+                                <i class="fab fa-google me-2"></i>Google
+                            </a>
+                        </div>
+                    </div>
+
+                    <p class="text-center mt-3 small">
+                        Already have an account? <a href="/logIn" class="text-decoration-none">Sign in</a>
+                    </p>
+                </form>
             </div>
         </div>
+    </div>
+    <script>
+        function togglePasswordVisibility(inputId) {
+            const passwordInput = document.getElementById(inputId);
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+            } else {
+                passwordInput.type = 'password';
+            }
+        };
 
-
-
-<script>
-    function validateName(){
-        const name = document.getElementById('name').value;
-        const nameRegex = /^[A-Za-z\s]+$/;
-        if (!nameRegex.test(name)) {
-            document.getElementById('nameError').textContent = "Name can only contain letters and spaces";
-            return false;
-        } else {
-            document.getElementById('nameError').textContent = '';
-            return true;
+        function validateName() {
+            const name = document.getElementById('name').value;
+            const nameRegex = /^[A-Za-z\s]+$/;
+            if (!nameRegex.test(name)) {
+                document.getElementById('nameError').textContent = "Name can only contain letters and spaces";
+                return false;
+            } else {
+                document.getElementById('nameError').textContent = '';
+                return true;
+            }
         }
-    }
 
-    function validateEmail() {
-        const email = document.getElementById("email").value;
-        const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-        const isValid = emailPattern.test(email);
-        document.getElementById("emailError").textContent = isValid ? "" : "Please enter a valid email address";
-        return isValid;
-    }
-
-    function validatePhone() {
-        const phone = document.getElementById("phone").value;
-        const phonePattern = /^\d{10}$/;
-        const isValid = phonePattern.test(phone);
-        document.getElementById("phoneError").textContent = isValid ? "" : "Enter a valid 10-digit phone number";
-        return isValid;
-    }
-
-    function validatePassword() {
-        const password = document.getElementById("password").value;
-        const isValid = password.length >= 6;
-        document.getElementById("passwordError").textContent = isValid ? "" : "Password must be at least 6 characters long";
-        return isValid;
-    }
-
-    function validateConfirmPassword() {
-        const password = document.getElementById("password").value;
-        const cPassword = document.getElementById("cPassword").value;
-        const isValid = password === cPassword;
-        document.getElementById("cPasswordError").textContent = isValid ? "" : "Passwords do not match";
-        return isValid;
-    }
-
-    function validateTerms() {
-        const terms = document.getElementById("terms").checked;
-        document.getElementById("termsError").textContent = terms ? "" : "You must agree to the terms and policy";
-        return terms;
-    }
-
-    function submitForm() {
-        const isValidName = validateName();
-        const isValidEmail = validateEmail();
-        const isValidPhone = validatePhone();
-        const isValidPassword = validatePassword();
-        const isValidConfirmPassword = validateConfirmPassword();
-        const isValidTerms = validateTerms();
-
-        // Only submit if all fields are valid
-        if (isValidName && isValidEmail && isValidPhone && isValidPassword && isValidConfirmPassword && isValidTerms) {
-            document.getElementById("signInForm").submit();
-        } else {
-            alert("Please correct the errors in the form before submitting");
-            return false;
+        function validateEmail() {
+            const email = document.getElementById("email").value;
+            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            const isValid = emailPattern.test(email);
+            document.getElementById("emailError").textContent = isValid ? "" : "Please enter a valid email address";
+            return isValid;
         }
-    }
-</script>
 
+        function validatePhone() {
+            const phone = document.getElementById("phone").value;
+            const phonePattern = /^\d{10}$/;
+            const isValid = phonePattern.test(phone);
+            document.getElementById("phoneError").textContent = isValid ? "" : "Enter a valid 10-digit phone number";
+            return isValid;
+        }
+
+        function validatePassword() {
+            const passwordInput = document.getElementById("password");
+            const password = passwordInput.value;
+            const passwordError = document.getElementById("passwordError");
+            let isValid = true;
+
+
+            if (password.length < 6) {
+                passwordError.textContent = "Password must beleast 6 characters long";
+                isValid = false;
+            } else {
+
+                const zxcvbnResult = zxcvbn(password);
+
+                if (zxcvbnResult.score < 2) {
+                    passwordError.textContent = 'Password is too weak. Try a more complex password.';
+                    isValid = false;
+                } else {
+                    passwordError.textContent = ''; 
+                }
+            }
+
+            return isValid;
+        }
+        function validateConfirmPassword() {
+            const password = document.getElementById("password").value;
+            const cPassword = document.getElementById("cPassword").value;
+            const isValid = password === cPassword;
+            document.getElementById("cPasswordError").textContent = isValid ? "" : "Passwords do not match";
+            return isValid;
+        }
+
+        function validateTerms() {
+            const terms = document.getElementById("terms").checked;
+            document.getElementById("termsError").textContent = terms ? "" : "You must agree to the terms and policy";
+            return terms;
+        }
+
+        function submitForm() {
+            const isValidName = validateName();
+            const isValidEmail = validateEmail();
+            const isValidPhone = validatePhone();
+            const isValidPassword = validatePassword();
+            const isValidConfirmPassword = validateConfirmPassword();
+            const isValidTerms = validateTerms();
+
+            // Only submit if all fields are valid
+            if (isValidName && isValidEmail && isValidPhone && isValidPassword && isValidConfirmPassword && isValidTerms) {
+                document.getElementById("signInForm").submit();
+            } else {
+                alert("Please correct the errors in the form before submitting");
+                return false;
+            }
+        }
+    </script>``
+    <!-- Bootstrap JS (optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

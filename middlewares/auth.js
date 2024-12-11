@@ -9,6 +9,11 @@ const userAuth = async (req, res, next) => {
         }
 
         const userData = await User.findById(req.session.user);
+        if (!userData) {
+          req.session.destroy();
+          return res.redirect('/logIn');
+      }
+
         if (userData && !userData.isBlocked) {
             req.user = userData; 
             req.session.user = userData;
@@ -21,9 +26,12 @@ const userAuth = async (req, res, next) => {
         return res.redirect('/logIn');
 
     } catch (error) {
-        console.error("Error in user Auth Middleware:", error);
-        res.status(500).send("Internal Server Error");
-    }
+      console.error("Error in user Auth Middleware:", error);
+      if (error.name === 'CastError') {
+          return res.redirect('/logIn');
+      }
+      res.status(500).send("Internal Server Error");
+  }
 };
 
 const adminAuth = async (req, res, next) => {
