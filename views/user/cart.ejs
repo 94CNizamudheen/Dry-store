@@ -29,68 +29,52 @@
                                                 <!-- Product Thumbnail -->
                                                 <td class="product-thumbnail text-center">
                                                     <img src="/uploads/images/<%= item.productId.productImage[0] %>"
-                                                        alt="<%= item.productId.productName %>"
-                                                        class="img-fluid rounded" style="max-width: 80px" />
+                                                        alt="<%= item.productId.productName %>" class="img-fluid rounded" style="max-width: 80px" />
                                                 </td>
-
+                                            
                                                 <!-- Product Name -->
                                                 <td class="product-name text-center">
-                                                    <strong>
-                                                        <%= item.productId.productName %>
-                                                    </strong>
+                                                    <strong><%= item.productId.productName %></strong>
                                                 </td>
-                                                <td class="price text-center ">
-                                                    <span style="text-decoration: line-through;"
-                                                        class="text-primary fw-bold ">₹<%=
-                                                            item.productId.regularPrice.toFixed(2) %>
-                                                    </span>
-                                                </td>
-
-                                                <!-- Product Price -->
+                                            
+                                                <!-- Discount Price -->
                                                 <td class="price text-center">
-                                                    <span class="text-success fw-bold">₹<%=
-                                                            item.productId.salePrice.toFixed(2) %>
+                                                    <span style="text-decoration: line-through;" class="text-primary fw-bold">
+                                                        ₹<span id="discount-<%= item.productId._id %>"><%= item.productId.regularPrice.toFixed(2) %></span>
                                                     </span>
                                                 </td>
-
-                                                <!-- Quantity Control -->
+                                            
+                                                <!-- Sale Price -->
+                                                <td class="price text-center">
+                                                    <span class="text-success fw-bold">
+                                                        ₹<span id="sale-<%= item.productId._id %>"><%= item.productId.salePrice.toFixed(2) %></span>
+                                                    </span>
+                                                </td>
+                                            
+                                                <!-- Quantity -->
                                                 <td class="quantity text-center">
-                                                    <div class="btn-group btn-group-sm" role="group"
-                                                        aria-label="Small quantity control">
-                                                        <button type="button"
-                                                            class="btn btn-outline-secondary btn-sm p-1 d-flex align-items-center justify-content-center"
-                                                            style="width: 25px; height: 25px"
-                                                            onclick="updateQuantity('<%= item.productId._id %>', 'decrease')">
-                                                            -
-                                                        </button>
-                                                        <span id="qty-<%= item.productId._id %>" class="mx-2">
-                                                            <%= item.quantity %>
-                                                        </span>
-                                                        <button type="button"
-                                                            class="btn btn-outline-secondary btn-sm p-1 d-flex align-items-center justify-content-center"
-                                                            style="width: 25px; height: 25px"
-                                                            onclick="updateQuantity('<%= item.productId._id %>', 'increase')">
-                                                            +
-                                                        </button>
+                                                    <div class="btn-group btn-group-sm" role="group" aria-label="Small quantity control">
+                                                        <button type="button" class="btn btn-outline-secondary btn-sm p-1 d-flex align-items-center justify-content-center"
+                                                            style="width: 25px; height: 25px" onclick="updateQuantity('<%= item.productId._id %>', 'decrease')">-</button>
+                                                        <span id="qty-<%= item.productId._id %>" class="mx-2"><%= item.quantity %></span>
+                                                        <button type="button" class="btn btn-outline-secondary btn-sm p-1 d-flex align-items-center justify-content-center"
+                                                            style="width: 25px; height: 25px" onclick="updateQuantity('<%= item.productId._id %>', 'increase')">+</button>
                                                     </div>
                                                 </td>
-
+                                            
                                                 <!-- Total Price -->
                                                 <td class="total-price text-center">
-                                                    <span class="text-success fw-bold">₹<span
-                                                            id="total-<%= item.productId._id %>">
-                                                            <%= item.totalPrice.toFixed(2) %>
-                                                        </span></span>
+                                                    <span class="text-success fw-bold">₹<span id="total-<%= item.productId._id %>"><%= item.totalPrice.toFixed(2) %></span></span>
                                                 </td>
-
+                                            
                                                 <!-- Remove Button -->
                                                 <td class="remove text-center">
-                                                    <button type="button" class="btn btn-danger btn-sm"
-                                                        onclick="removeItem('<%= item.productId._id %>')">
+                                                    <button type="button" class="btn btn-danger btn-sm" onclick="removeItem('<%= item.productId._id %>')">
                                                         <i class="fas fa-trash-alt"></i> Remove
                                                     </button>
                                                 </td>
                                             </tr>
+                                            
                                             <% }); %>
                                     </tbody>
                                 </table>
@@ -149,7 +133,8 @@
                                                         <tr>
                                                             <td class="fw-bold text-success">Discounted Total</td>
                                                             <td class="text-end text-success">
-                                                                ₹<span id="discountedTotal" class="ms-2 fw-bold text-success" >
+                                                                ₹<span id="discountedTotal"
+                                                                    class="ms-2 fw-bold text-success">
                                                                     <%= subtotal.toFixed(2) %>
                                                                 </span>
                                                             </td>
@@ -251,33 +236,7 @@
                     }
 
                     if (data.success) {
-                        document.getElementById(`item-${productId}`).remove();
-
-                        // Update cart totals
-                        updateCartTotals();
-
-                        // Show success notification
-                        Swal.fire({
-                            icon: "success",
-                            title: data.message,
-                            timer: 1500,
-                            showConfirmButton: false,
-                            position: 'center',
-                            toast: true,
-                        });
-
-                        // Check if the cart is empty
-                        const cartItems = document.querySelectorAll('[id^="item-"]');
-                        if (cartItems.length === 0) {
-                            const container = document.querySelector(".container");
-                            container.innerHTML = `
-                    <div class="text-center my-5">
-                        <h2>Your Cart is Empty</h2>
-                        <p>Looks like you haven't added any items to your cart yet.</p>
-                        <a href="/shop" class="btn btn-primary">Continue Shopping</a>
-                    </div>
-                `;
-                        }
+                        window.location.reload();
                     }
                 } catch (error) {
                     console.error("Error removing item:", error);
@@ -291,9 +250,6 @@
                     });
                 }
             }
-
-
-            // Attach functions to window object to make them available to HTML onclick handlers
             window.updateQuantity = updateQuantity;
             window.removeItem = removeItem;
 

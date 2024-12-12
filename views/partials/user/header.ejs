@@ -19,30 +19,115 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     
 </head>
+<style>
+    :root {
+        --primary-color: #e52e71;
+        --secondary-color: #4f0a27;
+        --bg-color: #ffe2f2;
+        --text-color: #18181b;
+    }
 
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg-color);
+    }
+
+    .modern-ticker {
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        padding: 12px 0;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .ticker-label {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        background: var(--primary-color);
+        color: white;
+        padding: 8px 16px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        z-index: 10;
+    }
+
+    .ticker-content {
+        display: inline-block;
+        white-space: nowrap;
+        position: relative;
+        animation: ticker 20s linear infinite;
+        padding-left: 120px; /* Space for the label */
+    }
+
+    .ticker-content:hover {
+        animation-play-state: paused;
+    }
+
+    .ticker-item {
+        display: inline-block;
+        margin-right: 50px;
+        opacity: 0.9;
+        transition: opacity 0.3s ease;
+    }
+
+    .ticker-item:hover {
+        opacity: 1;
+    }
+
+    .ticker-item span {
+        margin-right: 15px;
+        font-weight: 300;
+    }
+
+    .ticker-item .badge {
+        background-color: rgba(255,255,255,0.2);
+        margin-right: 10px;
+    }
+
+    @keyframes ticker {
+        0% {
+            transform: translateX(0%);
+        }
+        100% {
+            transform: translateX(-50%);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .ticker-label {
+            position: relative;
+            width: 100%;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .ticker-content {
+            padding-left: 0;
+            animation: ticker 15s linear infinite;
+        }
+    }
+</style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const searchForm = document.getElementById('searchForm');
         const searchInput = document.getElementById('searchInput');
         const searchIcon = document.getElementById('searchIcon');
-    
-        
-        searchForm.addEventListener('submit', function(e) {
+     searchForm.addEventListener('submit', function(e) {
             if (!searchInput.value.trim()) {
                 e.preventDefault(); 
             }
         });
-    
-        
-        searchIcon.addEventListener('click', function() {
+     searchIcon.addEventListener('click', function() {
             if (searchInput.value.trim()) {
                 searchForm.submit();
             }
         });
-    
-    
-        searchInput.addEventListener('keypress', function(e) {
+      searchInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 if (this.value.trim()) {
@@ -52,8 +137,7 @@
         });
     });
     </script>
-  
-    <header class="header-area header-style-1 header-height-2">
+     <header class="header-area header-style-1 header-height-2">
         <div class="header-top header-top-ptb-1 d-none d-lg-block">
             <div class="container">
                 <div class="container">
@@ -100,8 +184,7 @@
                         
                     </div>
                 </div>
-                
-            </div>
+             </div>
         </div>
         <div class="header-middle header-middle-ptb-1 d-none d-lg-block">
             <div class="container">
@@ -124,23 +207,17 @@
                             <div class="header-action-2">
                                 <div class="header-action-icon-2">
                                     <a href="#">
-                                        <img class="svgInject" alt="Evara" src="/uploads/sample-images/coin-stack.png">
-                                       
-                                    </a>
+                                        <img class="svgInject" alt="Evara" src="/uploads/sample-images/coin-stack.png"></a>
                                     <h6> <%= rewardPoints %></h6>
                                 </div>
                                 <div class="header-action-icon-2">
                                     <a href="/wallet">
-                                        <img class="svgInject" alt="Evara" src="/uploads/sample-images/wallet (1).png">
-                                       
-                                    </a>
+                                        <img class="svgInject" alt="Evara" src="/uploads/sample-images/wallet (1).png"></a>
                                     <h6>₹ <%= walletBalance.toFixed(2) %></h6>
                                 </div>
                                 <div class="header-action-icon-2">
                                     <a href="/wishlist">
-                                        <img class="svgInject" alt="Evara" src="/uploads/sample-images/folder.png">
-                                       
-                                    </a>
+                                        <img class="svgInject" alt="Evara" src="/uploads/sample-images/folder.png"></a>
                                     <h6 id="wishlistCountDisplay"><%= wishlistCount %></h6>
                                 </div>
                                 <div class="header-action-icon-2">
@@ -149,9 +226,7 @@
                                     </a>
                                     <h6 id="cartCountDisplay"  ><%= cartCount %></h6>
                                     <div class="cart-dropdown-wrap cart-dropdown-hm2">
-                                      
                                         <div class="shopping-cart-footer">
-                                         
                                             <div class="shopping-cart-button">
                                                 <a href="/cart" class="outline">View cart</a>
                                                 <a href="/check-out">Checkout</a>
@@ -165,9 +240,7 @@
                                     <div class="header-action-icon-2">
                                         <a href="#">
                                             <img class="svgInject" alt="Evara" src="/uploads/sample-images/coin-stack.png">
-                                            <span class="pro-count blue">0</span>
-                                        </a>
-                                        
+                                             <span class="pro-count blue">0</span> </a>
                                     </div>
                                     <div class="header-action-icon-2">
                                         <a href="/wallet">
@@ -212,22 +285,7 @@
                         <a href="/"><img src="/evara-frontend/assets/imgs/theme/logo for nuts store.png" alt="logo"></a>
                     </div>
                     <div class="header-nav d-none d-lg-flex">
-                        <!-- <div class="main-categori-wrap d-none d-lg-block">
-                            <a class="categori-button-active" href="#">
-                                <span class="fi-rs-apps"></span> Browse Categories
-                            </a>
-                            <div class="categori-dropdown-wrap categori-dropdown-active-large">
-                                <ul>
-                                    <li><a href="#">Dry Nuts</a></li>
-                                    <li><a href="#">Dry Fruite</li>
-                                    <li><a href="#">Dry leaves</a></li>
-                                    <li><a href="#">Dates</a></li>
-                                    <li><a href="#">Mixed Combos</a></li>
-                                    
-                                </ul>
-                                
-                            </div>
-                        </div> -->
+                       
                         <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block">
                             <nav>
                                 <ul>
@@ -249,13 +307,8 @@
                             <div class="header-action-icon-2">
                                
                             </div>
-                            <div class="header-action-icon-2">
-                                
-                                <div class="cart-dropdown-wrap cart-dropdown-hm2">
-                                    
-                                    <div class="shopping-cart-footer">
-                                       
-                                       
+                            <div class="header-action-icon-2"><div class="cart-dropdown-wrap cart-dropdown-hm2"> 
+                                    <div class="shopping-cart-footer">  
                                     </div>
                                 </div>
                             </div>
@@ -292,10 +345,7 @@
                         <button type="submit"><i class="fi-rs-search"></i></button>
                     </form>
                 </div>
-                <div class="mobile-menu-wrap mobile-header-border">
-                  
-
-                    <nav>
+                <div class="mobile-menu-wrap mobile-header-border"> <nav>
                         <ul class="mobile-menu">
                             <li class="menu-item-has-children"><span class="menu-expand"></span><a href="/">Home</a> 
                             </li>
@@ -346,6 +396,29 @@
                     <a href="#"><img src="assets/imgs/theme/icons/icon-pinterest.svg" alt=""></a>
                     <a href="#"><img src="assets/imgs/theme/icons/icon-youtube.svg" alt=""></a>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div class="modern-ticker">
+        <div class="ticker-label">
+            Updates
+        </div>
+        <div class="ticker-content">
+            <div class="ticker-item">
+                <span class="badge">💰 Exciting Offer! </span>
+                🎉 Pay with your wallet or online and earn Super Coins with your purchase! ✨
+                 Don't miss out on extra rewards!
+            </div>
+           
+            <div class="ticker-item">
+                <span class="badge">Alert</span>
+                "🎉 Great News! 🛍️ Spend over ₹ 999 and enjoy FREE SHIPPING on your order! 
+                🚚 Don't miss out on this amazing offer!"
+            </div>
+            <div class="ticker-item">
+                <span class="badge">News</span>
+                "🥜 Refer a Friend, Earn Cash! 💸 Invite your friends to shop with us, and when they make their first purchase,
+                 YOU get money in your wallet! 🎉 The more you refer, the more you earn!"
             </div>
         </div>
     </div>

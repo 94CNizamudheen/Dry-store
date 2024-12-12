@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Coin Rewards</title>
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6a11cb;
+            --secondary-color: #2575fc;
+        }
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Arial', sans-serif;
+        }
+        .btn-reward {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            transition: transform 0.3s ease;
+        }
+        .btn-reward:hover {
+            transform: scale(1.05);
+        }
+        #wheel-canvas {
+            max-width: 100%;
+            display: block;
+            margin: 0 auto;
+        }
+        .scratch-card-container {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            background-color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        #scratchCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: pointer;
+        }
+        .coin-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .coin-card:hover {
+            transform: scale(1.03);
+        }
+        .coin-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: rgba(255,255,255,0.8);
+        }
+        .reward-overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            text-align: center;
+            z-index: -1;
+        }
+        .spin-container {
+            position: relative;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .spin-arrow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 50px solid #ff4500;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12 col-md-4 mb-4">
+                <div class="coin-card p-4 text-center">
+                    <i class="fas fa-coins coin-icon"></i>
+                    <h2 class="mb-3">Super Coin</h2>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Current Price</span>
+                        <strong>$45.67</strong>
+                    </div>
+                    <div class="progress mb-3">
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: 65%" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-success">
+                            <i class="fas fa-arrow-up me-1"></i>+3.5%
+                        </span>
+                        <span>Last 24h</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-12 col-md-8">
+                <div class="row">
+                    <div class="col-12 text-center mb-4">
+                        <h1>Super Coin Rewards</h1>
+                        
+                        <!-- Reward Modes -->
+                        <div class="d-flex justify-content-center gap-3 mb-4">
+                            <button class="btn btn-reward" data-bs-toggle="modal" data-bs-target="#scratchModal">
+                                <i class="fas fa-scratch-card"></i> Scratch Card
+                            </button>
+                            <button class="btn btn-reward" data-bs-toggle="modal" data-bs-target="#spinModal">
+                                <i class="fas fa-dice"></i> Spin Wheel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rest of the previous HTML (Scratch Modal, Spin Modal, and JavaScript) remains the same -->
+    <!-- Scratch Modal content -->
+    <div class="modal fade" id="scratchModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Scratch Card</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="scratch-card-container mx-auto mb-3">
+                        <div class="reward-overlay">
+                            <div>
+                                <h3 id="rewardAmount">Reward</h3>
+                                <p>Super Coins Reward</p>
+                            </div>
+                        </div>
+                        <canvas id="scratchCanvas" width="300" height="200"></canvas>
+                    </div>
+                    <div class="scratch-progress">
+                        Scratch to reveal your reward!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Spin Wheel Modal -->
+    <div class="modal fade" id="spinModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Spin Wheel</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="spin-container mb-3">
+                        <canvas id="wheel-canvas" width="400" height="400"></canvas>
+                        <div class="spin-arrow"></div>
+                    </div>
+                    <div class="spin-controls">
+                        <button id="spinButton" class="btn btn-primary">
+                            Spin (10 Coins)
+                        </button>
+                        <div id="spinResult" class="mt-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap 5.3 JS Bundle (includes Popper) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+         document.addEventListener('DOMContentLoaded', function() {
+            // Scratch Card Logic
+            const scratchCanvas = document.getElementById('scratchCanvas');
+            const ctx = scratchCanvas.getContext('2d');
+            const rewardOverlay = document.querySelector('.reward-overlay');
+            const rewardAmount = document.getElementById('rewardAmount');
+            const scratchProgress = document.querySelector('.scratch-progress');
+            let isScratching = false;
+            let scratchedArea = 0;
+            const totalArea = scratchCanvas.width * scratchCanvas.height;
+
+            function resetScratchCard() {
+                ctx.fillStyle = 'gray';
+                ctx.fillRect(0, 0, scratchCanvas.width, scratchCanvas.height);
+                
+                ctx.fillStyle = 'silver';
+                ctx.fillRect(0, 0, scratchCanvas.width, scratchCanvas.height);
+                
+                scratchedArea = 0;
+                isScratching = false;
+                scratchProgress.textContent = 'Scratch to reveal your reward!';
+            }
+
+            function scratch(e) {
+                if (!isScratching) return;
+
+                const rect = scratchCanvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                ctx.beginPath();
+                ctx.arc(x, y, 20, 0, Math.PI * 2);
+                ctx.clip();
+                ctx.clearRect(0, 0, scratchCanvas.width, scratchCanvas.height);
+
+                scratchedArea += Math.PI * 20 * 20;
+                const scratchPercentage = (scratchedArea / totalArea) * 100;
+
+                scratchProgress.textContent = `Scratched: ${Math.min(100, scratchPercentage).toFixed(0)}%`;
+
+                if (scratchPercentage >= 60) {
+                    rewardOverlay.style.zIndex = 1;
+                    scratchProgress.textContent = 'Reward Revealed!';
+                }
+            }
+
+            scratchCanvas.addEventListener('mousedown', (e) => {
+                isScratching = true;
+                scratch(e);
+            });
+
+            scratchCanvas.addEventListener('mousemove', scratch);
+            scratchCanvas.addEventListener('mouseup', () => { isScratching = false; });
+            scratchCanvas.addEventListener('mouseleave', () => { isScratching = false; });
+
+            resetScratchCard();
+
+            // Spin Wheel Logic
+            const wheelCanvas = document.getElementById('wheel-canvas');
+            const wheelCtx = wheelCanvas.getContext('2d');
+            const spinButton = document.getElementById('spinButton');
+            const spinResult = document.getElementById('spinResult');
+
+            const segments = [
+                { label: '10 Coins', color: '#FF6B6B' },
+                { label: '25 Coins', color: '#4ECDC4' },
+                { label: '50 Coins', color: '#45B7D1' },
+                { label: '100 Coins', color: '#FDCB6E' },
+                { label: '5 Coins', color: '#6C5CE7' },
+                { label: '75 Coins', color: '#A8E6CF' }
+            ];
+
+            function drawWheel() {
+                const centerX = wheelCanvas.width / 2;
+                const centerY = wheelCanvas.height / 2;
+                const radius = Math.min(centerX, centerY) - 10;
+                const arcSize = (Math.PI * 2) / segments.length;
+
+                segments.forEach((segment, index) => {
+                    const startAngle = index * arcSize;
+                    const endAngle = (index + 1) * arcSize;
+
+                    wheelCtx.beginPath();
+                    wheelCtx.moveTo(centerX, centerY);
+                    wheelCtx.arc(centerX, centerY, radius, startAngle, endAngle);
+                    wheelCtx.closePath();
+
+                    wheelCtx.fillStyle = segment.color;
+                    wheelCtx.fill();
+
+                    // Add labels
+                    wheelCtx.save();
+                    wheelCtx.translate(centerX, centerY);
+                    wheelCtx.rotate(startAngle + arcSize / 2);
+                    wheelCtx.textAlign = 'right';
+                    wheelCtx.fillStyle = 'white';
+                    wheelCtx.font = 'bold 16px Arial';
+                    wheelCtx.fillText(segment.label, radius - 10, 0);
+                    wheelCtx.restore();
+                });
+            }
+
+            let spinning = false;
+            let spinAngle = 0;
+            let spinSpeed = 0;
+
+            function spin() {
+                if (spinning) return;
+                spinning = true;
+                spinSpeed = Math.random() * 0.5 + 0.5;
+                spinAngle = 0;
+                spinResult.textContent = '';
+                animate();
+            }
+
+            function animate() {
+                wheelCtx.clearRect(0, 0, wheelCanvas.width, wheelCanvas.height);
+                wheelCtx.save();
+                wheelCtx.translate(wheelCanvas.width / 2, wheelCanvas.height / 2);
+                wheelCtx.rotate(spinAngle);
+                wheelCtx.translate(-wheelCanvas.width / 2, -wheelCanvas.height / 2);
+                
+                drawWheel();
+                
+                wheelCtx.restore();
+
+                spinAngle += spinSpeed;
+                spinSpeed *= 0.99;
+
+                if (spinSpeed < 0.01) {
+                    spinning = false;
+                    const segmentIndex = Math.floor(((spinAngle % (Math.PI * 2)) / (Math.PI * 2)) * segments.length);
+                    spinResult.textContent = `You won: ${segments[segmentIndex].label}!`;
+                    return;
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            spinButton.addEventListener('click', spin);
+            drawWheel();
+        });
+    </script>
+</body>
+</html>

@@ -473,10 +473,8 @@
                                 position: 'center',
                             })
                             if (!data.isExisting) {
-                                // Select all possible cart count elements
                                 const cartCountElements = document.querySelectorAll('#cartCountDisplay, .header-action-icon-2 .pro-count.blue');
 
-                                // Update all found cart count elements
                                 cartCountElements.forEach(element => {
                                     element.textContent = data.cartCount;
                                 });

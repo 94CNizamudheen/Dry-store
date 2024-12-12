@@ -4,6 +4,23 @@ const Cart = require("../../models/cartScema");
 const { CommandSucceededEvent } = require("mongodb");
 const Coupon = require("../../models/couponSchema");
 
+
+const calculateCartTotals = (cart) => {
+    const subtotal = cart.items.reduce((acc, item) => acc + item.totalPrice, 0);
+    const cartRegularPriceTotal = cart.items.reduce((acc, item) => {
+        const regularPrice = item.productId.regularPrice || 0;
+        return acc + (regularPrice * item.quantity);
+    }, 0);
+    const cartSalePriceTotal = cart.items.reduce((acc, item) => {
+        const salePrice = item.productId.salePrice || 0;
+        return acc + (salePrice * item.quantity);
+    }, 0);
+    const totalDiscount = cartRegularPriceTotal - cartSalePriceTotal;
+
+    return { subtotal, total: subtotal, totalDiscount };
+};
+
+
 const loadCart = async (req, res) => {
     try {
         if (!req.session.user) {
@@ -23,8 +40,8 @@ const loadCart = async (req, res) => {
             });
         }
 
-        
-        const subtotal = cart.items.reduce((acc,item)=>acc+item.totalPrice||0,0);
+
+        const subtotal = cart.items.reduce((acc, item) => acc + item.totalPrice || 0, 0);
         const shipping = 0;
         const total = subtotal + shipping;
         const totalDiscount = cart.items.reduce((sum, item) => {
@@ -40,7 +57,7 @@ const loadCart = async (req, res) => {
             total: total,
             subtotal: subtotal,
             totalDiscount: totalDiscount,
-        
+
         });
     } catch (error) {
         console.error("Error loading cart page:", error);
@@ -142,10 +159,9 @@ const updateQuantity = async (req, res) => {
         const code = req.session.couponCode;
         const coupon = await Coupon.findOne({ code });
         if (coupon) {
-            return res.status(400).json({
-                success: false,
-                error: "You can't update the cart. Remove the coupon to update the cart.",
-            });
+            req.session.discount = 0;
+            req.session.discountedTotal = 0;
+            delete req.session.couponCode;
         }
 
         if (!cart) {
@@ -157,7 +173,7 @@ const updateQuantity = async (req, res) => {
             return res.status(404).json({ error: "Product not found in cart" });
         }
 
-        const product = item.productId; 
+        const product = item.productId;
         if (action === "increase" && item.quantity < 5 && item.quantity < product.quantity) {
             item.quantity += 1;
         } else if (action === "decrease" && item.quantity > 1) {
@@ -178,27 +194,17 @@ const updateQuantity = async (req, res) => {
         item.totalPrice = product.salePrice * item.quantity;
         await cart.save();
 
-        const subtotal = cart.items.reduce((acc, item) => acc + item.totalPrice, 0);
-        const shipping = 0;
-        const total = subtotal + shipping;
-        const cartRegularPriceTotal = cart.items.reduce((acc, item) => {
-            const regularPrice = item.productId.regularPrice || 0;
-            return acc + (regularPrice * item.quantity);
-        }, 0);
-        const cartSalePriceTotal = cart.items.reduce((acc, item) => {
-            const salePrice = item.productId.salePrice || 0; 
-            return acc + (salePrice * item.quantity);
-        }, 0);
-        const totalDiscount=cartRegularPriceTotal - cartSalePriceTotal;
-      
+        const data= await calculateCartTotals (cart);
+       
+
         res.json({
             success: true,
             message: "Quantity updated",
             newQuantity: item.quantity,
             newTotalPrice: item.totalPrice,
-            subtotal,
-            total,
-            totalDiscount: totalDiscount,
+            subtotal:data.subtotal,
+            total:data.total,
+            totalDiscount: data.totalDiscount
         });
     } catch (error) {
         console.error("Error updating quantity:", error);
@@ -216,6 +222,14 @@ const removeItem = async (req, res) => {
         if (!cart) {
             return res.status(404).json({ error: "Cart not found" });
         }
+        const code = req.session.couponCode;
+        const coupon = await Coupon.findOne({ code });
+        if (coupon) {
+            req.session.discount = 0;
+            req.session.discountedTotal = 0;
+            delete req.session.couponCode;
+
+        }
 
         const itemIndex = cart.items.findIndex(
             (item) => item.productId.toString() === productId
@@ -224,19 +238,16 @@ const removeItem = async (req, res) => {
             cart.items.splice(itemIndex, 1);
             await cart.save();
 
-            // Calculate new cart totals
-            const subtotal = cart.items.reduce(
-                (acc, item) => acc + item.totalPrice,
-                0
-            );
-            const shipping = 0;
-            const total = subtotal + shipping;
+          const data= await calculateCartTotals (cart);
 
             res.json({
                 success: true,
                 message: "Item removed successfully",
-                subtotal,
-                total,
+                subtotal:data.subtotal,
+                total:data.total,
+                totalDiscount: data.totalDiscount,
+                isExisting: false,
+                cartCount: cart.items.length,
             });
         } else {
             res.status(404).json({ error: "Product not found in cart" });
@@ -249,7 +260,7 @@ const removeItem = async (req, res) => {
 
 const applyCoupon = async (req, res) => {
     try {
-        console.log("apply copon invoked");
+        console.log("apply coupon invoked");
         const { code, totalAmount } = req.body;
         const userId = req.session.user;
 
@@ -282,21 +293,32 @@ const applyCoupon = async (req, res) => {
             discount = coupon.discountValue;
         }
         const discountedTotal = totalAmount - discount;
+
+        const originalShippingCharge = req.session.shippingCharge || 0;
+
+        const shipping = discountedTotal >= 1000 ? 0 : originalShippingCharge;
+
+        // Store values in session
         req.session.discountedTotal = discountedTotal;
         req.session.discount = discount;
         req.session.couponCode = code;
+        req.session.shippingCharge = shipping;
+
         res.status(200).json({
-                success: true,
-                discountedTotal,
-                discount,
-                message: "Coupen applied successfully",
-            });
+            success: true,
+            discountedTotal,
+            discount,
+            shipping,
+            message: discountedTotal >= 1000
+                ? "Coupon applied successfully. Free shipping!"
+                : "Coupon applied successfully",
+        });
     } catch (error) {
-        console.error("Error for appling coupon", error);
+        console.error("Error for applying coupon", error);
         res.status(500).json({
-                message: "Internal server Error.Please try again",
-                success: false,
-            });
+            message: "Internal server Error. Please try again",
+            success: false,
+        });
     }
 };
 const removeCoupon = async (req, res) => {
