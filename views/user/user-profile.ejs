@@ -366,6 +366,9 @@
                                                                     <p class="text-muted small">
                                                                         <%= order.orderedItems.length %> Items • Order Placed on <%= order.createdOn.toLocaleDateString() %>
                                                                     </p>
+                                                                    <p class="text-muted small">
+                                                                        💵 Payment Method : <%= order.paymentDetails.method %>
+                                                                    </p>
                                                                 </div>
                                                             </div>
                                                             <!-- Progress Tracker -->
@@ -490,7 +493,7 @@
                                                                         <div class="text-end">
                                                                             <h6>₹<%= (item.price * item.quantity).toFixed(2) %></h6>
                                                                             
-                                                                            <% if (order.status === "Pending" || order.status === "Processing") { %>
+                                                                            <% if (order.status === "Pending" || order.status === "Processing" || order.status ==='Partially Cancelled' ) { %>
                                                                                 <% if (order.orderedItems.length > 1 && !order.coupon) { %>
                                                                                     <a class="text-danger" href="#" onclick="cancelOrderItem('<%= order.orderId %>', '<%= item.product._id %>')">Cancel Item</a>
                                                                                 <% } %>
@@ -1002,7 +1005,7 @@
             fetch(`/check-order-payment?orderId=${orderId}`)
                 .then(response => response.json())
                 .then(orderData => {
-                    if (orderData.isOnlinePayment) {
+                    if (orderData.isOnlinePayment||orderData.isWallet) {
                         Swal.fire({
                             title: 'Are you sure?',
                             text: "How would you like to receive your refund?",

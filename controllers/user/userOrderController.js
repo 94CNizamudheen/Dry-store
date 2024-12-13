@@ -71,6 +71,7 @@ const loadCheckOutPage = async (req, res) => {
 
         let cartedProducts;
         if (productId) {
+            req.session.productId = productId;
             const product = await Product.findById(productId);
             if (!product) {
                 return res.redirect('/productDetails');
@@ -84,7 +85,7 @@ const loadCheckOutPage = async (req, res) => {
                 }],
             };
         } else {
-            // Regular cart flow
+
             cartedProducts = await Cart.findOne({ userId }).populate({
                 path: "items.productId",
                 model: "Product",
@@ -94,14 +95,38 @@ const loadCheckOutPage = async (req, res) => {
             if (!cartedProducts || cartedProducts.items.length === 0) {
                 return res.render('cart', { isEmpty: true });
             }
+            delete req.session.productId;
         }
 
-
         const subtotal = cartedProducts.items.reduce((acc, item) => acc + item.totalPrice, 0);
+
+        if (!req.session.selectedAddress) {
+            req.session.shippingCharge = 0;
+            req.session.discountedTotal = null;
+            req.session.discount = 0;
+            req.session.couponCode = null;
+        }
+
         let shipping = req.session.shippingCharge || 0;
 
         const discount = req.session.discount || 0;
-        const discountedTotal = req.session.discountedTotal || subtotal;
+        let discountedTotal = req.session.discountedTotal || subtotal;
+
+        if (req.session.couponCode) {
+            const appliedCoupon = await Coupon.findOne({ code: req.session.couponCode });
+            if (appliedCoupon) {
+                let calculatedDiscount = 0;
+                if (appliedCoupon.discountType === "percentage") {
+                    calculatedDiscount = (appliedCoupon.discountValue / 100) * subtotal;
+                } else {
+                    calculatedDiscount = appliedCoupon.discountValue;
+                }
+                discountedTotal = subtotal - calculatedDiscount;
+                req.session.discount = calculatedDiscount;
+                req.session.discountedTotal = discountedTotal;
+            }
+        }
+
         const regularTotal = cartedProducts.items.reduce(
             (sum, item) => sum + (item.productId?.regularPrice || 0) * item.quantity,
             0
@@ -116,8 +141,9 @@ const loadCheckOutPage = async (req, res) => {
             shipping = 0;
             req.session.shippingCharge = 0;
         }
-        const total = subtotal + shipping;
-        // Render checkout page
+
+        const total = discountedTotal + shipping;
+
         res.render('check-out', {
             user: userData,
             userAddress: addressData,
@@ -126,12 +152,13 @@ const loadCheckOutPage = async (req, res) => {
             total,
             subtotal,
             selectedAddress: req.session.selectedAddress || null,
-            discount,
+            discount: req.session.discount || 0,
             discountedTotal,
             coupons,
             totalDiscount,
             regularTotal,
             shipping,
+            appliedCouponCode: req.session.couponCode
         });
     } catch (error) {
         console.error('Error loading checkout page:', error);
@@ -170,24 +197,38 @@ const selectAddress = async (req, res) => {
         const userId = req.session.user;
         const addressId = req.query.id;
 
+        // Reset coupon-related session data when address changes
+        req.session.couponCode = null;
+        req.session.discount = 0;
+        req.session.discountedTotal = null;
+
         req.session.selectedAddress = addressId;
-        console.log("selected AddressId: ", req.session.selectedAddress)
+        
         if (!addressId) {
             return res.status(400).json({ success: false, error: "Address ID is required." });
         }
+        
         const addressDoc = await Address.findOne(
             { userId, 'address._id': addressId },
             { 'address.$': 1 }
         );
+        
         const state = addressDoc.address[0].state;
         const shipping = await ShippingData.findOne({ state: state });
+        
         if (!shipping) {
             return res.status(404).json({ success: false, error: "Shipping data not found for the selected state." });
         }
+        
         const shippingCharge = shipping.charge;
         req.session.shippingCharge = shippingCharge;
 
-        res.status(200).json({ success: true, selectedAddress: addressId, shippingCharge: shippingCharge });
+        res.status(200).json({ 
+            success: true, 
+            selectedAddress: addressId, 
+            shipping: shippingCharge,
+            message: "Address and shipping charge updated successfully",
+        });
     } catch (error) {
         console.error("Error selecting address:", error);
         res.status(500).json({ success: false, error: "Internal server error" });
@@ -200,15 +241,35 @@ const handlePaymentMethod = async (req, res) => {
 
         const userId = req.session.user;
         const { paymentOption } = req.body;
+        const productId = req.session.productId; 
         const user = await User.findById(userId);
         const code = req.session.couponCode
         const coupon = await Coupon.findOne({ code });
-        const cart = await Cart.findOne({ userId }).populate('items.productId');
+        
+        //  cart retrieval to support both scenarios
+        console.log("ProductId",productId);
+        let cart, total;
+        if (productId) {
+            //Single product scenario
+            const product = await Product.findById(productId);
+            cart = {
+                items: [{
+                    productId: product,
+                    quantity: 1,
+                    totalPrice: product.salePrice || product.regularPrice,
+                }]
+            };
+            total = product.salePrice || product.regularPrice;
+        } else {
+            // Regular cart scenario
+            cart = await Cart.findOne({ userId }).populate('items.productId');
+            total = cart.items.reduce((acc, item) => acc + item.totalPrice, 0);
+        }
+
         const selectedAddressId = req.session.selectedAddress;
         if (!selectedAddressId) {
             return res.status(400).json({ error: "Please select a delivery address" });
         }
-        const total = cart.items.reduce((acc, item) => acc + item.totalPrice, 0);
 
         let finalAmount = 0;
         const shipping = req.session.shippingCharge;
@@ -220,7 +281,7 @@ const handlePaymentMethod = async (req, res) => {
 
         if (paymentOption === "COD" && finalAmount > 1000) {
             return res.status(400).json({ error: "Maximum amount for Cash On Delivery is ₹1000/- " })
-        };
+        }
 
         console.log("paymentOption selected:", paymentOption);
         const validPaymentOption = ['COD', 'ONLINE', "WALLET"];
@@ -233,8 +294,9 @@ const handlePaymentMethod = async (req, res) => {
         if (!validPaymentOption.includes(paymentOption)) {
             return res.status(400).json({ error: "Invalid Payment Option" });
         }
+        
         req.session.paymentMethod = paymentOption;
-        console.log("pay mthd in sesion:", req.session.paymentMethod);
+        console.log("pay mthd in session:", req.session.paymentMethod);
         res.json({ success: true });
     } catch (error) {
         console.error("Error for handling payment method:", error);
@@ -250,11 +312,10 @@ const placeOrderForCODandWALLET = async (req, res) => {
         const userId = req.session.user;
         const selectedAddressId = req.session.selectedAddress;
         const paymentMethod = req.session.paymentMethod;
-
+        const productId = req.session.productId;
         if (!selectedAddressId) {
             return res.status(400).json({ error: "Please select a delivery address" });
         }
-
         if (!paymentMethod) {
             return res.status(400).json({ error: "Please select a payment method" });
         }
@@ -263,7 +324,20 @@ const placeOrderForCODandWALLET = async (req, res) => {
 
         const code = req.session.couponCode;
         const coupon = await Coupon.findOne({ code });
-        const cart = await Cart.findOne({ userId }).populate('items.productId');
+       
+        let cart;
+        if (productId) {
+            const product = await Product.findById(productId);
+            cart = {
+                items: [{
+                    productId: product,
+                    quantity: 1,
+                    totalPrice: product.salePrice || product.regularPrice,
+                }]
+            };
+        } else {
+            cart = await Cart.findOne({ userId }).populate('items.productId');
+        }
 
         const total = cart.items.reduce((acc, item) => acc + item.totalPrice, 0);
         const discount = req.session.discount;
@@ -326,7 +400,13 @@ const placeOrderForCODandWALLET = async (req, res) => {
 
         await newOrder.save();
 
-        await Cart.deleteOne({ userId });
+        if (productId) {
+            
+            console.log('Single product purchase, cart remains unchanged');
+        } else {
+          
+            await Cart.deleteOne({ userId });
+        }
 
         if (coupon) {
             const userCouponUsage = coupon.userUsage.find(u => u.userId.toString() === userId.toString());
@@ -356,6 +436,7 @@ const placeOrderForCODandWALLET = async (req, res) => {
         delete req.session.discount;
         delete req.session.discountedTotal;
         delete req.session.shippingCharge;
+        delete req.session.productId;
 
         res.status(200).json({ success: true, redirectURL: `/order-success-page?message=${encodeURIComponent('Order Compleated')}`, });
     } catch (error) {
@@ -378,7 +459,6 @@ const loadOrderSuccessPage = async (req, res) => {
 const cancelOrder = async (req, res) => {
 
     try {
-
         const { orderId, refundMethod } = req.query;
         if (!orderId) {
             return res.status(400).json({
@@ -434,9 +514,9 @@ const cancelOrder = async (req, res) => {
             if (!user.wallet || typeof user.wallet !== 'object') {
                 user.wallet = { balance: 0, transaction: [] };
             }
-
+           
             if (refundMethod === "WALLET") {
-                user.wallet.balance += order.paymentDetails.paidAmount;
+                user.wallet.balance += (order.paymentDetails.paidAmount-order.shippingCharge);
                 user.wallet.transaction.push({
                     type: 'credit',
                     amount: order.finalAmount,
@@ -577,7 +657,7 @@ const cancelOrderItem = async (req, res) => {
         order.orderedItems = remainingItems;
         order.totalPrice = newTotalPrice;
         order.discount = newDiscount;
-        order.finalAmount = newFinalAmount;
+        order.finalAmount = newFinalAmount + order.shippingCharge;
         order.status = remainingItems.length > 0 ? 'Partially Cancelled' : "Cancelled";
 
         await order.save();
@@ -614,7 +694,8 @@ const checkOrderPayment = async (req, res) => {
         }
         return res.status(200).json({
             success: true,
-            isOnlinePayment: order.paymentDetails.method === "ONLINE" && order.paymentDetails.paymentStatus === "Completed"
+            isOnlinePayment: order.paymentDetails.method === "ONLINE" && order.paymentDetails.paymentStatus === "Completed",
+            isWallet:order.paymentDetails.method==="WALLET" &&order.paymentDetails.paymentStatus === "Completed"
         });
 
 

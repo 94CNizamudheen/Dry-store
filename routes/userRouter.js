@@ -98,6 +98,10 @@ router.post('/failed-order-save',userAuth,orderController.failedOrderSave);
 router.patch('/verify-repay-payment',userAuth,orderController.repayPayment);
 router.post('/returnProduct',userAuth,orderController.initializeReturn);
 
+//super coin
+router.get('/superCoins',headerData,userAuth,userController.loadSuperCoin);
+router.post('/scrachReward',userAuth,userController.scrachReward);
+
 
 
 

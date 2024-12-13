@@ -624,8 +624,57 @@ const downoladInvoice= async(req,res)=>{
 
     }
 };
-
-
+const loadSuperCoin=async(req,res)=>{
+    try {
+        const userId=req.session.user;
+        const userData = await User.findById(userId)
+        res.render('superCoins',{
+            user:userData
+        })
+        
+    } catch (error) {
+        console.error("Error for rendering supercoin page",error);
+        res.redirect('/page-404');
+    }
+};
+const scrachReward = async (req, res) => {
+    try {
+        const userId = req.session.user;
+        const user = await User.findById(userId);
+        
+        if(user.rewardPoints < 250) {
+            return res.json({
+                success: false, 
+                message: "Sorry, you don't have enough balance for Scratch. Shop and earn more Coins"
+            });
+        }
+        
+        const rewards = Array.from({length: 90}, (_, i) => ({
+            amount: i + 10,
+            // message: `Congratulations! You WON ${i + 10} Rupees`
+        }));
+        
+        const reward = rewards[Math.floor(Math.random() * rewards.length)];
+        
+        user.rewardPoints -= 250;
+        user.wallet.balance += reward.amount;
+        await user.save();
+        
+        res.json({
+            success: true,
+            reward: {
+                amount: reward.amount,
+                message: reward.message
+            }
+        });
+    } catch (error) {
+        console.error("Error fetching scratch rewards", error);
+        res.status(500).json({
+            success: false,
+            message: "An error occurred. Please try again later."
+        });
+    }
+}
 
 module.exports = {
     loadHomepage,
@@ -642,5 +691,7 @@ module.exports = {
     getProductDetials,
     addToWishlist,
     removeFromWishlistPage,
-    downoladInvoice
+    downoladInvoice,
+    loadSuperCoin,
+    scrachReward,
 };

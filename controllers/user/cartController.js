@@ -264,21 +264,24 @@ const applyCoupon = async (req, res) => {
         const { code, totalAmount } = req.body;
         const userId = req.session.user;
 
+        const currentShippingCharge = req.session.shippingCharge || 0;
+
         const coupon = await Coupon.findOne({ code, userId: { $ne: userId } });
         if (!coupon) {
-            return res
-                .status(404)
-                .json({
-                    success: false,
-                    message: "Invalid Coupen code. Or You are already used this coupon ",
-                });
+            return res.status(404).json({
+                success: false,
+                message: "Invalid Coupen code. Or You are already used this coupon ",
+            });
         }
+
         const currentDate = new Date();
         if (currentDate > coupon.expiryOn) {
-            return res
-                .status(400)
-                .json({ message: "This Coupen has expired", success: false });
+            return res.status(400).json({ 
+                message: "This Coupen has expired", 
+                success: false 
+            });
         }
+
         if (coupon.minimumPrice && totalAmount < coupon.minimumPrice) {
             return res.status(400).json({
                 success: false,
@@ -294,9 +297,8 @@ const applyCoupon = async (req, res) => {
         }
         const discountedTotal = totalAmount - discount;
 
-        const originalShippingCharge = req.session.shippingCharge || 0;
-
-        const shipping = discountedTotal >= 1000 ? 0 : originalShippingCharge;
+        // Determine shipping charge based on current shipping charge and discounted total
+        const shipping = discountedTotal >= 1000 ? 0 : currentShippingCharge;
 
         // Store values in session
         req.session.discountedTotal = discountedTotal;

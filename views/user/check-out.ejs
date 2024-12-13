@@ -27,575 +27,573 @@
             color: white;
         }
     </style>
- 
-    <main class="main">
-        <div class="page-header breadcrumb-wrap">
-            <div class="container">
-                <div class="breadcrumb">
-                    <a href="index.html" rel="nofollow">Home</a>
-                    <span></span> Shop <span></span> Checkout
-                </div>
+
+
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="index.html" rel="nofollow">Home</a>
+                <span></span> Shop <span></span> Checkout
             </div>
         </div>
-        
-        <section class="mt-50 mb-50">
-            <% if(isEmpty) {%>
-                <div class="text-center my-5">
-                    <h2>Your Cart is Empty</h2>
-                    <p>Looks like you haven't added any items to your cart yet.</p>
-                    <a href="/shop" class="btn btn-primary">Continue Shopping</a>
-                </div>
-                <% }else {%>
-                    <div class="container">
+    </div>
 
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="divider mt-50 mb-50"></div>
-                            </div>
+    <section class="mt-50 mb-50">
+        <% if(isEmpty) {%>
+            <div class="text-center my-5">
+                <h2>Your Cart is Empty</h2>
+                <p>Looks like you haven't added any items to your cart yet.</p>
+                <a href="/shop" class="btn btn-primary">Continue Shopping</a>
+            </div>
+            <% }else {%>
+                <div class="container">
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="divider mt-50 mb-50"></div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-25">
-                                    <h4>Choose Address</h4>
-                                </div>
-                                <section class="content-main">
-                                    <div class="container">
-                                        <!-- Display User Addresses -->
-                                        <div class="row mb-4">
-                                            <% if (userAddress && userAddress.address.length> 0) { %>
-                                                <% userAddress.address.forEach((address)=> { %>
-                                                    <div class="col-lg-6 mb-3">
-                                                        <div class="card <%= selectedAddress && selectedAddress.toString() === address._id.toString() ? 'border-success' : '' %>"
-                                                            id="address-<%= address._id %>">
-                                                            <div class="card-header">
-                                                                <h5 class="mb-0">
-                                                                    Address Type: <%= address.addressType %>
-                                                                </h5>
-                                                            </div>
-                                                            <div class="card-body">
-                                                                <address>
-                                                                    Name: <%= address.name %><br />
-                                                                        City: <%= address.city %><br />
-                                                                            Landmark: <%= address.landmark %><br />
-                                                                                State: <%= address.state %><br />
-                                                                                    Pincode: <%= address.pincode %>
-                                                                                        <br />
-                                                                                        Phone: <%= address.phone %>
-                                                                                            <br />
-                                                                                            Alternative Phone: <%=
-                                                                                                address.altPhone %>
-                                                                </address>
-                                                                <a href="/edit-address/?id=<%= address._id %>"
-                                                                    class="btn btn-primary btn-sm">Edit</a>
-                                                                <a href="#" class="btn btn-secondary btn-sm select-btn"
-                                                                    data-id="<%= address._id %>">Select</a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <% }) %>
-                                                        <% } else { %>
-                                                            <div class="col-lg-6">
-                                                                <div class="card">
-                                                                    <div class="card-header">
-                                                                        <h5 class="mb-0">No Address</h5>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <% } %>
-                                        </div>
-
-
-                                        <!-- Address Form -->
-                                        <div class="form-group">
-                                            <div class="chek-form">
-                                                <div class="custome-checkbox">
-                                                    <input class="form-check-input" type="checkbox" name="checkbox"
-                                                        id="differentaddress" />
-                                                    <label class="form-check-label label_info" data-bs-toggle="collapse"
-                                                        data-target="#collapseAddress" href="#collapseAddress"
-                                                        aria-controls="collapseAddress"
-                                                        for="differentaddress"><span>Ship to a different
-                                                            address?</span></label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div id="collapseAddress" class="different_address collapse in">
-                                            <div class="card mx-auto card-address">
-                                                <div class="card-body">
-                                                    <h4 class="card-title mb-4">Add Address</h4>
-                                                    <form id="addressForm" action="/check-out-add-address" method="POST"
-                                                        class="container">
-                                                        <div class="row">
-                                                            <!-- First Column -->
-                                                            <div class="col-md-6">
-                                                                <div class="row mb-3">
-                                                                    <div class="col-12">
-                                                                        <label for="addressType"
-                                                                            class="form-label">Address Type</label>
-                                                                        <input type="text" id="addressType"
-                                                                            name="addressType" class="form-control"
-                                                                            placeholder="e.g., Home, Office" required />
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="row mb-3">
-                                                                    <div class="col-12">
-                                                                        <label for="name" class="form-label">Full
-                                                                            Name</label>
-                                                                        <input type="text" id="name" name="name"
-                                                                            class="form-control" placeholder="Full Name"
-                                                                            required />
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="row mb-3">
-                                                                    <div class="col-12">
-                                                                        <label for="pincode"
-                                                                            class="form-label">Pincode</label>
-                                                                        <input type="text" id="pincode" name="pincode"
-                                                                            class="form-control"
-                                                                            placeholder="6-digit Pincode" required />
-                                                                        <div id="pincode-validation-message"
-                                                                            class="text-muted small mt-1"></div>
-                                                                    </div>
-                                                                </div>
-
-                                                                <!-- Towns Selection - Initially Hidden -->
-                                                                <div id="townsContainer" class="row mb-3"
-                                                                    style="display: none;">
-                                                                    <div class="col-12">
-                                                                        <label for="towns" class="form-label">Select
-                                                                            City</label>
-                                                                        <select id="towns" name="towns[]"
-                                                                            class="form-select" multiple required>
-                                                                            <!-- Options will be dynamically populated -->
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
-                                                            <!-- Second Column -->
-                                                            <div class="col-md-6">
-                                                                <div class="row mb-3">
-                                                                    <div class="col-12">
-                                                                        <label for="landmark"
-                                                                            class="form-label">Landmark</label>
-                                                                        <input type="text" id="landmark" name="landmark"
-                                                                            class="form-control"
-                                                                            placeholder="Landmark" />
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="row mb-3">
-                                                                    <div class="col-12">
-                                                                        <label for="city"
-                                                                            class="form-label">City</label>
-                                                                        <input type="text" id="city" name="city"
-                                                                            class="form-control" placeholder="City"
-                                                                            required readonly />
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="row mb-3">
-                                                                    <div class="col-12">
-                                                                        <label for="state"
-                                                                            class="form-label">State</label>
-                                                                        <input type="text" id="state" name="state"
-                                                                            class="form-control" placeholder="State"
-                                                                            required readonly />
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="row mb-3">
-                                                                    <div class="col-12">
-                                                                        <label for="phone"
-                                                                            class="form-label">Phone</label>
-                                                                        <input type="tel" id="phone" name="phone"
-                                                                            class="form-control"
-                                                                            placeholder="Phone Number" required
-                                                                            pattern="[0-9]{10}" />
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="row mb-3">
-                                                                    <div class="col-12">
-                                                                        <label for="altPhone"
-                                                                            class="form-label">Alternative Phone</label>
-                                                                        <input type="tel" id="altPhone" name="altPhone"
-                                                                            class="form-control"
-                                                                            placeholder="Alternative Phone"
-                                                                            pattern="[0-9]{10}" />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <!-- Submit Button -->
-                                                        <div class="row">
-                                                            <div class="col-12">
-                                                                <button type="submit" class="btn btn-primary w-100">
-                                                                    Add Address
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="">
-                                            <div class="toggle_info">
-                                                <span><i class="fi-rs-label mr-10"></i><span class="text-muted">Have a
-                                                        coupon?</span>
-                                                    <a href="#coupon" data-bs-toggle="collapse" class="collapsed"
-                                                        aria-expanded="false">Click here to enter your code</a></span>
-                                            </div>
-                                            <div class="panel-collapse collapse coupon_form" id="coupon">
-                                                <div class="panel-body">
-
-                                                    <div class="input-group">
-                                                        <input type="text" id="couponInput" class="form-control"
-                                                            style="border-color: black;" placeholder="Enter coupon code"
-                                                            aria-label="Coupon code">
-                                                        <button id="applyBtn"
-                                                            class="btn btn-primary <%= discount > 0 ? 'd-none' : '' %>">
-                                                            Apply Coupon
-                                                        </button>
-                                                        <button id="removeBtn"
-                                                            class="btn btn-danger <%= discount > 0 ? '' : 'd-none' %>">
-                                                            Remove Coupon
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="container mt-4">
-                                            <div class="row ">
-                                                <% if(coupons.length<=0) {%>
-                                                    <h3 class="text-danger">No active coupons</h3>
-                                                    <% }else{ %>
-                                                        <div class="col-sm-12">
-                                                            <h3 class="mb-3 text-success">Active Coupons</h3>
-                                                        </div>
-                                                        <% coupons.forEach((coupon, index)=> { %>
-                                                            <div class="col-md-5 mb-3">
-                                                                <div
-                                                                    class="card <%= (new Date(coupon.expiryOn) < new Date() || coupon.usageLimit - coupon.timesUsed <= 0) 
-                                                            ? 'border-danger bg-danger text-white opacity-17' 
-                                                            : (index % 2 === 0 ? 'border-success bg-light' : 'border-warning bg-light') %>">
-                                                                    <div
-                                                                        class="card-header bg-<%= (new Date(coupon.expiryOn) < new Date() || coupon.usageLimit - coupon.timesUsed <= 0) 
-                                                                ? 'danger' 
-                                                                : (index % 2 === 0 ? 'success' : 'warning') %> text-white">
-                                                                        <h5>
-                                                                            <% if (coupon.minimumPrice) { %>
-                                                                                Minimum Purchase: ₹<%=
-                                                                                    coupon.minimumPrice %>
-                                                                                    <% } %>
-                                                                        </h5>
-                                                                    </div>
-                                                                    <div class="card-body">
-                                                                        <p class="card-text">
-                                                                            <span class="badge bg-info">
-                                                                                <%= coupon.discountType==='percentage' ?
-                                                                                    coupon.discountValue + '% OFF' : '₹'
-                                                                                    + coupon.discountValue + ' OFF' %>
-                                                                            </span>
-                                                                        </p>
-                                                                        <ul class="list-unstyled">
-                                                                            <li><strong>Code:</strong><br>
-                                                                                <%= coupon.code %>
-                                                                            </li>
-                                                                            <li><strong>Expires:</strong>
-                                                                                <%= new
-                                                                                    Date(coupon.expiryOn).toLocaleDateString()
-                                                                                    %>
-                                                                            </li>
-                                                                            <li><strong>Usage Limit:</strong>
-                                                                                <%= coupon.usageLimit - coupon.timesUsed
-                                                                                    %> Left
-                                                                            </li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <% }) %>
-
-
-                                                                <% } %>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </section>
-
-
-
-                                <div id="loadingSpinner" class="d-none text-center mt-2">
-                                    <div class="spinner-border text-primary" role="status">
-                                        <span class="visually-hidden">Loading...</span>
-                                    </div>
-                                </div><br>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-25">
+                                <h4>Choose Address</h4>
                             </div>
-                            <div class="col-md-6">
-                                <div class="order_review">
-                                    <div class="mb-20">
-                                        <h4>Your Orders</h4>
-                                    </div>
-                                    <div class="table-responsive order_table text-center">
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th colspan="2">Product</th>
-                                                    <th>Total</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <% cart.items.forEach(item=> { %>
-                                                    <tr>
-                                                        <td class="image product-thumbnail">
-                                                            <img src="/uploads/images/<%= item.productId.productImage[0] %>"
-                                                                alt="#" />
-                                                        </td>
-                                                        <td>
-                                                            <h5>
-                                                                <a href="shop-product-full.html">
-                                                                    <%= item.productId.productName %>
-                                                                </a>
+                            <section class="content-main">
+                                <div class="container">
+                                    <!-- Display User Addresses -->
+                                    <div class="row mb-4">
+                                        <% if (userAddress && userAddress.address.length> 0) { %>
+                                            <% userAddress.address.forEach((address)=> { %>
+                                                <div class="col-lg-6 mb-3">
+                                                    <div class="card <%= selectedAddress && selectedAddress.toString() === address._id.toString() ? 'border-success' : '' %>"
+                                                        id="address-<%= address._id %>">
+                                                        <div class="card-header">
+                                                            <h5 class="mb-0">
+                                                                Address Type: <%= address.addressType %>
                                                             </h5>
-                                                            <span class="product-qty">Quantity: <%= item.quantity %>
-                                                                    </span>
-                                                        </td>
-                                                        <td>₹<%= item.totalPrice.toFixed(2) %>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <address>
+                                                                Name: <%= address.name %><br />
+                                                                    City: <%= address.city %><br />
+                                                                        Landmark: <%= address.landmark %><br />
+                                                                            State: <%= address.state %><br />
+                                                                                Pincode: <%= address.pincode %>
+                                                                                    <br />
+                                                                                    Phone: <%= address.phone %>
+                                                                                        <br />
+                                                                                        Alternative Phone: <%=
+                                                                                            address.altPhone %>
+                                                            </address>
+                                                            <a href="/edit-address/?id=<%= address._id %>"
+                                                                class="btn btn-primary btn-sm">Edit</a>
+                                                            <a href="#" class="btn btn-secondary btn-sm select-btn"
+                                                                data-id="<%= address._id %>">Select</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <% }) %>
+                                                    <% } else { %>
+                                                        <div class="col-lg-6">
+                                                            <div class="card">
+                                                                <div class="card-header">
+                                                                    <h5 class="mb-0">No Address</h5>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <% } %>
+                                    </div>
+
+
+                                    <!-- Address Form -->
+                                    <div class="form-group">
+                                        <div class="chek-form">
+                                            <div class="custome-checkbox">
+                                                <input class="form-check-input" type="checkbox" name="checkbox"
+                                                    id="differentaddress" />
+                                                <label class="form-check-label label_info" data-bs-toggle="collapse"
+                                                    data-target="#collapseAddress" href="#collapseAddress"
+                                                    aria-controls="collapseAddress" for="differentaddress"><span>Ship to
+                                                        a different
+                                                        address?</span></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="collapseAddress" class="different_address collapse in">
+                                        <div class="card mx-auto card-address">
+                                            <div class="card-body">
+                                                <h4 class="card-title mb-4">Add Address</h4>
+                                                <form id="addressForm" action="/check-out-add-address" method="POST"
+                                                    class="container">
+                                                    <div class="row">
+                                                        <!-- First Column -->
+                                                        <div class="col-md-6">
+                                                            <div class="row mb-3">
+                                                                <div class="col-12">
+                                                                    <label for="addressType" class="form-label">Address
+                                                                        Type</label>
+                                                                    <input type="text" id="addressType"
+                                                                        name="addressType" class="form-control"
+                                                                        placeholder="e.g., Home, Office" required />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="row mb-3">
+                                                                <div class="col-12">
+                                                                    <label for="name" class="form-label">Full
+                                                                        Name</label>
+                                                                    <input type="text" id="name" name="name"
+                                                                        class="form-control" placeholder="Full Name"
+                                                                        required />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="row mb-3">
+                                                                <div class="col-12">
+                                                                    <label for="pincode"
+                                                                        class="form-label">Pincode</label>
+                                                                    <input type="text" id="pincode" name="pincode"
+                                                                        class="form-control"
+                                                                        placeholder="6-digit Pincode" required />
+                                                                    <div id="pincode-validation-message"
+                                                                        class="text-muted small mt-1"></div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Towns Selection - Initially Hidden -->
+                                                            <div id="townsContainer" class="row mb-3"
+                                                                style="display: none;">
+                                                                <div class="col-12">
+                                                                    <label for="towns" class="form-label">Select
+                                                                        City</label>
+                                                                    <select id="towns" name="towns[]"
+                                                                        class="form-select" multiple required>
+                                                                        <!-- Options will be dynamically populated -->
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Second Column -->
+                                                        <div class="col-md-6">
+                                                            <div class="row mb-3">
+                                                                <div class="col-12">
+                                                                    <label for="landmark"
+                                                                        class="form-label">Landmark</label>
+                                                                    <input type="text" id="landmark" name="landmark"
+                                                                        class="form-control" placeholder="Landmark" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="row mb-3">
+                                                                <div class="col-12">
+                                                                    <label for="city" class="form-label">City</label>
+                                                                    <input type="text" id="city" name="city"
+                                                                        class="form-control" placeholder="City" required
+                                                                        readonly />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="row mb-3">
+                                                                <div class="col-12">
+                                                                    <label for="state" class="form-label">State</label>
+                                                                    <input type="text" id="state" name="state"
+                                                                        class="form-control" placeholder="State"
+                                                                        required readonly />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="row mb-3">
+                                                                <div class="col-12">
+                                                                    <label for="phone" class="form-label">Phone</label>
+                                                                    <input type="tel" id="phone" name="phone"
+                                                                        class="form-control" placeholder="Phone Number"
+                                                                        required pattern="[0-9]{10}" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="row mb-3">
+                                                                <div class="col-12">
+                                                                    <label for="altPhone" class="form-label">Alternative
+                                                                        Phone</label>
+                                                                    <input type="tel" id="altPhone" name="altPhone"
+                                                                        class="form-control"
+                                                                        placeholder="Alternative Phone"
+                                                                        pattern="[0-9]{10}" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Submit Button -->
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <button type="submit" class="btn btn-primary w-100">
+                                                                Add Address
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="">
+                                        <div class="toggle_info">
+                                            <span><i class="fi-rs-label mr-10"></i><span class="text-muted">Have a
+                                                    coupon?</span>
+                                                <a href="#coupon" data-bs-toggle="collapse" class="collapsed"
+                                                    aria-expanded="false">Click here to enter your code</a></span>
+                                        </div>
+                                        <div class="panel-collapse collapse coupon_form" id="coupon">
+                                            <div class="panel-body">
+
+                                                <div class="input-group">
+                                                    <input type="text" id="couponInput" class="form-control"
+                                                        style="border-color: black;" placeholder="Enter coupon code"
+                                                        aria-label="Coupon code">
+                                                    <button id="applyBtn"
+                                                        class="btn btn-primary <%= discount > 0 ? 'd-none' : '' %>">
+                                                        Apply Coupon
+                                                    </button>
+                                                    <button id="removeBtn"
+                                                        class="btn btn-danger <%= discount > 0 ? '' : 'd-none' %>">
+                                                        Remove Coupon
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="toggle_info">
+                                        <span><i class="fi-rs-label mr-10"></i>
+                                            <a href="#coupons" data-bs-toggle="collapse" class="collapsed"
+                                                aria-expanded="false">Show Coupons</a></span>
+                                    </div>
+                                    <div class="panel-collapse collapse coupon_form" id="coupons">
+                                        <div class="panel-body">
+                                            <div class="container mt-4">
+                                                <div class="row ">
+                                                    <% if(coupons.length<=0) {%>
+                                                        <h3 class="text-danger">No active coupons</h3>
+                                                        <% }else{ %>
+                                                            <div class="col-sm-12">
+                                                                <h3 class="mb-3 text-success">Active Coupons</h3>
+                                                            </div>
+                                                            <% coupons.forEach((coupon, index)=> { %>
+                                                                <div class="col-md-5 mb-3">
+                                                                    <div
+                                                                        class="card <%= (new Date(coupon.expiryOn) < new Date() || coupon.usageLimit - coupon.timesUsed <= 0) 
+                                                                    ? 'border-danger bg-danger text-white opacity-17' 
+                                                                    : (index % 2 === 0 ? 'border-success bg-light' : 'border-warning bg-light') %>">
+                                                                        <div
+                                                                            class="card-header bg-<%= (new Date(coupon.expiryOn) < new Date() || coupon.usageLimit - coupon.timesUsed <= 0) 
+                                                                        ? 'danger' 
+                                                                        : (index % 2 === 0 ? 'success' : 'warning') %> text-white">
+                                                                            <h5>
+                                                                                <% if (coupon.minimumPrice) { %>
+                                                                                    Minimum Purchase: ₹<%=
+                                                                                        coupon.minimumPrice %>
+                                                                                        <% } %>
+                                                                            </h5>
+                                                                        </div>
+                                                                        <div class="card-body">
+                                                                            <p class="card-text">
+                                                                                <span class="badge bg-info">
+                                                                                    <%= coupon.discountType==='percentage'
+                                                                                        ? coupon.discountValue + '% OFF'
+                                                                                        : '₹' + coupon.discountValue
+                                                                                        + ' OFF' %>
+                                                                                </span>
+                                                                            </p>
+                                                                            <ul class="list-unstyled">
+                                                                                <li><strong>Code:</strong><br>
+                                                                                    <%= coupon.code %>
+                                                                                </li>
+                                                                                <li><strong>Expires:</strong>
+                                                                                    <%= new
+                                                                                        Date(coupon.expiryOn).toLocaleDateString()
+                                                                                        %>
+                                                                                </li>
+                                                                                <li><strong>Usage Limit:</strong>
+                                                                                    <%= coupon.usageLimit -
+                                                                                        coupon.timesUsed %>
+                                                                                        Left
+                                                                                </li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <% }) %>
+                                                                    <% } %>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </section>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="order_review">
+                                <div class="mb-20">
+                                    <h4>Your Orders</h4>
+                                </div>
+                                <div class="table-responsive order_table text-center">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th colspan="2">Product</th>
+                                                <th>Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% cart.items.forEach(item=> { %>
+                                                <tr>
+                                                    <td class="image product-thumbnail">
+                                                        <img src="/uploads/images/<%= item.productId.productImage[0] %>"
+                                                            alt="#" />
+                                                    </td>
+                                                    <td>
+                                                        <h5>
+                                                            <a href="shop-product-full.html">
+                                                                <%= item.productId.productName %>
+                                                            </a>
+                                                        </h5>
+                                                        <span class="product-qty">Quantity: <%= item.quantity %>
+                                                        </span>
+                                                    </td>
+                                                    <td>₹<%= item.totalPrice.toFixed(2) %>
+                                                    </td>
+                                                </tr>
+                                                <% }) %>
+
+                                                    <tr>
+                                                        <th class="fw-bold">Total</th>
+                                                        <td colspan="2" class="product-subtotal">
+                                                            ₹<span id="subtotal">
+                                                                <%= regularTotal.toFixed(2) %>
+                                                            </span>
                                                         </td>
                                                     </tr>
-                                                    <% }) %>
 
-                                                        <tr>
-                                                            <th class="fw-bold">Total</th>
-                                                            <td colspan="2" class="product-subtotal">
-                                                                ₹<span id="subtotal">
-                                                                    <%= regularTotal.toFixed(2) %>
-                                                                </span>
-                                                            </td>
-                                                        </tr>
+                                                    <tr>
+                                                        <th class="fw-bold">Discount</th>
+                                                        <td colspan="2" class="product-subtotal text-success">
+                                                            - ₹<%= totalDiscount.toFixed(2) %>
+                                                        </td>
+                                                    </tr>
 
-                                                        <tr>
-                                                            <th class="fw-bold">Discount</th>
-                                                            <td colspan="2" class="product-subtotal text-success">
-                                                                - ₹<%= totalDiscount.toFixed(2) %>
-                                                            </td>
-                                                        </tr>
+                                                    <tr>
+                                                        <th class="fw-bold">Shipping</th>
+                                                        <td colspan="2" class="price text-center">
+                                                            <span id="shipping-cost" class="fw-bold">₹<%=
+                                                                    shipping.toFixed(2) %></span>
+                                                        </td>
+                                                    </tr>
 
-                                                        <tr>
-                                                            <th class="fw-bold">Shipping</th>
-                                                            <td colspan="2" class="price text-center">
-                                                                <span id="shipping-cost" class="fw-bold">₹<%=
-                                                                        shipping.toFixed(2) %></span>
-                                                            </td>
-                                                        </tr>
+                                                    <tr>
+                                                        <th class="fw-bold">Applied Discount</th>
+                                                        <td colspan="2">
+                                                            <input type="hidden" id="discount"
+                                                                value="<%= discount.toFixed(2) %>">
+                                                            <span id="totalAmount" class="font-xl text-brand fw-900">₹
+                                                                <%= discount.toFixed(2) %>
+                                                            </span>
+                                                        </td>
+                                                    </tr>
 
-                                                        <tr>
-                                                            <th class="fw-bold">Applied Discount</th>
-                                                            <td colspan="2">
-                                                                <input type="hidden" id="discount"
-                                                                    value="<%= discount.toFixed(2) %>">
+                                                    <tr>
+                                                        <th class="fw-bold ">Final Amount</th>
+                                                        <td colspan="2" class="product-subtotal">
+                                                            <% if (discount===0) { %>
+                                                                <input type="hidden" id="total"
+                                                                    value="<%= total.toFixed(2) %>">
                                                                 <span id="totalAmount"
-                                                                    class="font-xl text-brand fw-900">₹<%=
-                                                                        discount.toFixed(2) %></span>
-                                                            </td>
-                                                        </tr>
-
-                                                        <tr>
-                                                            <th class="fw-bold ">Final Amount</th>
-                                                            <td colspan="2" class="product-subtotal">
-                                                                <% if (discount===0) { %>
+                                                                    class="font-xl text-brand fw-900 text-success">₹
+                                                                    <%= total.toFixed(2) %>
+                                                                </span>
+                                                                <% } else { %>
                                                                     <input type="hidden" id="total"
-                                                                        value="<%= total.toFixed(2) %>">
+                                                                        value="<%= discountedTotal.toFixed(2) %>">
                                                                     <span id="totalAmount"
                                                                         class="font-xl text-brand fw-900 text-success">₹
-                                                                        <%= total.toFixed(2) %></span>
-                                                                    <% } else { %>
-                                                                        <input type="hidden" id="total"
-                                                                            value="<%= discountedTotal.toFixed(2) %>">
-                                                                        <span id="totalAmount"
-                                                                            class="font-xl text-brand fw-900 text-success">₹
-                                                                            <%= discountedTotal.toFixed(2) %></span>
-                                                                        <% } %>
+                                                                        <%= discountedTotal.toFixed(2) %>
+                                                                    </span>
+                                                                    <% } %>
+                                                        </td>
+                                                    </tr>
+                                        </tbody>
+
+
+                                    </table>
+
+                                </div>
+                                <div class="container mt-4 d-flex justify-content-start">
+                                    <div class="card text-center shadow-sm p-3"
+                                        style="border-radius: 15px; max-width: 300px; background: #f8f9fa;">
+                                        <div class="card-header bg-secondary text-white"
+                                            style="border-radius: 15px 15px 0 0;">
+                                            <h5>Wallet Balance</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <h6 class="card-title" style="font-size: 1.5rem; color: #650a5c;">₹
+                                                <span id="walletBalance">
+                                                    <%= walletBalance.toFixed(2) %>
+                                                </span>
+                                            </h6>
+                                            <a href="/wallet" class="btn btn-sm btn-outline-success"
+                                                style="border-radius: 20px;">Add Funds</a>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="bt-1 border-color-1 mt-30 mb-30"></div>
+                                <form id="paymentMethodForm">
+                                    <div class="payment_method">
+                                        <div class="mb-25">
+                                            <h5>Payment</h5>
+                                        </div>
+                                        <div class="paymentOption">
+                                            <div class="custome-radio">
+                                                <input class="form-check-input" type="radio" name="paymentOption"
+                                                    id="walletOption" value="WALLET" />
+                                                <label class="form-check-label" for="walletOption">
+                                                    Wallet payment
+                                                </label>
+                                            </div>
+                                            <div class="custome-radio">
+                                                <input class="form-check-input" type="radio" name="paymentOption"
+                                                    id="codOption" value="COD" />
+                                                <label class="form-check-label" for="codOption">
+                                                    Cash On Delivery
+                                                </label>
+                                            </div>
+                                            <div class="custome-radio">
+                                                <input class="form-check-input" type="radio" name="paymentOption"
+                                                    id="onlineOption" value="ONLINE" />
+                                                <label class="form-check-label" for="onlineOption">
+                                                    Online Payments
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <button id="placeOrderButton" type="button"
+                                            class="btn btn-fill-out btn-block mt-30" style="display: none;">
+                                            Place Order
+                                        </button>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Bootstrap Modal -->
+
+                <div class="modal fade" id="paymentRetryModal" tabindex="-1" aria-labelledby="retryModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header bg-warning text-white">
+                                <h5 class="modal-title" id="retryModalLabel">
+                                    "Payment unsuccessful. Please try placing your order again."
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="container-fluid">
+                                        <h5 class="mb-3">Order Summary</h5>
+                                        <div class="table-responsive order_table text-center">
+                                            <table class="table table-bordered">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th colspan="2">Product</th>
+                                                        <th>Total</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <% cart.items.forEach(item=> { %>
+                                                        <tr>
+                                                            <td class="image product-thumbnail">
+                                                                <img src="/uploads/images/<%= item.productId.productImage[0] %>"
+                                                                    alt="#" style="width: 80px; height: auto;" />
+                                                            </td>
+                                                            <td>
+                                                                <h6 class="mb-1">
+                                                                    <%= item.productId.productName %>
+                                                                </h6>
+                                                                <small class="text-muted">Quantity: <%= item.quantity %>
+                                                                </small>
+                                                            </td>
+                                                            <td>₹<%= item.totalPrice.toFixed(2) %>
                                                             </td>
                                                         </tr>
-                                            </tbody>
-
-
-                                        </table>
-
-                                    </div>
-                                    <div class="container mt-4 d-flex justify-content-start">
-                                        <div class="card text-center shadow-sm p-3"
-                                            style="border-radius: 15px; max-width: 300px; background: #f8f9fa;">
-                                            <div class="card-header bg-secondary text-white"
-                                                style="border-radius: 15px 15px 0 0;">
-                                                <h5>Wallet Balance</h5>
-                                            </div>
-                                            <div class="card-body">
-                                                <h6 class="card-title" style="font-size: 1.5rem; color: #650a5c;">₹
-                                                    <span id="walletBalance">
-                                                        <%= walletBalance.toFixed(2) %>
-                                                    </span>
-                                                </h6>
-                                                <a href="/wallet" class="btn btn-sm btn-outline-success"
-                                                    style="border-radius: 20px;">Add Funds</a>
-
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="bt-1 border-color-1 mt-30 mb-30"></div>
-                                    <form id="paymentMethodForm">
-                                        <div class="payment_method">
-                                            <div class="mb-25">
-                                                <h5>Payment</h5>
-                                            </div>
-                                            <div class="paymentOption">
-                                                <div class="custome-radio">
-                                                    <input class="form-check-input" type="radio" name="paymentOption"
-                                                        id="walletOption" value="WALLET" />
-                                                    <label class="form-check-label" for="walletOption">
-                                                        Wallet payment
-                                                    </label>
-                                                </div>
-                                                <div class="custome-radio">
-                                                    <input class="form-check-input" type="radio" name="paymentOption"
-                                                        id="codOption" value="COD" />
-                                                    <label class="form-check-label" for="codOption">
-                                                        Cash On Delivery
-                                                    </label>
-                                                </div>
-                                                <div class="custome-radio">
-                                                    <input class="form-check-input" type="radio" name="paymentOption"
-                                                        id="onlineOption" value="ONLINE" />
-                                                    <label class="form-check-label" for="onlineOption">
-                                                        Online Payments
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <button id="placeOrderButton" type="button"
-                                                class="btn btn-fill-out btn-block mt-30" style="display: none;">
-                                                Place Order
-                                            </button>
-                                        </div>
-                                    </form>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Bootstrap Modal -->
-
-                    <div class="modal fade" id="paymentRetryModal" tabindex="-1" aria-labelledby="retryModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered modal-lg">
-                            <div class="modal-content">
-                                <div class="modal-header bg-warning text-white">
-                                    <h5 class="modal-title" id="retryModalLabel">
-                                        "Payment unsuccessful. Please try placing your order again."
-                                    </h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="row">
-                                        <div class="container-fluid">
-                                            <h5 class="mb-3">Order Summary</h5>
-                                            <div class="table-responsive order_table text-center">
-                                                <table class="table table-bordered">
-                                                    <thead class="table-light">
-                                                        <tr>
-                                                            <th colspan="2">Product</th>
-                                                            <th>Total</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <% cart.items.forEach(item=> { %>
+                                                        <% }) %>
                                                             <tr>
-                                                                <td class="image product-thumbnail">
-                                                                    <img src="/uploads/images/<%= item.productId.productImage[0] %>"
-                                                                        alt="#" style="width: 80px; height: auto;" />
-                                                                </td>
-                                                                <td>
-                                                                    <h6 class="mb-1">
-                                                                        <%= item.productId.productName %>
-                                                                    </h6>
-                                                                    <small class="text-muted">Quantity: <%=
-                                                                            item.quantity %></small>
-                                                                </td>
-                                                                <td>₹<%= item.totalPrice.toFixed(2) %>
+                                                                <th colspan="2">Total</th>
+                                                                <td>₹<%= regularTotal.toFixed(2) %>
                                                                 </td>
                                                             </tr>
-                                                            <% }) %>
-                                                                <tr>
-                                                                    <th colspan="2">Total</th>
-                                                                    <td>₹<%= regularTotal.toFixed(2) %>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <th colspan="2">Discount</th>
-                                                                    <td class="text-success">- ₹<%=
-                                                                            totalDiscount.toFixed(2) %>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <th>Applied Discount</th>
-                                                                    <td colspan="2">
-                                                                        <input type="hidden"
-                                                                            value="<%=discount.toFixed(2) %>">
-                                                                        <span id="totalAmount"
-                                                                            class="font-xl text-brand fw-900">₹<%=
-                                                                                discount.toFixed(2) %>
-                                                                        </span>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <th colspan="2">Shipping</th>
-                                                                    <td>
-                                                                        <% if (discountedTotal> 1000) { %>
-                                                                            <em>
-                                                                                <del>₹<%= shipping.toFixed(2) %></del>
-                                                                                Free
-                                                                            </em>
-                                                                            <% } else { %>
-                                                                                <em>₹<%= shipping.toFixed(2) %></em>
-                                                                                <% } %>
-                                                                    </td>
-                                                                </tr>
+                                                            <tr>
+                                                                <th colspan="2">Discount</th>
+                                                                <td class="text-success">- ₹<%= totalDiscount.toFixed(2)
+                                                                        %>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Applied Discount</th>
+                                                                <td colspan="2">
+                                                                    <input type="hidden"
+                                                                        value="<%=discount.toFixed(2) %>">
+                                                                    <span id="totalAmount"
+                                                                        class="font-xl text-brand fw-900">₹<%=
+                                                                            discount.toFixed(2) %>
+                                                                    </span>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th colspan="2">Shipping</th>
+                                                                <td>
+                                                                    <% if (discountedTotal> 1000) { %>
+                                                                        <em>
+                                                                            <del>₹<%= shipping.toFixed(2) %></del>
+                                                                            Free
+                                                                        </em>
+                                                                        <% } else { %>
+                                                                            <em>₹<%= shipping.toFixed(2) %></em>
+                                                                            <% } %>
+                                                                </td>
+                                                            </tr>
 
-                                                                <tr>
-                                                                    <th colspan="2" class="fw-bold">Final Total</th>
-                                                                    <td class="fw-bold text-success">
-                                                                        ₹<%= (discount===0 ? total.toFixed(2) :
-                                                                            discountedTotal.toFixed(2)) %>
-                                                                    </td>
-                                                                </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            <button type="button " class="btn btn-primary w-100 mt-4 btn-sm"
-                                                id="retryPaymentBtn">
-                                                Retry Payment
-                                            </button>
+                                                            <tr>
+                                                                <th colspan="2" class="fw-bold">Final Total</th>
+                                                                <td class="fw-bold text-success">
+                                                                    ₹<%= (discount===0 ? total.toFixed(2) :
+                                                                        discountedTotal.toFixed(2)) %>
+                                                                </td>
+                                                            </tr>
+                                                </tbody>
+                                            </table>
                                         </div>
-
+                                        <button type="button " class="btn btn-primary w-100 mt-4 btn-sm"
+                                            id="retryPaymentBtn">
+                                            Retry Payment
+                                        </button>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
+                <% } %>
+    </section>
 
-
-                    <% } %>
-        </section>
-    </main>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -736,10 +734,7 @@
             const couponInput = document.getElementById('couponInput').value.trim();
             const totalAmountElement = document.querySelector('.fw-bold.text-success');
             const totalAmount = parseFloat(totalAmountElement.textContent.replace('₹', '').trim() || '0');
-
             console.log('Total Amount:', totalAmount);
-            const loadingSpinner = document.getElementById('loadingSpinner');
-
             if (!couponInput) {
                 Swal.fire({
                     icon: "error",
@@ -750,8 +745,6 @@
                 });
                 return;
             }
-
-            loadingSpinner.classList.remove('d-none');
 
             fetch('/apply-coupon', {
                 method: "POST",
@@ -777,9 +770,7 @@
                             text: "Coupon applied successfully",
                             position: "center",
                             toast: true
-                        }).then(() => {
-                            location.reload();
-                        });
+                        })
                     } else {
                         Swal.fire({
                             icon: "error",
@@ -806,10 +797,6 @@
         });
 
         document.getElementById('removeBtn').addEventListener("click", function () {
-            const loadingSpinner = document.getElementById('loadingSpinner');
-
-
-            loadingSpinner.classList.remove('d-none');
 
             fetch('/remove-coupon', {
                 method: "POST",
@@ -839,30 +826,27 @@
                         toast: true,
                     });
                 })
-                .finally(() => {
-                    loadingSpinner.classList.add('d-none');
-                });
+
         });
-    </script>
-    <script>
+
         document.addEventListener('DOMContentLoaded', () => {
-            // Handle address selection
+
             const selectButtons = document.querySelectorAll('.select-btn');
             selectButtons.forEach(button => {
                 button.addEventListener('click', (event) => {
                     event.preventDefault();
                     const addressId = button.getAttribute('data-id');
 
-                    // Disable buttons and show loading state
+
                     selectButtons.forEach(btn => {
                         btn.disabled = true;
                         btn.classList.add('disabled');
                     });
 
-                    // Show loading indicator for shipping charge with emoji
+
                     const shippingChargeElement = document.getElementById('shipping-cost');
                     const originalText = shippingChargeElement.innerText;
-                    shippingChargeElement.innerHTML = `⏳ Calculating... 🚚`;
+
 
                     fetch(`/select-address/?id=${addressId}`, { method: 'GET' })
                         .then(response => response.json())
@@ -873,10 +857,7 @@
                                     addressId: addressId,
                                     shippingCharge: data.shippingCharge
                                 }));
-                                setTimeout(() => {
-                                    window.location.reload();
-                                }, 2000);
-
+                                window.location.reload();
                             } else {
 
                                 selectButtons.forEach(btn => {
