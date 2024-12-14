@@ -88,6 +88,7 @@ router.post('/generate',adminAuth,statiticsController.generateReports);
 router.get('/download/:type',adminAuth,statiticsController.downloadReports);
 router.get('/dashboardData',adminAuth,statiticsController.getDashboardData);
 router.get('/paymentData',adminAuth,statiticsController.getOrderPaymentData);
+router.get('/ordersSales',adminAuth,statiticsController.getOrderSales);
 
 //referral
 router.get('/referralCode',adminAuth,referralController.getReferralPage);

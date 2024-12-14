@@ -187,9 +187,7 @@
                                     <ul class="categories">
                                         <% priceRanges.forEach(function(range) { %>
                                             <li>
-                                                <a href="/shop?<%= new URLSearchParams({
-                                            minPrice: range.min,
-                                            maxPrice: range.max,
+                                                <a href="/shop?<%= new URLSearchParams({ minPrice: range.min,maxPrice: range.max,
                                             ...(currentCategory ? {category: currentCategory} : {}),
                                             ...(currentSort && currentSort !== 'newest' ? {sort: currentSort} : {}),
                                             ...(search ? {search: search} : {})
@@ -226,9 +224,7 @@
                                                                     </a>
                                                                 </div>
                                                                 <div class="product-action-1">
-                                                                    <a aria-label="Quick view"
-                                                                        class="action-btn hover-up"
-                                                                        data-bs-toggle="modal"
+                                                                    <a aria-label="Quick view" class="action-btn hover-up"  data-bs-toggle="modal"
                                                                         data-bs-target="#quickViewModal">
                                                                         <i class="fi-rs-eye"></i>
                                                                     </a>
@@ -243,15 +239,17 @@
                                                                     </a>
                                                                 </div>
                                                                 <div class="product-badges">
-                                                                    <% if (product.productOffer> 0) { %>
-                                                                        <span class="sale">-<%= product.productOffer %>
-                                                                                %</span>
-                                                                        <% } %>
-                                                                            <% if (product.quantity <=10 &&
-                                                                                product.quantity> 0) { %>
-                                                                                <span class="hot">Only few left </span>
-                                                                                <% } %>
+                                                                    <% if (product.productOffer > 0) { %>
+                                                                        <span class="sale"><%= product.productOffer %>% Product Offer</span>
+                                                                    <% } else if (product.category.categoryOffer > 0) { %>
+                                                                        <span class="sale"><%= product.category.categoryOffer %>% Category Offer</span>
+                                                                    <% } %>
+                                                                    
+                                                                    <% if (product.quantity <= 10 && product.quantity > 0) { %>
+                                                                        <span class="hot">Only few left</span>
+                                                                    <% } %>
                                                                 </div>
+
                                                             </div>
                                                             <div class="product-content-wrap">
                                                                 <div class="product-category">
@@ -264,12 +262,7 @@
                                                                         <%= product.productName %>
                                                                     </a>
                                                                 </h2>
-                                                                <div class="rating-result"
-                                                                    title="<%= product.productOffer %>%">
-                                                                    <span>
-                                                                        <%= product.productOffer %> % Off
-                                                                    </span>
-                                                                </div>
+                                                                
                                                                 <div
                                                                     class="stock-status <%= product.quantity > 0 ? 'in-stock text-success ml-5' : 'text-danger ml-5' %>">
                                                                     <%= product.quantity> 0 ? `Stock left:
@@ -279,8 +272,7 @@
                                                                     <span class="new-price">₹<%= product.salePrice %>
                                                                     </span>
                                                                     <% if (product.regularPrice> product.salePrice) { %>
-                                                                        <span class="old-price">₹<%=
-                                                                                product.regularPrice %></span>
+                                                                        <span class="old-price">₹<%=product.regularPrice %></span>
                                                                         <% } %>
                                                                 </div>
 

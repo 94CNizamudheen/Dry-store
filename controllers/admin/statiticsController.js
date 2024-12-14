@@ -5,6 +5,7 @@ const Coupon = require('../../models/couponSchema');
 const { generatePDF } = require('../../utilities/pdf');
 const { generateExcel } = require('../../utilities/excel');
 const Product = require('../../models/productSchema');
+const { months } = require('moment');
 
 
 
@@ -154,35 +155,50 @@ const getDashboardData = async (req, res) => {
         const now = new Date();
         let timeFilterMatch = {};
         switch (timeFilter) {
+            case 'daily':
+                timeFilterMatch = {
+                    createdOn: {
+                        $gte: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
+                        $lt: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1)
+                    }
+                };
+                break;
+            case 'weekly':
+                timeFilterMatch = {
+                    createdOn: {
+                        $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
+                        $lt: new Date()
+                    }
+                };
+                break;
             case 'monthly':
                 timeFilterMatch = {
                     createdOn: {
-                        $gte: new Date(now.getFullYear(), now.getMonth(), 1), // Start of the current month
-                        $lt: new Date(now.getFullYear(), now.getMonth() + 1, 1) // Start of the next month
+                        $gte: new Date(now.getFullYear(), now.getMonth(), now.getDate() - 30), // 30 days ago
+                        $lt: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1) // Start of tomorrow
                     }
                 };
                 break;
             case 'quarterly':
-                const startQuarterMonth = Math.floor(now.getMonth() / 3) * 3; // Start month of the current quarter
                 timeFilterMatch = {
                     createdOn: {
-                        $gte: new Date(now.getFullYear(), startQuarterMonth, 1), // Start of the quarter
-                        $lt: new Date(now.getFullYear(), startQuarterMonth + 3, 1) // Start of the next quarter
+                        $gte: new Date(now.getFullYear(), now.getMonth(), now.getDate() - 90), // 90 days ago
+                        $lt: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1) // Start of tomorrow
                     }
                 };
                 break;
             case 'yearly':
                 timeFilterMatch = {
                     createdOn: {
-                        $gte: new Date(now.getFullYear(), 0, 1), // Start of the current year
-                        $lt: new Date(now.getFullYear() + 1, 0, 1) // Start of the next year
+                        $gte: new Date(now.getFullYear(), now.getMonth(), now.getDate() - 365), // 365 days ago
+                        $lt: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1) // Start of tomorrow
                     }
                 };
                 break;
             default: // all time
                 timeFilterMatch = {};
-        };
-        
+        }
+
         switch (type) {
             case 'products':
                 aggregationPipeline = [
@@ -293,7 +309,6 @@ const getDashboardData = async (req, res) => {
                 return res.status(400).json({ error: 'Invalid type' });
         }
 
-        // Execute aggregation
         const result = await Order.aggregate(aggregationPipeline);
 
         res.json(result);
@@ -306,13 +321,13 @@ const getDashboardData = async (req, res) => {
 const getOrderPaymentData = async (req, res) => {
     try {
         const paymentData = await Order.aggregate([
-            {$group: {_id: "$paymentDetails.method", total: { $sum: 1 },totalAmount:{$sum:"$finalAmount"} } }
+            { $group: { _id: "$paymentDetails.method", total: { $sum: 1 }, totalAmount: { $sum: "$finalAmount" } } }
         ]);
 
         const chartData = paymentData.map((item) => ({
             method: item._id,
             total: item.total,
-            totalAmount:item.totalAmount,
+            totalAmount: item.totalAmount,
         }));
 
         res.json(chartData);
@@ -321,6 +336,56 @@ const getOrderPaymentData = async (req, res) => {
         res.status(500).json({ message: "Error fetching payment data" });
     }
 };
+const getOrderSales = async (req, res) => {
+    try {
+        const { time, status } = req.query;
+        const now = new Date();
+        let dateFilter = {};
+        if (time === 'weekly') {
+            dateFilter = {
+                createdOn: { $gte: new Date(now - 7 * 24 * 60 * 60 * 1000), $lt: now }
+            };
+        } else if (time === 'monthly') {
+            dateFilter = {
+                createdOn: { $gte: new Date(now.getFullYear(), now.getMonth(), 1), $lt: now }
+            };
+        } else if (time === 'quarterly') {
+            const quarterStartMonth = Math.floor(now.getMonth() / 3) * 3;
+            dateFilter = {
+                createdOn: { $gte: new Date(now.getFullYear(), quarterStartMonth, 1), $lt: now }
+            };
+        } else if (time === 'yearly') {
+            dateFilter = {
+                createdOn: { $gte: new Date(now.getFullYear(), 0, 1), $lt: now }
+            };
+        }
+        const statusFilter = status && status !== 'all' ? { status } : {};
+
+        const orders = await Order.aggregate([
+            { $match: { ...dateFilter, ...statusFilter } },
+            {
+                $group: {
+                    _id: {
+                        day: { $dayOfMonth: '$createdOn' },
+                        month: { $month: '$createdOn' },
+                        year: { $year: '$createdOn' }
+                    },
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { '_id.year': 1, '_id.month': 1, '_id.day': 1 } }
+        ]);
+        const labels=orders.map(order=>`${order._id.day}-${order._id.month}-${order._id.year}`);
+        const salesCounts=orders.map(order=>order.count);
+        res.json({labels,salesCounts})
+
+
+    } catch (error) {
+        console.error("error for getting sales data",error);
+        res.status(500).json({error:"failed to fetch sales data"});
+
+    }
+}
 
 module.exports = { getOrderPaymentData };
 
@@ -331,6 +396,7 @@ module.exports = {
     generateReports,
     downloadReports,
     getDashboardData,
-    getOrderPaymentData
+    getOrderPaymentData,
+    getOrderSales
 
 }

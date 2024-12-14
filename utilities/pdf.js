@@ -20,8 +20,8 @@ const generatePDF = async (orders) => {
         const totalDiscount = orders.reduce((sum, order) => sum + (order.discount || 0), 0);
 
         doc.fontSize(12)
-            .text(`Total Sales: RS ${totalSales.toFixed(2)}`)
-            .text(`Total Discount: RS ${totalDiscount.toFixed(2)}`)
+            .text(`Total Sales: Rs ${totalSales.toFixed(2)}`)
+            .text(`Total Discount: Rs ${totalDiscount.toFixed(2)}`)
             .text(`Total Orders: ${orders.length}`)
             .moveDown(1.5);
 
@@ -43,8 +43,8 @@ const generatePDF = async (orders) => {
             const rowY = doc.y;
 
             doc.text(order.orderId, columnXPositions[0], rowY, { width: 150, align: 'left' });
-            doc.text(`RS ${order.finalAmount.toFixed(2)}`, columnXPositions[1], rowY, { width: 100, align: 'left' });
-            doc.text(`RS ${(order.discount || 0).toFixed(2)}`, columnXPositions[2], rowY, { width: 100, align: 'left' });
+            doc.text(`Rs ${order.finalAmount.toFixed(2)}`, columnXPositions[1], rowY, { width: 100, align: 'left' });
+            doc.text(`Rs ${(order.discount || 0).toFixed(2)}`, columnXPositions[2], rowY, { width: 100, align: 'left' });
             doc.text(new Date(order.createdOn).toLocaleString(), columnXPositions[3], rowY, { width: 150, align: 'left' });
 
             doc.moveDown(1); // Space between rows
@@ -55,58 +55,151 @@ const generatePDF = async (orders) => {
 };
 const generateOrderInvoice = async (order) => {
     return new Promise((resolve, reject) => {
-        const doc = new PDFDocument({ margin: 50 });
+        const doc = new PDFDocument({ 
+            margin: 50,
+            size: 'A4'
+        });
         const buffers = [];
 
         doc.on('data', buffer => buffers.push(buffer));
         doc.on('end', () => resolve(Buffer.concat(buffers)));
 
+        // Color Palette
+        const colors = {
+            primary: '#2C3E50',    // Dark Blue-Gray
+            secondary: '#34495E',  // Slightly Lighter Blue-Gray
+            accent: '#E74C3C',     // Vibrant Red
+            text: '#333333'        // Dark Gray
+        };
+
         // Invoice Header
-        doc.fontSize(20).text('Order Invoice', { align: 'center' });
-        doc.fontSize(12).text(`Order ID: ${order.orderId}`, { align: 'center' });
-        doc.fontSize(10).text(`Generated on: ${new Date().toLocaleString()}`, { align: 'center' });
+        doc.fillColor(colors.primary)
+           .fontSize(25)
+           .font('Helvetica-Bold')
+           .text('HENZA\'S DRY STORE', { align: 'center' });
+        
+        doc.fillColor(colors.secondary)
+           .fontSize(10)
+           .text('Tax Invoice / Bill of Supply', { align: 'center' });
+        
+        // Divider
+        doc.strokeColor(colors.accent)
+           .lineWidth(1.5)
+           .moveTo(50, doc.y + 10)
+           .lineTo(550, doc.y + 10)
+           .stroke();
+
+        doc.moveDown(1.5);
+
+        // Invoice Details
+        const leftColumnX = 50;
+        const rightColumnX = 350;
+        const startY = doc.y;
+
+        // Company Details (Left Column)
+        doc.fillColor(colors.text)
+           .fontSize(10)
+           .font('Helvetica-Bold')
+           .text('Henza\'s Dry Store', leftColumnX, startY)
+           .font('Helvetica')
+           .fontSize(9)
+           .text('123 Dry Goods Lane')
+           .text('Spice Market Area')
+           .text('GSTIN: 07ABCDE1234F1Z5');
+
+        // Invoice Details (Right Column)
+        doc.font('Helvetica-Bold')
+           .fontSize(10)
+           .text('Invoice Details', rightColumnX, startY)
+           .font('Helvetica')
+           .fontSize(9)
+           .text(`Invoice No: ${order.orderId}`)
+           .text(`Date: ${new Date().toLocaleDateString()}`)
+           .text(`Payment Method: ${order.paymentDetails.method}`);
+
         doc.moveDown(2);
 
         // Customer Details
-        doc.fontSize(12)
-            .text(`Customer Name: ${order.shippingAddress.name}`)
-            .text(`Address: ${order.shippingAddress.addressType}, ${order.shippingAddress.city}, ${order.shippingAddress.state}`)
-            .text(`Phone: ${order.shippingAddress.phone.join(', ')}`)
-            .moveDown(1.5);
+        doc.font('Helvetica-Bold')
+           .fontSize(12)
+           .fillColor(colors.primary)
+           .text('Customer Information', { underline: true });
 
-        // Order Summary
-        doc.fontSize(12)
-            .text(`Total Amount: ₹${order.totalPrice.toFixed(2)}`)
-            .text(`Discount: ₹${order.discount.toFixed(2)}`)
-            .text(`Final Amount: ₹${order.finalAmount.toFixed(2)}`)
-            .text(`Payment Method: ${order.paymentDetails.method}`)
-            .moveDown(2);
+        doc.font('Helvetica')
+           .fontSize(10)
+           .fillColor(colors.text)
+           .text(`Name: ${order.shippingAddress.name}`)
+           .text(`Address: ${order.shippingAddress.addressType}, ${order.shippingAddress.city}, ${order.shippingAddress.state}, ${order.shippingAddress.pincode}`)
+           .text(`Phone: ${order.shippingAddress.phone.join(', ')}`);
+          
 
-        // Order Items Table Header
+        doc.moveDown(2);
+
+        // Order Items Table
         const tableTop = doc.y;
-        const columnXPositions = [50, 250, 350, 450]; // Adjust as needed
-        const columnTitles = ['Product', 'Quantity', 'Price', 'Total'];
+        const columnXPositions = [50, 250, 350, 450];
+        const columnTitles = ['Product', 'Quantity', 'Unit Price', 'Total'];
 
-        doc.fontSize(12).font('Helvetica-Bold');
+        doc.font('Helvetica-Bold')
+           .fontSize(10)
+           .fillColor(colors.primary);
+
+        // Table Header
         columnTitles.forEach((title, i) => {
             doc.text(title, columnXPositions[i], tableTop, { width: 100, align: 'left' });
         });
 
-        doc.moveDown(0.5).strokeColor('#aaaaaa').lineWidth(0.5).moveTo(50, doc.y).lineTo(550, doc.y).stroke();
+        doc.moveDown(0.5)
+           .strokeColor(colors.accent)
+           .lineWidth(1)
+           .moveTo(50, doc.y)
+           .lineTo(550, doc.y)
+           .stroke();
 
-        // Order Items Table Content
-        doc.font('Helvetica').fillColor('#333333');
+        // Table Content
+        doc.font('Helvetica')
+           .fontSize(9)
+           .fillColor(colors.text);
+           doc.moveDown(0.5)
         order.orderedItems.forEach((item) => {
             const rowY = doc.y;
             const totalPrice = item.quantity * item.price;
-
+           
             doc.text(item.product.productName, columnXPositions[0], rowY, { width: 200, align: 'left' });
             doc.text(item.quantity, columnXPositions[1], rowY, { width: 50, align: 'left' });
-            doc.text(`₹${item.price.toFixed(2)}`, columnXPositions[2], rowY, { width: 100, align: 'left' });
-            doc.text(`₹${totalPrice.toFixed(2)}`, columnXPositions[3], rowY, { width: 100, align: 'left' });
+            doc.text(`Rs ${item.price.toFixed(2)}`, columnXPositions[2], rowY, { width: 100, align: 'left' });
+            doc.text(`Rs${totalPrice.toFixed(2)}`, columnXPositions[3], rowY, { width: 100, align: 'left' });
 
-            doc.moveDown(1); // Space between rows
+            doc.moveDown(1);
         });
+
+        // Totals Section
+        doc.moveDown(1);
+        doc.font('Helvetica-Bold')
+           .fontSize(10)
+           .fillColor(colors.primary)
+           .text('Payment Summary', { align: 'right' });
+           
+        doc.font('Helvetica')
+           .fontSize(9)
+           .fillColor(colors.text)
+           .text(`Subtotal: Rs ${order.totalPrice.toFixed(2)}`, { align: 'right' })
+           .text(`Discount: Rs ${order.discount.toFixed(2)}`, { align: 'right' })
+           .text(`Shipping: Rs ${(order.shippingCharge || 0).toFixed(2)}`, { align: 'right' })
+           .text(`Total: Rs ${order.finalAmount.toFixed(2)}`, { align: 'right' });
+
+        // Footer
+        doc.moveDown(2);
+        doc.strokeColor(colors.accent)
+           .lineWidth(1)
+           .moveTo(50, doc.y)
+           .lineTo(550, doc.y)
+           .stroke();
+           doc.moveDown(0.5)
+        doc.fontSize(8)
+           .fillColor(colors.secondary)
+           .text('Thank you for your business!', { align: 'center' })
+           .text('For any queries, contact us at support@henzasdrystore.com', { align: 'center' });
 
         // Save and Resolve
         doc.end();

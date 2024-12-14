@@ -68,10 +68,12 @@ const loadCheckOutPage = async (req, res) => {
         const coupons = await Coupon.find();
         const userData = await User.findById(userId);
         const addressData = await Address.findOne({ userId: userId });
-
+        const quickbuyQuantity= req.query.quantity;
+        console.log("quickbuyQuantity:",quickbuyQuantity);
         let cartedProducts;
         if (productId) {
             req.session.productId = productId;
+            req.session.quickbuyQuantity=quickbuyQuantity;
             const product = await Product.findById(productId);
             if (!product) {
                 return res.redirect('/productDetails');
@@ -80,8 +82,8 @@ const loadCheckOutPage = async (req, res) => {
             cartedProducts = {
                 items: [{
                     productId: product,
-                    quantity: 1,
-                    totalPrice: product.salePrice || product.regularPrice,
+                    quantity: quickbuyQuantity,
+                    totalPrice: product.salePrice*quickbuyQuantity
                 }],
             };
         } else {
@@ -203,29 +205,29 @@ const selectAddress = async (req, res) => {
         req.session.discountedTotal = null;
 
         req.session.selectedAddress = addressId;
-        
+
         if (!addressId) {
             return res.status(400).json({ success: false, error: "Address ID is required." });
         }
-        
+
         const addressDoc = await Address.findOne(
             { userId, 'address._id': addressId },
             { 'address.$': 1 }
         );
-        
+
         const state = addressDoc.address[0].state;
         const shipping = await ShippingData.findOne({ state: state });
-        
+
         if (!shipping) {
             return res.status(404).json({ success: false, error: "Shipping data not found for the selected state." });
         }
-        
+
         const shippingCharge = shipping.charge;
         req.session.shippingCharge = shippingCharge;
 
-        res.status(200).json({ 
-            success: true, 
-            selectedAddress: addressId, 
+        res.status(200).json({
+            success: true,
+            selectedAddress: addressId,
             shipping: shippingCharge,
             message: "Address and shipping charge updated successfully",
         });
@@ -241,13 +243,13 @@ const handlePaymentMethod = async (req, res) => {
 
         const userId = req.session.user;
         const { paymentOption } = req.body;
-        const productId = req.session.productId; 
+        const productId = req.session.productId;
         const user = await User.findById(userId);
         const code = req.session.couponCode
         const coupon = await Coupon.findOne({ code });
-        
+
         //  cart retrieval to support both scenarios
-        console.log("ProductId",productId);
+        console.log("ProductId", productId);
         let cart, total;
         if (productId) {
             //Single product scenario
@@ -294,7 +296,7 @@ const handlePaymentMethod = async (req, res) => {
         if (!validPaymentOption.includes(paymentOption)) {
             return res.status(400).json({ error: "Invalid Payment Option" });
         }
-        
+
         req.session.paymentMethod = paymentOption;
         console.log("pay mthd in session:", req.session.paymentMethod);
         res.json({ success: true });
@@ -313,6 +315,7 @@ const placeOrderForCODandWALLET = async (req, res) => {
         const selectedAddressId = req.session.selectedAddress;
         const paymentMethod = req.session.paymentMethod;
         const productId = req.session.productId;
+        const quickbuyQuantity=req.session.quickbuyQuantity;
         if (!selectedAddressId) {
             return res.status(400).json({ error: "Please select a delivery address" });
         }
@@ -324,15 +327,15 @@ const placeOrderForCODandWALLET = async (req, res) => {
 
         const code = req.session.couponCode;
         const coupon = await Coupon.findOne({ code });
-       
+
         let cart;
         if (productId) {
             const product = await Product.findById(productId);
             cart = {
                 items: [{
                     productId: product,
-                    quantity: 1,
-                    totalPrice: product.salePrice || product.regularPrice,
+                    quantity: quickbuyQuantity,
+                    totalPrice:product.salePrice*quickbuyQuantity,
                 }]
             };
         } else {
@@ -401,10 +404,10 @@ const placeOrderForCODandWALLET = async (req, res) => {
         await newOrder.save();
 
         if (productId) {
-            
+
             console.log('Single product purchase, cart remains unchanged');
         } else {
-          
+
             await Cart.deleteOne({ userId });
         }
 
@@ -437,7 +440,7 @@ const placeOrderForCODandWALLET = async (req, res) => {
         delete req.session.discountedTotal;
         delete req.session.shippingCharge;
         delete req.session.productId;
-
+        delete req.session.quickbuyQuantity
         res.status(200).json({ success: true, redirectURL: `/order-success-page?message=${encodeURIComponent('Order Compleated')}`, });
     } catch (error) {
         console.error("Error occurred in Place Order:", error);
@@ -514,9 +517,9 @@ const cancelOrder = async (req, res) => {
             if (!user.wallet || typeof user.wallet !== 'object') {
                 user.wallet = { balance: 0, transaction: [] };
             }
-           
+
             if (refundMethod === "WALLET") {
-                user.wallet.balance += (order.paymentDetails.paidAmount-order.shippingCharge);
+                user.wallet.balance += (order.paymentDetails.paidAmount - order.shippingCharge);
                 user.wallet.transaction.push({
                     type: 'credit',
                     amount: order.finalAmount,
@@ -695,7 +698,7 @@ const checkOrderPayment = async (req, res) => {
         return res.status(200).json({
             success: true,
             isOnlinePayment: order.paymentDetails.method === "ONLINE" && order.paymentDetails.paymentStatus === "Completed",
-            isWallet:order.paymentDetails.method==="WALLET" &&order.paymentDetails.paymentStatus === "Completed"
+            isWallet: order.paymentDetails.method === "WALLET" && order.paymentDetails.paymentStatus === "Completed"
         });
 
 
@@ -769,13 +772,29 @@ const verifyRazorpayPaymentAndPlaceOrder = async (req, res) => {
                 const user = await User.findById(userId);
                 const addressDoc = await Address.findOne({ "address._id": selectedAddressId });
                 const shippingAddress = addressDoc.address.find(addr => addr._id.toString() === selectedAddressId);
-                const cart = await Cart.findOne({ userId }).populate('items.productId');
+                const productId = req.session.productId;
+                const quickbuyQuantity=req.session.quickbuyQuantity;
                 const code = req.session.couponCode;
-                const coupon = await Coupon.findOne({ code })
-                const discount = req.session.discount;
+                const coupon = await Coupon.findOne({ code });
+                let cart;
+                if (productId) {
+                    const product = await Product.findById(productId);
+                    cart = {
+                        items: [{
+                            productId: product,
+                            quantity: quickbuyQuantity,
+                            totalPrice: product.salePrice*quickbuyQuantity,
+                        }]
+                    };
+                } else {
+                    cart = await Cart.findOne({ userId }).populate('items.productId');
+                }
+
                 const total = cart.items.reduce((acc, item) => acc + item.totalPrice, 0);
-                let shipping = req.session.shippingCharge;
+                const discount = req.session.discount;
                 let finalAmount = 0;
+                let shipping = req.session.shippingCharge;
+
                 if (req.session.discountedTotal >= 1000) {
                     shipping = 0;
                 }
@@ -825,6 +844,15 @@ const verifyRazorpayPaymentAndPlaceOrder = async (req, res) => {
                 });
 
                 await newOrder.save();
+                if (productId) {
+
+                    console.log('Single product purchase, cart remains unchanged');
+                } else {
+                    
+                    await Cart.deleteOne({ userId });
+                }
+        
+
                 if (coupon) {
                     const userCouponUsage = coupon.userUsage.find(u => u.userId.toString() === userId.toString());
                     if (userCouponUsage) {
@@ -838,7 +866,6 @@ const verifyRazorpayPaymentAndPlaceOrder = async (req, res) => {
 
                     await coupon.save();
                 }
-                await Cart.deleteOne({ userId });
 
                 for (const item of cart.items) {
                     const product = await Product.findById(item.productId._id);
@@ -857,6 +884,8 @@ const verifyRazorpayPaymentAndPlaceOrder = async (req, res) => {
                 delete req.session.discount;
                 delete req.session.discountedTotal;
                 delete req.session.shippingCharge;
+                delete req.session.productId;
+                delete req.session.quickbuyQuantity;
 
                 return res.status(200).json({
                     success: true,

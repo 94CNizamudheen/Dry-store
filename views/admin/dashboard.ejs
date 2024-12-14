@@ -130,35 +130,81 @@
                 <!-- Charts and Activities -->
                 <div class="row mt-4">
                     <div class="col-lg-8">
+                        <div class="card shadow-sm">
+                            <div class="card-header ">
+                                <div class="row align-items-center">
+                                    <div class="col-12 col-md-6 mb-2 mb-md-0">
+                                        <h5 class="card-title mb-0">Top Performance</h5>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <div class="chart-controls d-flex flex-column flex-md-row gap-2 justify-content-end align-items-center">
+                                            <select id="dataType" class="form-select form-select-sm w-auto">
+                                                <option value="products">Top Products</option>
+                                                <option value="categories">Top Categories</option>
+                                                <option value="brands">Top Brands</option>
+                                            </select>
+                                            <select id="timeFilter" class="form-select form-select-sm w-auto">
+                                                <option value="all">All Time</option>
+                                                <option value="daily">Daily</option>
+                                                <option value="weekly">Weekly</option>
+                                                <option value="monthly">Monthly</option>
+                                                <option value="quarterly">Quarterly</option>
+                                                <option value="yearly">Yearly</option>
+                                            </select>
+                                            <div class="chart-type-container d-flex gap-2">
+                                                <div class="btn-group btn-group-sm" role="group" aria-label="Chart Type">
+                                                    <input type="radio" class="btn-check" name="chartType" id="barChart" value="bar" autocomplete="off" checked>
+                                                    <label class="btn btn-outline-primary" for="barChart">Bar</label>
+                        
+                                                    <input type="radio" class="btn-check" name="chartType" id="lineChart" value="line" autocomplete="off">
+                                                    <label class="btn btn-outline-primary" for="lineChart">Line</label>
+                        
+                                                    <input type="radio" class="btn-check" name="chartType" id="pieChart" value="pie" autocomplete="off">
+                                                    <label class="btn btn-outline-primary" for="pieChart">Pie</label>
+                        
+                                                    <input type="radio" class="btn-check" name="chartType" id="doughnutChart" value="doughnut" autocomplete="off">
+                                                    <label class="btn btn-outline-primary" for="doughnutChart">Doughnut</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="TopSalesChart" class="w-100"></canvas>
+                            </div>
+                        </div>
                         <div class="card">
                             <div class="card-header">
-                                <h5 class="card-title">Sales Statistics</h5>
-                                <div class="chart-controls">
-                                    <select id="dataType" class="form-select form-select-sm">
-                                        <option value="products">Top Products</option>
-                                        <option value="categories">Top Categories</option>
-                                        <option value="brands">Top Brands</option>
-                                    </select>
-                                    <select id="timeFilter" class="form-select form-select-sm">
-                                        <option value="all">All Time</option>
-                                        <option value="monthly">Last Month</option>
-                                        <option value="quarterly">Last Quarter</option>
-                                        <option value="yearly">Last Year</option>
-                                    </select>
-                                    <div class="chart-type-container">
-                                        <label class="form-check-label">
-                                            <input type="radio" name="chartType" value="bar" class="form-check-input" checked> Bar
-                                        </label>
-                                        <label class="form-check-label">
-                                            <input type="radio" name="chartType" value="line" class="form-check-input"> Line
-                                        </label>
+                                <div class="row align-items-center">
+                                    <div class="col-md-6">
+                                        <h5 class="card-title mb-0">Sales Statistics</h5>
+                                    </div>
+                                    <div class="col-md-6 d-flex justify-content-end">
+                                        <div class="filters d-flex gap-2">
+                                            <select id="salesTimeFilter" class="form-select form-select-sm w-auto">
+                                                <option value="all">All Time</option>
+                                                <option value="weekly">Weekly</option>
+                                                <option value="monthly">Monthly</option>
+                                                <option value="quarterly">Quarterly</option>
+                                                <option value="yearly">Yearly</option>
+                                            </select>
+                                            <select id="salesStatusFilter" class="form-select form-select-sm w-auto">
+                                                <option value="all">All Status</option>
+                                                <option value="Shipped">Shipped</option>
+                                                <option value="Delivered">Delivered</option>
+                                                <option value="Cancelled">Cancelled</option>
+                                                <option value="Partially Cancelled">Partially Cancelled</option>
+                                                <option value="Returned">Returned</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="card-body">
                                 <canvas id="salesChart"></canvas>
                             </div>
-                        </div>
+                        </div>  
         
                         <!-- Recent Activities & Admins -->
                         <div class="row mt-4">
@@ -222,7 +268,7 @@
                                 <canvas id="revenueByAreaChart"></canvas>
                             </div>
                         </div>
-        
+                        
                         <!-- <div class="card mt-4">
                             <div class="card-header">
                                 <h5 class="card-title">Ledger Actions</h5>
@@ -341,6 +387,7 @@
          
     </section>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
     async function loadChartData() {
         try {
@@ -397,7 +444,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const ctx = document.getElementById('salesChart').getContext('2d');
+        const ctx = document.getElementById('TopSalesChart').getContext('2d');
         let salesChart;
 
         // Function to create or update chart
@@ -535,6 +582,90 @@
         });
     });
 </script>
+
+<script>
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    let salesChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [], 
+            datasets: [{
+                label: 'Sales',
+                data: [],
+                backgroundColor: 'rgba(84, 180, 211, 0.2)', // Modern, soft teal
+                borderColor: 'rgba(41, 128, 185, 1)', // Deeper, rich blue
+                borderWidth: 2,
+                tension: 0.4, // Adds a slight curve to the line
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: 'rgba(50, 50, 50, 0.8)' // Soft dark gray for better readability
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    title: { 
+                        display: true, 
+                        text: 'Time',
+                        color: 'rgba(70, 70, 70, 0.9)' // Dark gray title
+                    },
+                    grid: {
+                        color: 'rgba(200, 200, 200, 0.2)' // Light grid lines
+                    }
+                },
+                y: {
+                    title: { 
+                        display: true, 
+                        text: 'Sales Count',
+                        color: 'rgba(70, 70, 70, 0.9)' // Dark gray title
+                    },
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(200, 200, 200, 0.2)' // Light grid lines
+                    }
+                }
+            }
+        }
+    });
+
+    async function updateChart() {
+        const timeFilter = document.getElementById('salesTimeFilter').value;
+        const statusFilter = document.getElementById('salesStatusFilter').value;
+
+        try {
+            const response = await fetch(`/admin/ordersSales?time=${timeFilter}&status=${statusFilter}`);
+            
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            
+            const data = await response.json();
+
+            salesChart.data.labels = data.labels;
+            salesChart.data.datasets[0].data = data.salesCounts;
+            salesChart.update();
+        } catch (error) {
+            console.error('Error fetching sales data:', error);
+         
+            alert('Could not load sales data. Please try again later.');
+        }
+    }
+
+    // Event listeners for filters
+    document.getElementById('salesTimeFilter').addEventListener('change', updateChart);
+    document.getElementById('salesStatusFilter').addEventListener('change', updateChart);
+
+    // Initial chart load
+    updateChart();
+</script>
+
+
 <script>
         document.addEventListener('DOMContentLoaded', function () {
     const ledgerTitle = document.getElementById('ledgerTitle');

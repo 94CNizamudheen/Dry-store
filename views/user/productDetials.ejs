@@ -1,8 +1,166 @@
 <%-include ("../../views/partials/user/header.ejs")%>
 <style>
-            .added i {
+     .added i {
     color: green !important;
 }
+    .product-actions-modern {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        max-width: 100%;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .quick-buy-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .quantity-control {
+        display: flex;
+        align-items: center;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        overflow: hidden;
+        width: 100%;
+        max-width: 200px;
+    }
+
+    .quantity-btn {
+        background-color: #f0f0f0;
+        border: none;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .quantity-btn:hover {
+        background-color: #e0e0e0;
+    }
+
+    .quantity-input {
+        width: 50px;
+        text-align: center;
+        border: none;
+        background-color: white;
+        font-size: 16px;
+        appearance: none;
+        -moz-appearance: textfield;
+        flex-grow: 1;
+        padding: 5px;
+    }
+
+    .btn-quick-buy {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        width: 100%;
+        max-width: 200px;
+    }
+
+    .btn-quick-buy:hover {
+        background-color: #0056b3;
+    }
+
+    .btn-icon {
+        font-size: 16px;
+    }
+
+    .secondary-actions {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .action-btn {
+        background-color: #f0f0f0;
+        border: none;
+        width: 45px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .action-btn:hover {
+        background-color: #e0e0e0;
+    }
+
+    .action-btn svg {
+        width: 20px;
+        height: 20px;
+        stroke: #333;
+    }
+
+    /* Responsive Breakpoints */
+    @media screen and (min-width: 576px) {
+        .product-actions-modern {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .quick-buy-wrapper {
+            flex-direction: row;
+            width: auto;
+        }
+
+        .btn-quick-buy, .quantity-control {
+            width: auto;
+            max-width: none;
+        }
+
+        .quick-buy-wrapper {
+            gap: 15px;
+        }
+
+        .btn-quick-buy {
+            width: auto;
+        }
+    }
+
+    @media screen and (max-width: 375px) {
+        .quantity-btn {
+            width: 35px;
+            height: 35px;
+        }
+
+        .btn-quick-buy {
+            font-size: 14px;
+            padding: 8px 12px;
+        }
+
+        .action-btn {
+            width: 40px;
+            height: 40px;
+        }
+    }
 </style>
     <main class="main">
         <div class="page-header breadcrumb-wrap">
@@ -58,11 +216,7 @@
                                             <%= data.productName %>
                                         </h2>
                                         <div class="product-detail-rating">
-                                            <div class="pro-details-brand">
-                                                <span> Brand: <a href="">
-                                                        <%= data.brand.brandName %>
-                                                    </a></span>
-                                            </div>
+                                            
                                             <div class="product-rate-cover text-end">
                                                 <div class="product-rate d-inline-block">
                                                     <div class="product-rating" style="width:90%">
@@ -76,9 +230,7 @@
                                                 <ins><span class="text-brand">₹<%= data.salePrice %></span></ins>
                                                 <ins><span class="old-price font-md ml-15">₹<%= data.regularPrice %>
                                                             </span></ins>
-                                                <span class="save-price  font-md color3 ml-15">
-                                                    <%= data.productOffer %>% off
-                                                </span>
+                                                
                                             </div>
                                         </div>
                                         <div class="bt-1 border-color-1 mt-15 mb-15"></div>
@@ -129,21 +281,32 @@
                                             <span class="qty-val">1</span>
                                             <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
                                         </div> -->
-                                            <div class="product-extra-link2">
-                                                <button type="submit" class="button btn-sm button-buyNow" id="" data-product-id="<%= data._id %>">Quick Buy</button>
-                                                    <a aria-label="Add To Wishlist" 
-                                                   class="action-btn hover-up add-to-wishlist" 
-                                                   href="#" 
-                                                   data-product-id="<%= data._id %>">
-                                                   <i class="fi-rs-heart"></i>
-                                                </a>
-                                                <a aria-label="Add To Cart" class="action-btn hover-up"
-                                                href="javascript:void(0);" id="addToCartButton"
-                                                data-product-id="<%= data._id %>">
-                                                <i class="fi-rs-shopping-bag-add"></i>
-                                            </a>
-                                               
+                                        <div class="product-actions-modern">
+                                            <div class="quick-buy-wrapper">
+                                                <div class="quantity-control">
+                                                    <button class="quantity-btn quantity-decrease">-</button>
+                                                    <input type="number" class="quantity-input" value="1" min="1" max="5" readonly>
+                                                    <button class="quantity-btn quantity-increase">+</button>
+                                                </div>
+                                                <button type="submit" class="btn-quick-buy" data-product-id="<%= data._id %>">
+                                                    <span class="btn-icon">⚡</span>
+                                                    Quick Buy
+                                                </button>
                                             </div>
+                                            <div class="secondary-actions">
+                                                <button class="action-btn wishlist-btn" aria-label="Add To Wishlist" data-product-id="<%= data._id %>">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                                    </svg>
+                                                </button>
+                                                <button class="action-btn cart-btn" aria-label="Add To Cart" data-product-id="<%= data._id %>">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                        <path d="M9 22a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/><path d="M20 22a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                                                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
                                         </div>
                                         <!-- <ul class="product-meta font-xs color-grey mt-50">
                                             <li class="mb-5"> <a href="#"></a></li>
@@ -485,10 +648,31 @@
     </main>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        document.querySelectorAll('.button-buyNow').forEach(button => {
-            button.addEventListener('click', () => {
-                const productId = button.getAttribute('data-product-id');
-                window.location.href = `/check-out?productId=${productId}`;
+        document.addEventListener('DOMContentLoaded', () => {
+            const quantityControl = document.querySelector('.quantity-control');
+            const quantityInput = quantityControl.querySelector('.quantity-input');
+            const decreaseBtn = quantityControl.querySelector('.quantity-decrease');
+            const increaseBtn = quantityControl.querySelector('.quantity-increase');
+            const quickBuyBtn = document.querySelector('.btn-quick-buy');
+    
+            decreaseBtn.addEventListener('click', () => {
+                let currentValue = parseInt(quantityInput.value);
+                if (currentValue > 1) {
+                    quantityInput.value = currentValue - 1;
+                }
+            });
+    
+            increaseBtn.addEventListener('click', () => {
+                let currentValue = parseInt(quantityInput.value);
+                if (currentValue < 5) {
+                    quantityInput.value = currentValue + 1;
+                }
+            });
+    
+            quickBuyBtn.addEventListener('click', () => {
+                const productId = quickBuyBtn.getAttribute('data-product-id');
+                const quantity = quantityInput.value;
+                window.location.href = `/check-out?productId=${productId}&quantity=${quantity}`;
             });
         });
     </script>

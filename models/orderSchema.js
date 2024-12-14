@@ -107,7 +107,7 @@ const orderSchema= new Schema({
 
     invoiceDate:{
         type:Date,
-    },
+    },      
     status:{
         type:String,
         required:true,

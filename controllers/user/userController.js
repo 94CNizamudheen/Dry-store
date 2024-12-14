@@ -497,8 +497,8 @@ const getProductDetials = async (req, res) => {
         const user = req.session.user;
     
         const productData = await Product.findById(productId)
-            .populate("category")
-            .populate("brand");
+            .populate("category", "name categoryOffer")
+            .populate("brand","brandName");
         if (productData) {
             return res.render("productDetials", { data: productData, user: user });
         }
@@ -607,7 +607,9 @@ const removeFromWishlistPage=async(req,res)=>{
 const downoladInvoice= async(req,res)=>{
     try {
         const {orderId}=req.body;
-        const order= await Order.findOne({orderId}).populate('orderedItems.product').populate('user');
+        const order = await Order.findOne({ orderId })
+            .populate('orderedItems.product', 'productName')
+            .populate('user');
 
         if(!order){
             return res.status(404).json({message:"order not found"});
@@ -659,9 +661,13 @@ const scrachReward = async (req, res) => {
         user.rewardPoints -= 250;
         user.wallet.balance += reward.amount;
         await user.save();
-        
+        const remainWalletBalance=  user.wallet.balance;
+        const remainRewardPoints=user.rewardPoints;
+
         res.json({
             success: true,
+            remainWalletBalance,
+            remainRewardPoints,
             reward: {
                 amount: reward.amount,
                 message: reward.message
