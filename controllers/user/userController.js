@@ -14,6 +14,8 @@ const Config= require('../../models/configSchema');
 const Order = require("../../models/orderSchema");
 const { quadraticCurveTo } = require("pdfkit");
 const {generateOrderInvoice}= require('../../utilities/pdf');
+const Review =require('../../models/reviewSchema');
+
 
 
 
@@ -499,11 +501,20 @@ const getProductDetials = async (req, res) => {
         const productData = await Product.findById(productId)
             .populate("category", "name categoryOffer")
             .populate("brand","brandName");
+        
+        const reviews= await Review.find({productId:productId}).populate('userId',"name")
+        let totalRating = 0;
+        let reviewCount = reviews.length;
+
+        if (reviewCount > 0) {
+            totalRating = reviews.reduce((acc, review) => acc + review.rating, 0);
+        }
+        const averageRating = reviewCount > 0 ? totalRating / reviewCount : 0;
         if (productData) {
-            return res.render("productDetials", { data: productData, user: user });
+            return res.render("productDetails", { data: productData, user: user,reviews,averageRating });
         }
     } catch (error) {
-        console.log("error in product detilas page", error);
+        console.log("error in product details page", error);
     }
 };
 const loadWishlist = async (req, res) => {
@@ -680,7 +691,28 @@ const scrachReward = async (req, res) => {
             message: "An error occurred. Please try again later."
         });
     }
-}
+};
+const submitReview=async(req,res)=>{
+    try {
+        const{productId,comment,rating}=req.body;
+        const userId= req.session.user;
+        const review = new Review({
+            productId:productId,
+            comment:comment,
+            userId:userId,
+            date:new Date,
+            rating:rating,
+            userName:req.session.user.name
+        });
+        await review.save();
+        await Product.findByIdAndUpdate(productId,{$push:{reviews:review._id}});
+        res.redirect(`/productDetails?id=${productId}`);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('An error occurred while submitting your review.');
+    }
+};
+
 
 module.exports = {
     loadHomepage,
@@ -700,4 +732,6 @@ module.exports = {
     downoladInvoice,
     loadSuperCoin,
     scrachReward,
+    submitReview
+ 
 };

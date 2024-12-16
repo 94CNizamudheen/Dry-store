@@ -291,18 +291,14 @@
                                                                         : (index % 2 === 0 ? 'success' : 'warning') %> text-white">
                                                                             <h5>
                                                                                 <% if (coupon.minimumPrice) { %>
-                                                                                    Minimum Purchase: ₹<%=
-                                                                                        coupon.minimumPrice %>
-                                                                                        <% } %>
+                                                                                    Minimum Purchase: ₹<%= coupon.minimumPrice %>
+                                                                                <% } %>
                                                                             </h5>
                                                                         </div>
                                                                         <div class="card-body">
                                                                             <p class="card-text">
                                                                                 <span class="badge bg-info">
-                                                                                    <%= coupon.discountType==='percentage'
-                                                                                        ? coupon.discountValue + '% OFF'
-                                                                                        : '₹' + coupon.discountValue
-                                                                                        + ' OFF' %>
+                                                                                    <%= coupon.discountType==='percentage'? coupon.discountValue + '% OFF' : '₹' + coupon.discountValue+ ' OFF' %>
                                                                                 </span>
                                                                             </p>
                                                                             <ul class="list-unstyled">
@@ -388,8 +384,7 @@
                                                     <tr>
                                                         <th class="fw-bold">Shipping</th>
                                                         <td colspan="2" class="price text-center">
-                                                            <span id="shipping-cost" class="fw-bold">₹<%=
-                                                                    shipping.toFixed(2) %></span>
+                                                            <span id="shipping-cost" class="fw-bold">₹<%=shipping.toFixed(2) %></span>
                                                         </td>
                                                     </tr>
 
@@ -408,20 +403,14 @@
                                                         <th class="fw-bold ">Final Amount</th>
                                                         <td colspan="2" class="product-subtotal">
                                                             <% if (discount===0) { %>
-                                                                <input type="hidden" id="total"
-                                                                    value="<%= total.toFixed(2) %>">
-                                                                <span id="totalAmount"
-                                                                    class="font-xl text-brand fw-900 text-success">₹
-                                                                    <%= total.toFixed(2) %>
-                                                                </span>
+                                                                <input type="hidden" id="total" value="<%= total.toFixed(2) %>">
+                                                                <span id="totalAmount" class="font-xl text-brand fw-900 text-success">₹<%= total.toFixed(2) %></span>
                                                                 <% } else { %>
-                                                                    <input type="hidden" id="total"
-                                                                        value="<%= discountedTotal.toFixed(2) %>">
-                                                                    <span id="totalAmount"
-                                                                        class="font-xl text-brand fw-900 text-success">₹
+                                                                    <input type="hidden" id="total" value="<%= discountedTotal.toFixed(2) %>">
+                                                                    <span id="totalAmount" class="font-xl text-brand fw-900 text-success">₹
                                                                         <%= discountedTotal.toFixed(2) %>
                                                                     </span>
-                                                                    <% } %>
+                                                                <% } %>
                                                         </td>
                                                     </tr>
                                         </tbody>
@@ -559,14 +548,11 @@
                                                             <tr>
                                                                 <th colspan="2">Shipping</th>
                                                                 <td>
-                                                                    <% if (discountedTotal> 1000) { %>
-                                                                        <em>
-                                                                            <del>₹<%= shipping.toFixed(2) %></del>
-                                                                            Free
-                                                                        </em>
-                                                                        <% } else { %>
-                                                                            <em>₹<%= shipping.toFixed(2) %></em>
-                                                                            <% } %>
+                                                                        <% if (discountedTotal> 1000) { %>
+                                                                            <em><del>₹<%= shipping.toFixed(2) %></del> Free</em>
+                                                                            <% } else { %>
+                                                                                <em>₹<%= shipping.toFixed(2) %></em>
+                                                                         <% } %>
                                                                 </td>
                                                             </tr>
 

@@ -3,56 +3,143 @@ const path= require('path');
 const fs= require('fs');
 
 const generatePDF = async (orders) => {
-    return new Promise((resolve, reject) => {
-        const doc = new PDFDocument({ margin: 50 });
-        const buffers = [];
+   return new Promise((resolve, reject) => {
+       try {
+           const doc = new PDFDocument({ margin: 50, bufferPages: true });
+           const buffers = [];
+           doc.on('data', (buffer) => buffers.push(buffer));
+           doc.on('end', () => resolve(Buffer.concat(buffers)));
 
-        doc.on('data', buffer => buffers.push(buffer));
-        doc.on('end', () => resolve(Buffer.concat(buffers)));
+           const pageWidth = doc.page.width;
+           const leftMargin = 50;
+           const rightMargin = 50;
+           const contentWidth = pageWidth - leftMargin - rightMargin;
 
-        // Title and Header
-        doc.fontSize(20).text('Dry Store Sales Report', { align: 'center' });
-        doc.fontSize(10).text(`Generated on: ${new Date().toLocaleString()}`, { align: 'center' });
-        doc.moveDown(2);
+           const colors = {
+               primary: '#2C3E50',
+               secondary: '#34495E',
+               accent: '#3498DB',
+               text: '#333333',
+               border: '#BDC3C7',
+           };
 
-        // Summary
-        const totalSales = orders.reduce((sum, order) => sum + order.finalAmount, 0);
-        const totalDiscount = orders.reduce((sum, order) => sum + (order.discount || 0), 0);
+           // Document Header
+           doc.fillColor(colors.primary)
+               .fontSize(24)
+               .font('Helvetica-Bold')
+               .text("Henza's Dry Store Sales Report", { align: 'center', width: contentWidth });
 
-        doc.fontSize(12)
-            .text(`Total Sales: Rs ${totalSales.toFixed(2)}`)
-            .text(`Total Discount: Rs ${totalDiscount.toFixed(2)}`)
-            .text(`Total Orders: ${orders.length}`)
-            .moveDown(1.5);
+           doc.fillColor(colors.secondary)
+               .fontSize(10)
+               .text(`Generated on: ${new Date().toLocaleString()}`, { align: 'center', width: contentWidth });
 
-        // Table Headers
-        const tableTop = doc.y;
-        const columnXPositions = [50, 200, 300, 400]; // X positions for each column
-        const columnTitles = ['Order ID', 'Final Amount', 'Discount', 'Created On'];
+           doc.moveDown(2);
 
-        doc.fontSize(12).font('Helvetica-Bold');
-        columnTitles.forEach((title, i) => {
-            doc.text(title, columnXPositions[i], tableTop, { width: 100, align: 'left' });
-        });
+           // Summary Section
+           const totalSales = orders.reduce((sum, order) => sum + order.finalAmount, 0);
+           const totalDiscount = orders.reduce((sum, order) => sum + (order.discount || 0), 0);
+           const averageOrderValue = totalSales / orders.length;
 
-        doc.moveDown(0.5).strokeColor('#aaaaaa').lineWidth(0.5).moveTo(50, doc.y).lineTo(500, doc.y).stroke();
+           doc.fillColor(colors.primary)
+               .fontSize(14)
+               .font('Helvetica-Bold')
+               .text('Sales Summary', { align: 'center', underline: true });
 
-        // Table Content
-        doc.font('Helvetica').fillColor('#333333');
-        orders.forEach((order) => {
-            const rowY = doc.y;
+           doc.fillColor(colors.text)
+               .fontSize(12)
+               .font('Helvetica')
+               .text(`Total Sales: Rs ${totalSales.toFixed(2)}`)
+               .text(`Total Discount: Rs ${totalDiscount.toFixed(2)}`)
+               .text(`Total Orders: ${orders.length}`)
+               .text(`Average Order Value: Rs ${averageOrderValue.toFixed(2)}`)
+               .moveDown(1.5);
 
-            doc.text(order.orderId, columnXPositions[0], rowY, { width: 150, align: 'left' });
-            doc.text(`Rs ${order.finalAmount.toFixed(2)}`, columnXPositions[1], rowY, { width: 100, align: 'left' });
-            doc.text(`Rs ${(order.discount || 0).toFixed(2)}`, columnXPositions[2], rowY, { width: 100, align: 'left' });
-            doc.text(new Date(order.createdOn).toLocaleString(), columnXPositions[3], rowY, { width: 150, align: 'left' });
+               
 
-            doc.moveDown(1); // Space between rows
-        });
 
-        doc.end();
-    });
+           // Table Header
+            const drawTableHeader = () => {
+               const tableTop = doc.y;
+               const columnXPositions = [100, 200, 350, 450];
+               const columnTitles = ['Order ID', 'Final Amount', 'Discount', 'Created On'];
+       
+               doc.font('Helvetica-Bold')
+                  .fontSize(10)
+                  .fillColor(colors.primary);
+       
+               // Table Header
+               columnTitles.forEach((title, i) => {
+                   doc.text(title, columnXPositions[i], tableTop, { width: 100, align: 'left' });
+               });
+       
+               doc.moveDown(0.5)
+                  .strokeColor(colors.accent)
+                  .lineWidth(1)
+                  .moveTo(50, doc.y)
+                  .lineTo(550, doc.y)
+                  .stroke();
+                  doc.moveDown(0.5)
+       };
+        
+        
+
+           drawTableHeader();
+
+           // Table Content
+           const rowHeight = 30;
+           const startY = doc.y;
+           const columnWidths = [
+               contentWidth * 0.25,
+               contentWidth * 0.25,
+               contentWidth * 0.25,
+               contentWidth * 0.25,
+           ];
+
+           orders.forEach((order, index) => {
+               if (doc.y + rowHeight > doc.page.height - 50) {
+                   doc.addPage();
+                   drawTableHeader(); // Redraw table header on a new page
+               }
+
+               const rowY = doc.y;
+
+               // Alternate row background
+               if (index % 2 === 0) {
+                   doc.fillColor('#F7F9FA')
+                       .rect(leftMargin, rowY, contentWidth, rowHeight)
+                       .fill();
+               }
+
+               doc.fillColor(colors.text)
+                   .fontSize(10)
+                   .font('Helvetica')
+                   .text(order.orderId, leftMargin, rowY, { width: columnWidths[0], align: 'center' })
+                   .text(`Rs ${order.finalAmount.toFixed(2)}`, leftMargin + columnWidths[0], rowY, { width: columnWidths[1], align: 'center' })
+                   .text(`Rs ${(order.discount || 0).toFixed(2)}`, leftMargin + columnWidths[0] + columnWidths[1], rowY, { width: columnWidths[2], align: 'center' })
+                   .text(new Date(order.createdOn).toLocaleString(), leftMargin + columnWidths[0] + columnWidths[1] + columnWidths[2], rowY, { width: columnWidths[3], align: 'center' });
+
+               doc.moveDown(1);
+           });
+
+           // Page Numbers
+           const pages = doc.bufferedPageRange();
+           for (let i = 0; i < pages.count; i++) {
+               doc.switchToPage(i);
+               doc.fillColor(colors.secondary)
+                   .fontSize(10)
+                   .text(`Page ${i + 1} of ${pages.count}`, leftMargin, doc.page.height - 30, {
+                       align: 'center',
+                       width: contentWidth,
+                   });
+           }
+
+           doc.end();
+       } catch (error) {
+           reject(error);
+       }
+   });
 };
+
 const generateOrderInvoice = async (order) => {
     return new Promise((resolve, reject) => {
         const doc = new PDFDocument({ 

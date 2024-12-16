@@ -224,9 +224,9 @@
                                                 </a>
                                             </div>
                                             <div class="product-action-1">
-                                                <a aria-label="Quick view" class="action-btn hover-up"
+                                                <!-- <a aria-label="Quick view" class="action-btn hover-up"
                                                     data-bs-toggle="modal" data-bs-target="#quickViewModal"><i
-                                                        class="fi-rs-eye"></i></a>
+                                                        class="fi-rs-eye"></i></a> -->
                                                 <a aria-label="Add To Wishlist"
                                                     class="action-btn hover-up add-to-wishlist" href="#"
                                                     data-product-id="<%= products[i]._id %>">
@@ -262,8 +262,7 @@
                                             </div>
 
                                             <div class="product-action-1 show">
-                                                <a aria-label="Add To Cart" class="action-btn hover-up"
-                                                    href="javascript:void(0);" id="addToCartButton"
+                                                <a aria-label="Add To Cart" class="action-btn hover-up"href="javascript:void(0);" id="addToCartButton"
                                                     data-product-id="<%= products[i]._id %>">
                                                     <i class="fi-rs-shopping-bag-add"></i>
                                                 </a>
@@ -603,9 +602,9 @@
                         }
                     } else {
                         Swal.fire({
-                            title: 'Error',
+                            title: 'Notice',
                             text: result.message || 'Failed to add to wishlist.',
-                            icon: 'error',
+                            icon: 'info',
                             toast: true,
                             position: 'center',
                             timer: 2000,

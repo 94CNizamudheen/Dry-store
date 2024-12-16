@@ -52,6 +52,11 @@ const productSchema= new Schema({
         required:true,
         default:"Available",
     },
+    reviews: [{ 
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Review'
+     }] ,
+
     stockHistory: [
         {
             date: { type: Date, default: Date.now },
@@ -60,8 +65,6 @@ const productSchema= new Schema({
             notes: { type: String },
         }
     ],
-   
-
 
 },{timestamps:true});
 

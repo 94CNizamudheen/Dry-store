@@ -1,0 +1,672 @@
+<%-include ("../../views/partials/user/header.ejs")%>
+<style>
+     .added i {
+    color: green !important;
+}
+    .product-actions-modern {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        background-color: #4f384c4d;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        max-width: 100%;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .quick-buy-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .quantity-control {
+        display: flex;
+        align-items: center;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        overflow: hidden;
+        width: 100%;
+        max-width: 200px;
+    }
+
+    .quantity-btn {
+        background-color: #f0f0f0;
+        border: none;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .quantity-btn:hover {
+        background-color: #e0e0e0;
+    }
+
+    .quantity-input {
+        width: 50px;
+        text-align: center;
+        border: none;
+        background-color: #7e6d7991;
+        font-size: 16px;
+        appearance: none;
+        -moz-appearance: textfield;
+        flex-grow: 1;
+        padding: 5px;
+    }
+
+    .btn-quick-buy {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        width: 100%;
+        max-width: 200px;
+    }
+
+    .btn-quick-buy:hover {
+        background-color: #0056b3;
+    }
+
+    .btn-icon {
+        font-size: 16px;
+    }
+
+    .secondary-actions {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .action-btn {
+        background-color: #f0f0f0;
+        border: none;
+        width: 45px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .action-btn:hover {
+        background-color: #e0e0e0;
+    }
+
+    .action-btn svg {
+        width: 20px;
+        height: 20px;
+        stroke: #333;
+    }
+
+    /* Responsive Breakpoints */
+    @media screen and (min-width: 576px) {
+        .product-actions-modern {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .quick-buy-wrapper {
+            flex-direction: row;
+            width: auto;
+        }
+
+        .btn-quick-buy, .quantity-control {
+            width: auto;
+            max-width: none;
+        }
+
+        .quick-buy-wrapper {
+            gap: 15px;
+        }
+
+        .btn-quick-buy {
+            width: auto;
+        }
+    }
+
+    @media screen and (max-width: 375px) {
+        .quantity-btn {
+            width: 35px;
+            height: 35px;
+        }
+
+        .btn-quick-buy {
+            font-size: 14px;
+            padding: 8px 12px;
+        }
+
+        .action-btn {
+            width: 40px;
+            height: 40px;
+        }
+    }
+</style>
+    <main class="main">
+        <div class="page-header breadcrumb-wrap">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="/home" rel="nofollow">Home</a>
+                    <span></span> Product Details
+                    <span></span>
+                    <%= data.productName %>
+                </div>
+            </div>
+        </div>
+        <section class="mt-50 mb-50">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="product-detail accordion-detail">
+                            <div class="row mb-50">
+                                <div class="col-md-6 col-sm-12 col-xs-12">
+                                    <div class="detail-gallery">
+                                        <span class="zoom-icon"><i class="fi-rs-search"></i></span>
+                                        <!-- MAIN SLIDES -->
+                                        <div class="product-image-slider">
+                                            <figure class="border-radius-10">
+                                                <img src="uploads/images/<%= data.productImage[0] %>"
+                                                    alt="product image">
+                                            </figure>
+                                            <figure class="border-radius-10">
+                                                <img src="uploads/images/<%= data.productImage[1] %>"
+                                                    alt="product image">
+                                            </figure>
+                                            <figure class="border-radius-10">
+                                                <img src="uploads/images/<%= data.productImage[2] %>"
+                                                    alt="product image">
+                                            </figure>
+
+                                        </div>
+                                        <!-- THUMBNAILS -->
+                                        <div class="slider-nav-thumbnails pl-15 pr-15">
+                                            <div><img src="uploads/images/<%= data.productImage[0] %>"
+                                                    alt="product image"></div>
+                                            <div><img src="uploads/images/<%= data.productImage[1] %>"
+                                                    alt="product image"></div>
+                                            <div><img src="uploads/images/<%= data.productImage[2] %>"
+                                                    alt="product image"></div>
+                                        </div>
+                                    </div>
+                                    <!-- End Gallery -->
+                                </div>
+                                <div class="col-md-6 col-sm-12 col-xs-12">
+                                    <div class="detail-info">
+                                        <h2 class="title-detail">
+                                            <%= data.productName %>
+                                        </h2>
+                                        <div class="product-detail-rating">
+                                            
+                                            <div class="product-rate-cover text-end">
+                                                  <span >Average Rating (⭐<%= averageRating.toFixed(1) %>)</span>
+                                        <span class="font-small ml-5 text-muted"> (<%= reviews.length %> Reviews)</span>
+                                            </div>
+                                        </div>
+                                        <div class="clearfix product-price-cover">
+                                            <div class="product-price primary-color float-left">
+                                                <ins><span class="text-brand">₹<%= data.salePrice.toFixed(2) %></span></ins>
+                                                <ins><span class="old-price font-md ml-15">₹<%= data.regularPrice.toFixed(2) %>
+                                                            </span></ins>
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="bt-1 border-color-1 mt-15 mb-15"></div>
+                                        <div class="short-desc mb-30">
+                                            <p>
+                                                <%= data.description %>
+                                            </p>
+                                        </div>
+                                        <div class="product_sort_info font-xs mb-30">
+                                            <ul>
+                                                <li>Availability: <span
+                                                        class="<%= data.quantity > 10 ? 'in-stock text-success ml-5' : 'text-danger ml-5' %>">
+                                                        <%= data.quantity> 0 ? `Stock left: ${data.quantity}` : 'Out of  stock' %>
+                                                    </span></li>
+                                                <li class="mb-10"><i class="fi-rs-refresh mr-5"></i> 3 Day Return
+                                                    Policy</li>
+                                                <li><i class="fi-rs-credit-card mr-5"></i> Cash on Delivery available for minimum purchase ₹1000/-
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    
+                                        <div class="bt-1 border-color-1 mt-30 mb-30"></div>
+                                        <div class="detail-extralink">
+                                           
+                                        <div class="product-actions-modern">
+                                            <div class="quick-buy-wrapper">
+                                                <div class="quantity-control">
+                                                    <button class="quantity-btn quantity-decrease">-</button>
+                                                    <input type="number" class="quantity-input" value="1" min="1" max="5" readonly>
+                                                    <button class="quantity-btn quantity-increase">+</button>
+                                                </div>
+                                                <button type="submit" class="btn-quick-buy" data-product-id="<%= data._id %>">
+                                                    <span class="btn-icon">⚡</span>
+                                                    Quick Buy
+                                                </button>
+                                                <a aria-label="Add To Cart" class="action-btn hover-up"href="javascript:void(0);" id="addToCartButton"
+                                                data-product-id="<%= data._id %>">
+                                                <i class="fi-rs-shopping-bag-add"></i></a>
+                                                <a aria-label="Add To Wishlist"
+                                                    class="action-btn hover-up add-to-wishlist" href="#"
+                                                    data-product-id="<%= data._id %>">
+                                                    <i class="fi-rs-heart"></i>
+                                                </a>    
+                                            </div>
+                                             
+                                        </div>
+                                        </div>
+            
+                                    </div>
+                                
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-10 m-auto entry-main-content">
+                                    <h2 class="section-title style-1 mb-30">Description</h2>
+                                    <div class="description mb-50">
+                                       <p><%= data.description  %></p>
+                                        <hr class="wp-block-separator is-style-dots">
+                                        
+                                        <h4 class="mt-30">📦 Packaging & Delivery</h4>
+                                        <hr class="wp-block-separator is-style-wide">
+                                        <p>We ensure that your orders are carefully packed and delivered with the utmost care to preserve quality and freshness. Our packaging process is designed to protect your items during transit, ensuring they reach you in perfect condition. <br>
+
+                                            🔔 Important Notes: <br>
+                                            
+                                            ✅All items are checked for quality before dispatch. <br>
+                                            ❌ Products damaged or broken during transit will not be eligible for return or replacement. <br>
+                                            ⏰ Delivery timelines are estimates and may vary based on your location and unforeseen circumstances. <br>
+                                            Thank you for choosing us! 💖 We’re committed to delivering excellence with every order.
+                                        </p>
+                                        
+                                    </div>
+                                    
+                                    <h3 class="section-title style-1 mb-30 mt-30">Reviews (<%= reviews.length %>)</h3>
+                                    <!--Comments-->
+                                    <div class="comments-area style-2">
+                                        <div class="row">
+                                            <div class="reviews mt-8">
+                                                <h4 class="text-lg font-semibold mb-4">Customer Reviews</h4>
+                                                <% if (reviews.length > 0) { %>
+                                                    <% reviews.forEach(review => { %>
+                                                        <div class="review-item border-b border-gray-200 pb-4 mb-4">
+                                                            <p class="text-sm text-gray-700 mb-1">
+                                                                <% for (let i = 1; i <= review.rating; i++) { %>
+                                                                    <span class="<%= i <= review.rating ? 'text-amber-400' : 'text-gray-300' %>">⭐</span>
+                                                                <% } %>
+                                                            </p>
+                                                            <p class="text-gray-800 font-medium"><%= review.comment %></p>
+                                                            <p class="text-sm text-gray-500">Posted by <%= review.userName %> on <%= review.date.toDateString() %></p>
+                                                        </div>
+                                                    <% }) %>
+                                                <% } else { %>
+                                                    <p class="text-gray-500">No reviews yet. Be the first to leave one!</p>
+                                                <% } %>
+                                            </div>
+                                            
+                                            <!-- <div class="col-lg-4">
+                                                <h4 class="mb-30">Customer reviews</h4>
+                                                <div class="d-flex mb-30">
+                                                    <div class="product-rate d-inline-block mr-15">
+                                                        <div class="product-rating" style="width:90%">
+                                                        </div>
+                                                    </div>
+                                                    <h6>4.8 out of 5</h6>
+                                                </div>
+                                                <div class="progress">
+                                                    <span>5 star</span>
+                                                    <div class="progress-bar" role="progressbar" style="width: 50%;"
+                                                        aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">50%
+                                                    </div>
+                                                </div>
+                                                <div class="progress">
+                                                    <span>4 star</span>
+                                                    <div class="progress-bar" role="progressbar" style="width: 25%;"
+                                                        aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%
+                                                    </div>
+                                                </div>
+                                                <div class="progress">
+                                                    <span>3 star</span>
+                                                    <div class="progress-bar" role="progressbar" style="width: 45%;"
+                                                        aria-valuenow="45" aria-valuemin="0" aria-valuemax="100">45%
+                                                    </div>
+                                                </div>
+                                                <div class="progress">
+                                                    <span>2 star</span>
+                                                    <div class="progress-bar" role="progressbar" style="width: 65%;"
+                                                        aria-valuenow="65" aria-valuemin="0" aria-valuemax="100">65%
+                                                    </div>
+                                                </div>
+                                                <div class="progress mb-30">
+                                                    <span>1 star</span>
+                                                    <div class="progress-bar" role="progressbar" style="width: 85%;"
+                                                        aria-valuenow="85" aria-valuemin="0" aria-valuemax="100">85%
+                                                    </div>
+                                                </div>
+                                                <a href="#" class="font-xs text-muted">How are ratings calculated?</a>
+                                            </div> -->
+                                        </div>
+                                    </div>
+                                    <!--comment form-->
+                                  
+                                    <div class="container ">
+                                        <div class="  overflow-hidden">
+                                            <div class="p-6">
+                                                <h4 class="text-2xl font-bold text-center text-gray-800 mb-6">Share Your Feedback</h4>
+                                                
+                                                <% if (user) { %>
+                                                <!-- Review Form -->
+                                                <form action="/submit-review" method="POST" id="reviewForm" class="space-y-5">
+                                                    <!-- Star Rating -->
+                                                    <div class="rating-section">
+                                                        <p class="text-sm text-gray-600 mb-2">Rate Your Experience</p>
+                                                        <div class="flex justify-center space-x-1" id="star-rating">
+                                                            <% for(let i = 1; i <= 5; i++) { %>
+                                                                <input 
+                                                                    type="radio" 
+                                                                    name="rating" 
+                                                                    id="rating-<%= i %>" 
+                                                                    value="<%= i %>" 
+                                                                    class="hidden"
+                                                                >
+                                                                <label 
+                                                                    for="rating-<%= i %>" 
+                                                                    data-rating="<%= i %>"
+                                                                    class="text-3xl cursor-pointer star-icon text-gray-300"
+                                                                >
+                                                                ⭐
+                                                                </label>
+                                                            <% } %>
+                                                        </div>
+                                                        <span style="background-color: rgb(115, 20, 95); border-radius: 2px;" 
+                                                        class="text-start mt-2 text-warning fw-bold p-1 " id="rating-value">
+                                                            Select a rating
+                                                        </span>
+                                                    </div>
+                                                    
+                                                    <!-- Review Input -->
+                                                    <div class="review-input">
+                                                        <textarea 
+                                                            name="comment" 
+                                                            rows="4" 
+                                                            class="w-full px-4 py-3 
+                                                                   border border-gray-300 
+                                                                   rounded-sm
+                                                                   focus:ring-2 focus:ring-blue-200 
+                                                                   focus:border-blue-500 
+                                                                   transition-all duration-300 
+                                                                   resize-none"
+                                                            placeholder="Tell us about your experience..."
+                                                        ></textarea>
+                                                    </div>
+                                                    
+                                                    <input type="hidden" name="productId" value="<%= data._id %>">
+                                                    
+                                                    <!-- Submit Button -->
+                                                    <div class="submit-section">
+                                                        <button 
+                                                            type="submit" 
+                                                            class="w-full bg-blue-600 text-white  py-3 rounded-lg 
+                                                                   hover:bg-blue-700 
+                                                                   transition-colors duration-300 
+                                                                   font-semibold 
+                                                                   shadow-md 
+                                                                   active:scale-95"
+                                                        >
+                                                            Submit Review
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                                <% } else { %>
+                                                <!-- Prompt to Log In -->
+                                                <div class="text-center bg-red-50 p-4 rounded-lg">
+                                                    <p class="text-red-600">
+                                                        Please <a href="/login" class="font-bold underline">log in</a> to share your feedback
+                                                    </p>
+                                                </div>
+                                                <% } %>
+                                            </div>   
+                                        </div>
+                                    </div>    
+                                </div>
+                            </div>
+                 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Display selected rating dynamically
+        const stars = document.querySelectorAll('input[name="rating"]');
+        const ratingValue = document.getElementById('rating-value');
+        
+        stars.forEach(star => {
+            star.addEventListener('change', () => {
+                ratingValue.textContent = `You rated: ${star.value}  ⭐`;
+            });
+        });
+    
+        // Form validation
+        document.getElementById('reviewForm').addEventListener('submit', function (e) {
+            const rating = document.querySelector('input[name="rating"]:checked');
+            const comment = document.querySelector('textarea[name="comment"]').value.trim();
+    
+            if (!rating || comment === '') {
+                e.preventDefault();
+                Swal.fire({
+                    icon:"info",
+                    text:"Please provide both a rating and a comment!",
+                    toast:true,
+                    position:"center"
+                })
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const quantityControl = document.querySelector('.quantity-control');
+            const quantityInput = quantityControl.querySelector('.quantity-input');
+            const decreaseBtn = quantityControl.querySelector('.quantity-decrease');
+            const increaseBtn = quantityControl.querySelector('.quantity-increase');
+            const quickBuyBtn = document.querySelector('.btn-quick-buy');
+    
+            decreaseBtn.addEventListener('click', () => {
+                let currentValue = parseInt(quantityInput.value);
+                if (currentValue > 1) {
+                    quantityInput.value = currentValue - 1;
+                }
+            });
+    
+            increaseBtn.addEventListener('click', () => {
+                let currentValue = parseInt(quantityInput.value);
+                if (currentValue < 5) {
+                    quantityInput.value = currentValue + 1;
+                }
+            });
+    
+            quickBuyBtn.addEventListener('click', () => {
+                const productId = quickBuyBtn.getAttribute('data-product-id');
+                const quantity = quantityInput.value;
+                window.location.href = `/check-out?productId=${productId}&quantity=${quantity}`;
+            });
+        });
+    </script>
+    <script>
+         document.querySelectorAll('.add-to-wishlist').forEach((button) => {
+            button.addEventListener('click', async (event) => {
+                event.preventDefault();
+                const productId = button.getAttribute('data-product-id');
+
+                button.disabled = true;
+
+                try {
+                    const response = await fetch('/addToWishlist', {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ productId }),
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        Swal.fire({
+                            title: result.isExisting ? 'Notice' : 'Success',
+                            text: result.message,
+                            icon: result.isExisting ? 'info' : 'success',
+                            toast: true,
+                            position: 'center',
+                            timer: 2000,
+                            showConfirmButton: true,
+                        });
+
+                        if (!result.isExisting) {
+                            button.classList.add('added');
+                            const icon = button.querySelector('i');
+                            if (icon) {
+                                icon.style.color = 'green';
+                            }
+                            // Update wishlist count
+                            const wishlistCountElement = document.querySelector('#wishlistCountDisplay');
+                            if (wishlistCountElement) {
+                                wishlistCountElement.textContent = result.wishlistCount;
+                            }
+                        }
+                    } else {
+                        Swal.fire({
+                            title: 'Notice',
+                            text: result.message || 'Failed to add to wishlist.',
+                            icon: 'info',
+                            toast: true,
+                            position: 'center',
+                            timer: 2000,
+                            showConfirmButton: true,
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error adding to Wishlist:', error);
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Something went wrong. Please try again.',
+                        icon: 'error',
+                        toast: true,
+                        position: 'center',
+                        timer: 3000,
+                        showConfirmButton: false,
+                    });
+                } finally {
+                    button.disabled = false;
+                }
+            });
+        });
+
+
+
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.addEventListener('click', async (e) => {
+                if (e.target && e.target.closest('#addToCartButton')) {
+                    e.preventDefault();
+                    const button = e.target.closest('#addToCartButton');
+                    const productId = button.dataset.productId;
+                    const quantity = 1;
+                    button.disabled = true;
+                    try {
+                        const response = await fetch('/add-to-cart', {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ productId, quantity }),
+                        });
+
+                        const data = await response.json();
+                        console.log(data);
+
+                        if (response.status === 401) {
+                            Swal.fire({
+                                title: 'Login Required!',
+                                text: 'Please login to add items to your cart.',
+                                icon: 'info',
+                                toast: true,
+                                position: 'center',
+
+                            });
+
+                        }
+                        if (data.success) {
+                            Swal.fire({
+                                title: data.isExisting ? 'Notice!' : 'Success!',
+                                text: data.message,
+                                icon: data.isExisting ? 'info' : 'success',
+                                timer: 2000,
+                                showConfirmButton: true,
+                                toast: true,
+                                position: 'center',
+                            })
+                            if (!data.isExisting) {
+                                // Select all possible cart count elements
+                                const cartCountElements = document.querySelectorAll('#cartCountDisplay, .header-action-icon-2 .pro-count.blue');
+
+                                // Update all found cart count elements
+                                cartCountElements.forEach(element => {
+                                    element.textContent = data.cartCount;
+                                });
+                            }
+                            // Update stock count
+                            const stockElement = document.querySelector(`[data-stock-id="${productId}"]`);
+                            if (stockElement && data.remainingStock !== undefined) {
+                                stockElement.textContent = `Stock: ${data.remainingStock}`;
+                            }
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: data.message || 'Unable to add item to cart.',
+                                icon: 'error',
+                                toast: true,
+                                position: 'center',
+                            });
+                        }
+                    } catch (error) {
+                        console.error("Fetch error:", error);
+
+                        Swal.fire({
+                            title: 'Network Error!',
+                            text: 'Something went wrong. Please try again.',
+                            icon: 'error',
+                            toast: true,
+                            position: 'center',
+                        });
+                    } finally {
+                        button.disabled = false;
+                    }
+                }
+            });
+        });
+    </script>
+    <%-include ("../../views/partials/user/footer.ejs")%>

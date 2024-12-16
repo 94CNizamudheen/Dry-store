@@ -117,10 +117,12 @@
                     <div class="progress-bar bg-warning" role="progressbar" style="width: 65%" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
                 </div> -->
                     <div class="d-flex justify-content-between">
-                        <span class="text-success">
-                            <i class="fas fa-arrow-up me-1"></i>+3.5%
+                        <span id="remainRewardPoints" class="text-white">
+                            <%= user.rewardPoints %>
                         </span>
-                        <span>Last 24h</span>
+                        <span id="remainWalletBalance">
+                            ₹ <%= user.wallet.balance.toFixed(2) %>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -135,9 +137,9 @@
                             <button class="btn btn-reward" data-bs-toggle="modal" data-bs-target="#scratchModal">
                                 <i class="fas fa-scratch-card"></i> Scratch Card (250 Coin)
                             </button>
-                            <button class="btn btn-reward" data-bs-toggle="modal" data-bs-target="#spinModal">
+                            <!-- <button class="btn btn-reward" data-bs-toggle="modal" data-bs-target="#spinModal">
                                 <i class="fas fa-dice"></i> Spin Wheel (250 Coin)
-                            </button>
+                            </button> -->
                         </div>
                     </div>
                 </div>
@@ -267,7 +269,10 @@
                                 this.showErrorMessage(data.message || 'Something went wrong!');
                                 return null;
                             }
-
+                            document.querySelector('.header-action-icon-2:nth-child(1) h6').textContent = data.remainRewardPoints;
+                            document.querySelector('.header-action-icon-2:nth-child(2) h6').textContent = `₹ ${data.remainWalletBalance.toFixed(2)}`;
+                            document.getElementById('remainRewardPoints').textContent = data.remainRewardPoints;
+                            document.getElementById('remainWalletBalance').textContent = `₹ ${data.remainWalletBalance.toFixed(2)}`
                             return data.reward;
                         } catch (error) {
                             console.error('Error fetching reward:', error);
@@ -430,89 +435,3 @@
         </script>
     </body>
     <%- include('../partials/user/footer.ejs') %>
-        <script>
-            // Spin Wheel Logic
-            const wheelCanvas = document.getElementById('wheel-canvas');
-            const wheelCtx = wheelCanvas.getContext('2d');
-            const spinButton = document.getElementById('spinButton');
-            const spinResult = document.getElementById('spinResult');
-
-            const segments = [
-                { label: '10 Coins', color: '#FF6B6B' },
-                { label: '25 Coins', color: '#4ECDC4' },
-                { label: '50 Coins', color: '#45B7D1' },
-                { label: '100 Coins', color: '#FDCB6E' },
-                { label: '5 Coins', color: '#6C5CE7' },
-                { label: '75 Coins', color: '#A8E6CF' }
-            ];
-
-            function drawWheel() {
-                const centerX = wheelCanvas.width / 2;
-                const centerY = wheelCanvas.height / 2;
-                const radius = Math.min(centerX, centerY) - 10;
-                const arcSize = (Math.PI * 2) / segments.length;
-
-                segments.forEach((segment, index) => {
-                    const startAngle = index * arcSize;
-                    const endAngle = (index + 1) * arcSize;
-
-                    wheelCtx.beginPath();
-                    wheelCtx.moveTo(centerX, centerY);
-                    wheelCtx.arc(centerX, centerY, radius, startAngle, endAngle);
-                    wheelCtx.closePath();
-
-                    wheelCtx.fillStyle = segment.color;
-                    wheelCtx.fill();
-
-                    // Add labels
-                    wheelCtx.save();
-                    wheelCtx.translate(centerX, centerY);
-                    wheelCtx.rotate(startAngle + arcSize / 2);
-                    wheelCtx.textAlign = 'right';
-                    wheelCtx.fillStyle = 'white';
-                    wheelCtx.font = 'bold 16px Arial';
-                    wheelCtx.fillText(segment.label, radius - 10, 0);
-                    wheelCtx.restore();
-                });
-            }
-
-            let spinning = false;
-            let spinAngle = 0;
-            let spinSpeed = 0;
-
-            function spin() {
-                if (spinning) return;
-                spinning = true;
-                spinSpeed = Math.random() * 0.5 + 0.5;
-                spinAngle = 0;
-                spinResult.textContent = '';
-                animate();
-            }
-
-            function animate() {
-                wheelCtx.clearRect(0, 0, wheelCanvas.width, wheelCanvas.height);
-                wheelCtx.save();
-                wheelCtx.translate(wheelCanvas.width / 2, wheelCanvas.height / 2);
-                wheelCtx.rotate(spinAngle);
-                wheelCtx.translate(-wheelCanvas.width / 2, -wheelCanvas.height / 2);
-
-                drawWheel();
-
-                wheelCtx.restore();
-
-                spinAngle += spinSpeed;
-                spinSpeed *= 0.99;
-
-                if (spinSpeed < 0.01) {
-                    spinning = false;
-                    const segmentIndex = Math.floor(((spinAngle % (Math.PI * 2)) / (Math.PI * 2)) * segments.length);
-                    spinResult.textContent = `You won: ${segments[segmentIndex].label}!`;
-                    return;
-                }
-
-                requestAnimationFrame(animate);
-            }
-
-            spinButton.addEventListener('click', spin);
-            drawWheel();
-        </script>

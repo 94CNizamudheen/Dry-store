@@ -34,6 +34,7 @@ router.get('/auth/google/callback',passport.authenticate('google',{failureRedire
 router.get('/logOut',userController.logOut);
 router.get("/productDetails",headerData,userController.getProductDetials)
 router.post('/download-invoice',userAuth,userController.downoladInvoice);
+router.post('/submit-review',userAuth,userController.submitReview);
 //wallet
 router.get('/wallet',headerData,userAuth,walletController.loadWalletPage)
 router.post('/create-recharge-order',userAuth,walletController.createRechargeOrder);
@@ -101,6 +102,7 @@ router.post('/returnProduct',userAuth,orderController.initializeReturn);
 //super coin
 router.get('/superCoins',headerData,userAuth,userController.loadSuperCoin);
 router.post('/scrachReward',userAuth,userController.scrachReward);
+
 
 
 

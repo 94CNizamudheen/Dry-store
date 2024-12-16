@@ -1,0 +1,550 @@
+<%- include('../partials/user/header.ejs') %>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .checkout-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .checkout-steps {
+            margin-bottom: 30px;
+        }
+        .step {
+            display: none;
+        }
+        .step.active {
+            display: block;
+        }
+        .product-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+        }
+        .product-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        .coupon-card {
+            border: 1px dashed #007bff;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .payment-method-card {
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="index.html" rel="nofollow">Home</a>
+                <span></span> Shop <span></span> Checkout
+            </div>
+        </div>
+    </div>
+    <% if(isEmpty) {%>
+        <div class="text-center my-5">
+            <h2>Your Cart is Empty</h2>
+            <p>Looks like you haven't added any items to your cart yet.</p>
+            <a href="/shop" class="btn btn-primary">Continue Shopping</a>
+        </div>
+        <% }else {%>
+    <div class="container ">
+        <div class="checkout-container">
+            <!-- Checkout Steps Navigation (Remains the same) -->
+            <div class="checkout-steps d-flex justify-content-between mb-4">
+                <div class="step-indicator btn btn-primary btn-sm" data-step="1">1. Cart Details</div>
+                <div class="step-indicator btn btn-outline-secondary btn-sm" data-step="2">2. Shipping Address</div>
+                <div class="step-indicator btn btn-outline-secondary btn-sm" data-step="3">3. Payment</div>
+            </div>
+    
+            <!-- Step 1: Cart Details (Modified) -->
+            <div class="step active" id="step1">
+                <h3 class="mb-4">Your Cart</h3>
+                <% cart.items.forEach(item=> { %> 
+                <div class="product-item">
+                    <img src="/uploads/images/<%= item.productId.productImage[0] %>" alt="#">
+                    <div class="flex-grow-1">
+                        <h5><%= item.productId.productName %></h5>
+                        <p class="text-muted mb-1">Quantity: <%= item.quantity %></p>
+                        <span class="text-success fw-bold">₹<%= item.totalPrice.toFixed(2) %></span><br>
+                        <span class="text-danger text-decoration-line-through"> ₹<%= (item.productId.regularPrice*item.quantity).toFixed(2) %></span>
+                    </div>
+                </div>
+                <% }) %>
+                
+    
+                <!-- Available Coupons Section (Remains the same) -->
+                <div class="mt-4">
+                    <button class="btn btn-outline-primary w-100" type="button" data-bs-toggle="collapse" data-bs-target="#availableCoupons">
+                        View Available Coupons
+                    </button>
+    
+                    <div class="collapse mt-3" id="availableCoupons">
+                        <% if(coupons.length<=0) {%>
+                            <h3 class="text-danger">No active coupons</h3>
+                        <% }else{ %>
+                            <% coupons.forEach((coupon, index)=> { %>
+                        <div class="coupon-card">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">CODE: <%= coupon.code %></h6>
+                                    <p class="text-muted mb-0"><%= coupon.discountType==='percentage'? coupon.discountValue + '% OFF' : '₹' + coupon.discountValue+ ' OFF' %></p>
+
+                                    <h5>
+                                        <% if (coupon.minimumPrice) { %>
+                                            Minimum Purchase: ₹<%= coupon.minimumPrice %>
+                                        <% } %>
+                                    </h5>
+                                </div>
+                                <button id="applyBtn" class="btn btn-primary <%= discount > 0 ? 'd-none' : '' %>">
+                                Apply Coupon
+                                </button>
+                                <button id="removeBtn"class="btn btn-danger <%= discount > 0 ? '' : 'd-none' %>">
+                                Remove Coupon
+                                </button>
+                            </div>
+                        </div>
+                        <% }) %>
+                        <% } %>
+                        
+                    </div>
+                </div>
+    
+                <div class="cart-summary mt-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Order Summary</h5>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Regular Total</span>
+                                <span id="regular-total">₹<%= regularTotal.toFixed(2) %></span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Product/Category Discount</span>
+                                <span class="text-success" id="product-discount">- ₹<%= totalDiscount.toFixed(2) %></span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Coupon Discount</span>
+                                <span class="text-success" id="coupon-discount">-₹<%= discount.toFixed(2) %></span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between fw-bold">
+                                <span>Subtotal</span>
+                                <% if (discount===0) { %>
+                                    <input type="hidden" id="total" value="<%= total.toFixed(2) %>">
+                                    <span id="totalAmount" class="font-xl text-brand fw-900 text-success">₹<%= total.toFixed(2) %></span>
+                                    <% } else { %>
+                                        <input type="hidden" id="total" value="<%= discountedTotal.toFixed(2) %>">
+                                        <span id="totalAmount" class="font-xl text-brand fw-900 text-success">₹ <%= discountedTotal.toFixed(2) %></span>
+                                    <% } %>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <button class="btn btn-primary w-100 mt-3 next-step" data-target="2">Proceed to Address</button>
+                </div>
+            </div>
+    
+            <!-- Step 2: Shipping Address (Modified) -->
+            <div class="step" id="step2">
+                <h3 class="mb-4">Shipping Address</h3>
+                
+                <div class="mb-3">
+                    <label class="form-label">Saved Addresses</label>
+                    <% if (userAddress && userAddress.address.length> 0) { %>
+                        <% userAddress.address.forEach((address)=> { %>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="savedAddress" id="address1" checked>
+                        <label class="form-check-label" for="address1">
+                            <%= address.name %>,<%= address.landmark %>,<%= address.city %> ,<%= address.state %>,  <%= address.pincode %>,
+                            <%= address.phone %>
+                        </label>
+                    </div>
+                    <% }) %>
+                    <% } else { %>
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">No Address</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+                    
+                    
+    
+                    <button class="btn btn-outline-primary mb-3" data-bs-toggle="modal" data-bs-target="#newAddressModal">
+                        Add New Address
+                    </button>
+    
+                    <!-- Shipping Method Selection -->
+                    <!-- <div class="shipping-options mt-3">
+                        <label class="form-label">Shipping Method</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="shippingMethod" id="standard-shipping" checked>
+                            <label class="form-check-label" for="standard-shipping">
+                                Standard Shipping (3-5 Business Days)
+                                <span class="text-muted ms-2">$10.00</span>
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="shippingMethod" id="express-shipping">
+                            <label class="form-check-label" for="express-shipping">
+                                Express Shipping (1-2 Business Days)
+                                <span class="text-muted ms-2">$20.00</span>
+                            </label>
+                        </div>
+                    </div>
+                </div> -->
+    
+                <!-- Shipping Summary -->
+                <div class="shipping-summary mt-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Order Summary</h5>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Subtotal</span>
+                                <% if (discount===0) { %>
+                                    <input type="hidden" id="total" value="<%= total.toFixed(2) %>">
+                                    <span id="totalAmount" class="font-xl text-brand fw-900 text-success">₹<%= total.toFixed(2) %></span>
+                                    <% } else { %>
+                                        <input type="hidden" id="total" value="<%= discountedTotal.toFixed(2) %>">
+                                        <span id="totalAmount" class="font-xl text-brand fw-900 text-success">₹
+                                            <%= discountedTotal.toFixed(2) %>
+                                        </span>
+                                    <% } %>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Shipping Charge</span>
+                                <span id="shipping-cost" class="fw-bold">₹<%=shipping.toFixed(2) %></span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between fw-bold">
+                                <span>Total</span>
+                                <span id="shipping-total">$389.98</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="d-flex justify-content-between">
+                    <button class="btn btn-secondary prev-step" data-target="1">Back to Cart</button>
+                    <button class="btn btn-primary next-step" data-target="3">Proceed to Payment</button>
+                </div>
+            </div>
+    
+            <!-- Step 3: Payment (Modified) -->
+            <div class="step" id="step3">
+                <h3 class="mb-4">Payment Method</h3>
+                
+                <div class="payment-method-card">
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="paymentMethod" id="paypal" checked>
+                        <label class="form-check-label" for="paypal">
+                            PayPal
+                        </label>
+                    </div>
+                    <p class="text-muted">You will be redirected to PayPal to complete your payment.</p>
+                </div>
+    
+                <div class="payment-method-card">
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="paymentMethod" id="cod">
+                        <label class="form-check-label" for="cod">
+                            Cash on Delivery (COD)
+                        </label>
+                    </div>
+                    <p class="text-muted">Pay when you receive the package.</p>
+                </div>
+    
+                <div class="payment-method-card">
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="paymentMethod" id="wallet">
+                        <label class="form-check-label" for="wallet">
+                            Wallet
+                        </label>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <p class="text-muted">Available Balance: $500.00</p>
+                        <span class="badge bg-success">Sufficient Balance</span>
+                    </div>
+                </div>
+    
+                <!-- Final Order Summary -->
+                <div class="final-order-summary mt-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Final Order Summary</h5>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Subtotal</span>
+                                <span id="payment-subtotal">$379.98</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Shipping Charge</span>
+                                <span id="payment-shipping-charge">$10.00</span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between fw-bold">
+                                <span>Total Payable</span>
+                                <span id="payment-total">$389.98</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="d-flex justify-content-between mt-4">
+                    <button class="btn btn-secondary prev-step" data-target="2">Back to Address</button>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#orderConfirmModal">
+                        Complete Order
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- adress modal -->
+
+    <div class="modal fade" id="newAddressModal" tabindex="-1" aria-labelledby="newAddressModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newAddressModalLabel">Add New Address</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addressForm" action="/check-out-add-address" method="POST" class="container">
+                        <div class="row">
+                            <!-- First Column -->
+                            <div class="col-md-6">
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <label for="addressType" class="form-label">Address Type</label>
+                                        <input type="text" id="addressType" name="addressType" class="form-control" placeholder="e.g., Home, Office" required />
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <label for="name" class="form-label">Full Name</label>
+                                        <input type="text" id="name" name="name" class="form-control" placeholder="Full Name" required />
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <label for="pincode" class="form-label">Pincode</label>
+                                        <input type="text" id="pincode" name="pincode" class="form-control" placeholder="6-digit Pincode" required />
+                                        <div id="pincode-validation-message" class="text-muted small mt-1"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Towns Selection - Initially Hidden -->
+                                <div id="townsContainer" class="row mb-3" style="display: none;">
+                                    <div class="col-12">
+                                        <label for="towns" class="form-label">Select City</label>
+                                        <select id="towns" name="towns[]" class="form-select" multiple required>
+                                            <!-- Options will be dynamically populated -->
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Second Column -->
+                            <div class="col-md-6">
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <label for="landmark" class="form-label">Landmark</label>
+                                        <input type="text" id="landmark" name="landmark" class="form-control" placeholder="Landmark" />
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <label for="city" class="form-label">City</label>
+                                        <input type="text" id="city" name="city" class="form-control" placeholder="City" required readonly />
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <label for="state" class="form-label">State</label>
+                                        <input type="text" id="state" name="state" class="form-control" placeholder="State" required readonly />
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <label for="phone" class="form-label">Phone</label>
+                                        <input type="tel" id="phone" name="phone" class="form-control" placeholder="Phone Number" required pattern="[0-9]{10}" />
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <label for="altPhone" class="form-label">Alternative Phone</label>
+                                        <input type="tel" id="altPhone" name="altPhone" class="form-control" placeholder="Alternative Phone" pattern="[0-9]{10}" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary w-100">Add Address</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <% } %>
+    
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const shippingMethodRadios = document.querySelectorAll('input[name="shippingMethod"]');
+        const subtotal = 379.98;
+    
+        // Elements to update
+        const elements = {
+            shippingCharge: [
+                document.getElementById('shipping-charge'),
+                document.getElementById('payment-shipping-charge')
+            ],
+            total: [
+                document.getElementById('shipping-total'),
+                document.getElementById('payment-total')
+            ]
+        };
+    
+        shippingMethodRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                const shippingCharge = this.id === 'standard-shipping' ? 10.00 : 20.00;
+                const newTotal = subtotal + shippingCharge;
+    
+                // Update shipping charge
+                elements.shippingCharge.forEach(el => {
+                    el.textContent = `$${shippingCharge.toFixed(2)}`;
+                });
+    
+                // Update total
+                elements.total.forEach(el => {
+                    el.textContent = `$${newTotal.toFixed(2)}`;
+                });
+            });
+        });
+    });
+    </script>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+   <script>
+    document.querySelectorAll('.next-step').forEach(button => {
+    button.addEventListener('click', function() {
+        const currentStep = this.closest('.step');
+        const targetStepNumber = this.getAttribute('data-target');
+        const targetStep = document.getElementById('step' + targetStepNumber);
+        const stepIndicators = document.querySelectorAll('.step-indicator');
+
+        // Hide current step
+        currentStep.classList.remove('active');
+        
+        // Show target step
+        targetStep.classList.add('active');
+
+        // Update step indicators
+        stepIndicators.forEach(indicator => {
+            indicator.classList.remove('btn-primary');
+            indicator.classList.add('btn-outline-secondary');
+        });
+        stepIndicators[targetStepNumber - 1].classList.remove('btn-outline-secondary');
+        stepIndicators[targetStepNumber - 1].classList.add('btn-primary');
+    });
+});
+
+// Previous Step Navigation
+document.querySelectorAll('.prev-step').forEach(button => {
+    button.addEventListener('click', function() {
+        const currentStep = this.closest('.step');
+        const targetStepNumber = this.getAttribute('data-target');
+        const targetStep = document.getElementById('step' + targetStepNumber);
+        const stepIndicators = document.querySelectorAll('.step-indicator');
+
+        // Hide current step
+        currentStep.classList.remove('active');
+        
+        // Show target step
+        targetStep.classList.add('active');
+
+        // Update step indicators
+        stepIndicators.forEach(indicator => {
+            indicator.classList.remove('btn-primary');
+            indicator.classList.add('btn-outline-secondary');
+        });
+        stepIndicators[targetStepNumber - 1].classList.remove('btn-outline-secondary');
+        stepIndicators[targetStepNumber - 1].classList.add('btn-primary');
+    });
+});
+
+// // Coupon Application (Optional Enhancement)
+// document.querySelectorAll('#availableCoupons .btn-outline-success').forEach(couponButton => {
+//     couponButton.addEventListener('click', function() {
+//         const couponCode = this.closest('.coupon-card').querySelector('h6').textContent;
+//         alert(`Coupon ${couponCode} applied!`);
+//         // In a real implementation, you would:
+//         // 1. Validate coupon
+//         // 2. Apply discount
+//         // 3. Update order summary
+//         // 4. Disable the applied coupon button
+//     });
+// });
+
+// Address Form Validation (Basic Example)
+document.querySelector('#newAddressModal .btn-primary').addEventListener('click', function() {
+    const firstName = document.querySelector('#newAddressModal input[type="text"]');
+    const lastName = document.querySelector('#newAddressModal input[type="text"]:nth-of-type(2)');
+    const address = document.querySelector('#newAddressModal input[type="text"]:nth-of-type(3)');
+    const city = document.querySelector('#newAddressModal input[type="text"]:nth-of-type(4)');
+    const state = document.querySelector('#newAddressModal input[type="text"]:nth-of-type(5)');
+    const zip = document.querySelector('#newAddressModal input[type="text"]:nth-of-type(6)');
+
+    const fields = [firstName, lastName, address, city, state, zip];
+    let isValid = true;
+
+    fields.forEach(field => {
+        if (field.value.trim() === '') {
+            field.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            field.classList.remove('is-invalid');
+        }
+    });
+
+    if (isValid) {
+        alert('Address saved successfully!');
+        // In a real implementation, you would:
+        // 1. Send address to backend
+        // 2. Add address to saved addresses
+        // 3. Close modal
+    }
+});
+   </script>
+
+
+<%- include('../partials/user/footer.ejs') %>
