@@ -80,24 +80,27 @@
             <p>Recover your account</p>
         </div>
         <div class="p-4">
-            <% if (locals.message && message.length > 0) { %>
+            <% if (locals.message && message.length> 0) { %>
                 <div class="alert alert-danger" role="alert">
                     <%= message %>
                 </div>
-            <% } %>
-            <form method="post" action="/verify-email-otp" id="otpForm" onsubmit="return validateOtpForm()">
-                <div class="mb-3">
-                    <input type="text" name="otp" id="otp" placeholder="Enter OTP" maxlength="6" class="form-control">
-                    <div id="otpError" class="error-message"></div>
-                </div>
-                <div class="timer mb-3">
-                    <span class="text-muted">Time remaining: <span id="timer" class="font-weight-bold">1:00</span></span>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Verify OTP</button>
-            </form>
-            <p class="text-center mt-3">
-                Didn’t receive an OTP? <a href="#" id="resendLink" onclick="resendOtp()" class="text-decoration-none text-primary font-weight-bold">Resend OTP</a>
-            </p>
+                <% } %>
+                    <form method="post" action="/verify-email-otp" id="otpForm" onsubmit="return validateOtpForm()">
+                        <div class="mb-3">
+                            <input type="text" name="otp" id="otp" placeholder="Enter OTP" maxlength="6"
+                                class="form-control">
+                            <div id="otpError" class="error-message"></div>
+                        </div>
+                        <div class="timer mb-3">
+                            <span class="text-muted">Time remaining: <span id="timer"
+                                    class="font-weight-bold">1:00</span></span>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Verify OTP</button>
+                    </form>
+                    <p class="text-center mt-3">
+                        Didn’t receive an OTP? <a href="#" id="resendLink" onclick="resendOtp()"
+                            class="text-decoration-none text-primary font-weight-bold">Resend OTP</a>
+                    </p>
         </div>
     </div>
 
@@ -160,6 +163,8 @@
                             timer: 1500,
                             position: 'center',
                             toast: true,
+                            background: 'purple',
+                            color: "gold"
                         }).then(() => {
                             window.location.href = response.redirectUrl;
                         });
@@ -170,6 +175,9 @@
                             text: "Please try again",
                             position: 'center',
                             toast: true,
+                            background: 'purple',
+                            color: "gold"
+
                         });
                     }
                 }

@@ -184,6 +184,8 @@
                                 timer: 1500,
                                 position: 'center',
                                 toast: true,
+                                background: 'purple',
+                            color:"gold"
                             }).then(() => {
                                 window.location.href = response.redirectUrl; 
                             });
@@ -194,6 +196,8 @@
                                 text: response.message || "Please try again",
                                 position: 'center',
                                 toast: true,
+                                background: 'purple',
+                            color:"gold"
                             });
                         }
                     },
@@ -206,6 +210,8 @@
                             text: errorMessage,
                             position: 'center',
                             toast: true,
+                            background: 'purple',
+                            color:"gold"
                         });
                     }
                 });
@@ -229,6 +235,8 @@
                             showConfirmButton: false,
                             toast: true,
                             position: "center",
+                            background: 'purple',
+                            color:"gold"
                         });
                     },
                     error: function () {
@@ -238,6 +246,8 @@
                             text: "Failed to resend OTP. Please try again later.",
                             toast: true,
                             position: "center",
+                            background: 'purple',
+                            color:"gold"
                         });
                     }
                 });

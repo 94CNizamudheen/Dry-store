@@ -17,6 +17,54 @@ const {generateOrderInvoice}= require('../../utilities/pdf');
 const Review =require('../../models/reviewSchema');
 
 
+async function getMostPopularProducts(limit=5){
+    try {
+        const popularProducts= Order.aggregate([
+            {$unwind:"$orderedItems"},
+            {$group:{_id:"$orderedItems.product",totalQuantity:{$sum:"$orderedItems.quantity"}}},
+            {$sort:{totalQuantity:-1}},
+            {$limit:limit},
+            {$lookup:{from:"products",localField:"_id",foreignField:"_id",as:"productDetails"}},
+            {$unwind:"$productDetails"},
+            {$project:{
+                _id:0,
+                productId:"$productDetails._id",
+                productName:"$productDetails.productName",
+                description:"$productDetails.description",
+                salePrice:"$productDetails.salePrice",
+                regularPrice:"$productDetails.regularPrice",
+                productImage:"$productDetails.productImage",
+                totalQuantitySold:"$totalQuantity",
+                quantity:"$productDetails.quantity",
+                category:"$productDetails.category",
+                brand:"$productDetails.brand",
+                status:"$productDetails.status",
+                productOffer:"$productDetails.productOffer"
+            }}
+        ]);
+        return popularProducts
+    } catch (error) {
+        console.error("Error fetching popular products:", error);
+        throw error;
+    }
+}
+async function getAverageRating(productId){
+    try {
+        const reviews= await Review.find({productId:productId}).populate('userId',"name")
+        let totalRating = 0;
+        let reviewCount = reviews.length;
+
+        if (reviewCount > 0) {
+            totalRating = reviews.reduce((acc, review) => acc + review.rating, 0);
+        }
+        const averageRating = reviewCount > 0 ? totalRating / reviewCount : 0;
+        return averageRating;
+        return reviews;
+        
+    } catch (error) {
+        console.error("error for fetching average rating",error);
+    }
+}
 
 
 async function getOrderDetails(orderId){
@@ -114,14 +162,22 @@ const loadHomepage = async (req, res) => {
             .sort({ createdAt: -1 });
         productData.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
         productData = productData.slice(0, 4);
+        const mostPopularProducts = await getMostPopularProducts(5)
+        
         
         if (user) {
             const userData = await User.findOne({ _id: user._id });
-            return res.render("home", { user: userData, products: productData,brands:brands });
+            return res.render("home", { 
+                user: userData,
+                 products: productData,
+                 brands:brands,
+                 popularProducts:mostPopularProducts
+                 });
         } else {
             return res.render("home", {
                 products: productData,
-                brands:brands
+                brands:brands,
+                popularProducts:mostPopularProducts
             });
         }
     } catch (error) {
@@ -501,17 +557,18 @@ const getProductDetials = async (req, res) => {
         const productData = await Product.findById(productId)
             .populate("category", "name categoryOffer")
             .populate("brand","brandName");
-        
-        const reviews= await Review.find({productId:productId}).populate('userId',"name")
-        let totalRating = 0;
-        let reviewCount = reviews.length;
 
-        if (reviewCount > 0) {
-            totalRating = reviews.reduce((acc, review) => acc + review.rating, 0);
-        }
-        const averageRating = reviewCount > 0 ? totalRating / reviewCount : 0;
+        const reviews= await Review.find({productId:productId}).populate('userId',"name")
+        const averageRating= await getAverageRating(productId);
+        
+        
         if (productData) {
-            return res.render("productDetails", { data: productData, user: user,reviews,averageRating });
+            return res.render("productDetails", {
+                data: productData,
+                user: user,
+                reviews,
+                averageRating,
+            });
         }
     } catch (error) {
         console.log("error in product details page", error);

@@ -263,7 +263,10 @@ const applyCoupon = async (req, res) => {
         console.log("apply coupon invoked");
         const { code, totalAmount } = req.body;
         const userId = req.session.user;
-
+        const selectedAddressId=req.session.selectedAddress;
+        if (!selectedAddressId) {
+            return res.status(400).json({ message: "Please select a delivery address" });
+        }
         const currentShippingCharge = req.session.shippingCharge || 0;
 
         const coupon = await Coupon.findOne({ code, userId: { $ne: userId } });
@@ -297,10 +300,8 @@ const applyCoupon = async (req, res) => {
         }
         const discountedTotal = totalAmount - discount;
 
-        // Determine shipping charge based on current shipping charge and discounted total
         const shipping = discountedTotal >= 1000 ? 0 : currentShippingCharge;
 
-        // Store values in session
         req.session.discountedTotal = discountedTotal;
         req.session.discount = discount;
         req.session.couponCode = code;

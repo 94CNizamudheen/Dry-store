@@ -76,6 +76,8 @@ router.get('/orderList/:orderId',adminAuth,orderController.getOrderDetails);
 router.post('/cancelOrder/:orderId',adminAuth,orderController.cancelOrder);
 router.patch('/returnRequestHandle',adminAuth,orderController.handleReturnRequest);
 
+
+
 //coupon managment 
 router.get('/coupon',adminAuth,coupenController.loadCouponPage);
 router.post('/coupon',adminAuth,coupenController.createCoupon);

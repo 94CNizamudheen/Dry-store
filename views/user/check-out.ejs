@@ -16,15 +16,108 @@
             margin-bottom: 10px;
         }
 
-        .btn-outline-success {
-            padding: 5px 20px;
-            font-size: 0.9rem;
+        .wallet-timeline-container {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            gap: 20px;
+        }
+        .wallet-card {
+            flex: 0 0 300px;
+            max-width: 300px;
+            border-radius: 15px;
+            background: #f8f9fa;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .wallet-card .card-header {
+            background-color: #6c757d !important;
+            border-radius: 15px 15px 0 0;
+            color: white;
+        }
+        .wallet-balance {
+            color: #650a5c;
+            font-size: 1.5rem;
+        }
+        .checkout-timeline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            flex-grow: 1;
+            min-width: 300px;
+        }
+        .timeline-connector {
+            position: absolute;
+            height: 4px;
+            background-color: #e9efec;
+            top: 30px;
+            left: 0;
+            right: 0;
+            z-index: 0;
+        }
+        .timeline-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+        .timeline-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #e9ecef;
+            color: #6c757d;
+            font-size: 24px;
+            margin-bottom: 10px;
             transition: all 0.3s ease;
         }
-
-        .btn-outline-success:hover {
-            background-color: #28a745;
+        .timeline-item.active .timeline-icon {
+            background-color: #349636;
             color: white;
+            box-shadow: 0 0 0 4px rgba(0,123,255,0.3);
+        }
+        .timeline-text {
+            text-align: center;
+            color: #6c757d;
+            font-weight: 500;
+        }
+        .timeline-item.active .timeline-text {
+            color: #007bff;
+            font-weight: bold;
+        }
+        @media (max-width: 992px) {
+            .wallet-timeline-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .wallet-card {
+                max-width: 100%;
+                width: 100%;
+            }
+            .checkout-timeline {
+                flex-direction: column;
+            }
+            .timeline-connector {
+                display: none;
+            }
+            .timeline-item {
+                flex-direction: row;
+                width: 100%;
+                margin-bottom: 15px;
+                justify-content: flex-start;
+            }
+            .timeline-icon {
+                margin-right: 15px;
+                margin-bottom: 0;
+            }
+            .timeline-text {
+                text-align: left;
+            }
         }
     </style>
 
@@ -69,21 +162,21 @@
                                                         id="address-<%= address._id %>">
                                                         <div class="card-header">
                                                             <h5 class="mb-0">
-                                                                Address Type: <%= address.addressType %>
+                                                            Address Type: <%= address.addressType %>
                                                             </h5>
                                                         </div>
                                                         <div class="card-body">
                                                             <address>
                                                                 Name: <%= address.name %><br />
-                                                                    City: <%= address.city %><br />
-                                                                        Landmark: <%= address.landmark %><br />
-                                                                            State: <%= address.state %><br />
-                                                                                Pincode: <%= address.pincode %>
-                                                                                    <br />
-                                                                                    Phone: <%= address.phone %>
-                                                                                        <br />
-                                                                                        Alternative Phone: <%=
-                                                                                            address.altPhone %>
+                                                                City: <%= address.city %><br />
+                                                                Landmark: <%= address.landmark %><br />
+                                                                State: <%= address.state %><br />
+                                                                Pincode: <%= address.pincode %>
+                                                                <br />
+                                                                Phone: <%= address.phone %>
+                                                                <br />
+                                                                 Alternative Phone: <%=
+                                                                address.altPhone %>
                                                             </address>
                                                             <a href="/edit-address/?id=<%= address._id %>"
                                                                 class="btn btn-primary btn-sm">Edit</a>
@@ -264,6 +357,7 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <br>
                                     <div class="toggle_info">
                                         <span><i class="fi-rs-label mr-10"></i>
                                             <a href="#coupons" data-bs-toggle="collapse" class="collapsed"
@@ -279,48 +373,43 @@
                                                             <div class="col-sm-12">
                                                                 <h3 class="mb-3 text-success">Active Coupons</h3>
                                                             </div>
-                                                            <% coupons.forEach((coupon, index)=> { %>
-                                                                <div class="col-md-5 mb-3">
-                                                                    <div
-                                                                        class="card <%= (new Date(coupon.expiryOn) < new Date() || coupon.usageLimit - coupon.timesUsed <= 0) 
-                                                                    ? 'border-danger bg-danger text-white opacity-17' 
-                                                                    : (index % 2 === 0 ? 'border-success bg-light' : 'border-warning bg-light') %>">
+                                                            <% coupons.forEach((coupon, index) => {%> 
+                                                               
+                                                               <%  if (new Date(coupon.expiryOn) >= new Date() && coupon.usageLimit - coupon.timesUsed > 0) { %>
+                                                                    <div class="col-md-5 mb-3">
                                                                         <div
-                                                                            class="card-header bg-<%= (new Date(coupon.expiryOn) < new Date() || coupon.usageLimit - coupon.timesUsed <= 0) 
-                                                                        ? 'danger' 
-                                                                        : (index % 2 === 0 ? 'success' : 'warning') %> text-white">
-                                                                            <h5>
-                                                                                <% if (coupon.minimumPrice) { %>
-                                                                                    Minimum Purchase: ₹<%= coupon.minimumPrice %>
-                                                                                <% } %>
-                                                                            </h5>
-                                                                        </div>
-                                                                        <div class="card-body">
-                                                                            <p class="card-text">
-                                                                                <span class="badge bg-info">
-                                                                                    <%= coupon.discountType==='percentage'? coupon.discountValue + '% OFF' : '₹' + coupon.discountValue+ ' OFF' %>
-                                                                                </span>
-                                                                            </p>
-                                                                            <ul class="list-unstyled">
-                                                                                <li><strong>Code:</strong><br>
-                                                                                    <%= coupon.code %>
-                                                                                </li>
-                                                                                <li><strong>Expires:</strong>
-                                                                                    <%= new
-                                                                                        Date(coupon.expiryOn).toLocaleDateString()
-                                                                                        %>
-                                                                                </li>
-                                                                                <li><strong>Usage Limit:</strong>
-                                                                                    <%= coupon.usageLimit -
-                                                                                        coupon.timesUsed %>
-                                                                                        Left
-                                                                                </li>
-                                                                            </ul>
+                                                                            class="card <%= (index % 2 === 0 ? 'border-success bg-light' : 'border-warning bg-light') %>">
+                                                                            <div
+                                                                                class="card-header bg-<%= (index % 2 === 0 ? 'success' : 'warning') %> text-white">
+                                                                                <h5>
+                                                                                    <% if (coupon.minimumPrice) { %>
+                                                                                        Minimum Purchase: ₹<%= coupon.minimumPrice %>
+                                                                                    <% } %>
+                                                                                </h5>
+                                                                            </div>
+                                                                            <div class="card-body">
+                                                                                <p class="card-text">
+                                                                                    <span class="badge bg-info">
+                                                                                        <%= coupon.discountType === 'percentage'? coupon.discountValue + '% OFF': '₹' + coupon.discountValue + ' OFF' %>
+                                                                                    </span>
+                                                                                </p>
+                                                                                <ul class="list-unstyled">
+                                                                                    <li><strong>Code:</strong><br>
+                                                                                        <%= coupon.code %>
+                                                                                    </li>
+                                                                                    <li><strong>Expires:</strong>
+                                                                                        <%= new Date(coupon.expiryOn).toLocaleDateString() %>
+                                                                                    </li>
+                                                                                    <li><strong>Usage Limit:</strong>
+                                                                                        <%= coupon.usageLimit - coupon.timesUsed %> Left
+                                                                                    </li>
+                                                                                </ul>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                                <% }) %>
-                                                                    <% } %>
+                                                            <% } %>
+                                                            <% }) %>
+                                                        <% } %>
                                                 </div>
                                             </div>
 
@@ -419,25 +508,25 @@
                                     </table>
 
                                 </div>
-                                <div class="container mt-4 d-flex justify-content-start">
-                                    <div class="card text-center shadow-sm p-3"
-                                        style="border-radius: 15px; max-width: 300px; background: #f8f9fa;">
-                                        <div class="card-header bg-secondary text-white"
-                                            style="border-radius: 15px 15px 0 0;">
-                                            <h5>Wallet Balance</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <h6 class="card-title" style="font-size: 1.5rem; color: #650a5c;">₹
-                                                <span id="walletBalance">
-                                                    <%= walletBalance.toFixed(2) %>
-                                                </span>
-                                            </h6>
-                                            <a href="/wallet" class="btn btn-sm btn-outline-success"
-                                                style="border-radius: 20px;">Add Funds</a>
-
+                                <div class="container mt-4">
+                                        <div class="wallet-timeline-container">
+                                            <div class="card wallet-card text-center shadow-sm p-3">
+                                                <div class="card-header text-white">
+                                                    <h5>Wallet Balance</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <h6 class="card-title wallet-balance">₹ 
+                                                        <span id="walletBalance"> <%= walletBalance.toFixed(2) %></span>
+                                                    </h6>
+                                                    <a href="/wallet" class="btn btn-sm btn-outline-success" style="border-radius: 20px;">
+                                                        Add Funds
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        
+                                            
                                         </div>
                                     </div>
-                                </div>
 
 
                                 <div class="bt-1 border-color-1 mt-30 mb-30"></div>
@@ -566,8 +655,7 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <button type="button " class="btn btn-primary w-100 mt-4 btn-sm"
-                                            id="retryPaymentBtn">
+                                        <button type="button " class="btn btn-primary w-100 mt-4 btn-sm" id="retryPaymentBtn">
                                             Retry Payment
                                         </button>
                                     </div>
@@ -582,7 +670,7 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js" async defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const pincodeInput = document.getElementById('pincode');
@@ -691,6 +779,43 @@
         });
     </script>
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+    const timelineItems = document.querySelectorAll('.timeline-item');
+
+   
+    function updateTimeline(stepIndex) {
+        timelineItems.forEach((item, index) => {
+            if (index <= stepIndex) {
+                item.classList.add('active'); // Activate current and all previous steps
+            } else {
+                item.classList.remove('active'); // Deactivate future steps
+            }
+        });
+    }
+
+    // Address Selection
+    const addressButtons = document.querySelectorAll('.select-btn');
+    addressButtons.forEach((button) => {
+        button.addEventListener('click', (event) => {
+            event.preventDefault(); // Prevent default link behavior
+            updateTimeline(1); // Activate "Address" step
+        });
+    });
+
+    // Payment Option Selection
+    const paymentOptions = document.querySelectorAll('input[name="paymentOption"]');
+    paymentOptions.forEach((option) => {
+        option.addEventListener('change', () => {
+            updateTimeline(2); // Activate "Payment" step
+        });
+    });
+});
+
+
+    </script>
+   
+
+    <script>
         const discountedTotalElement = document.querySelector('.fw-bold.text-success');
         const discountedTotal = parseFloat(
             discountedTotalElement.textContent.replace('₹', '').trim() || 0
@@ -700,7 +825,7 @@
         console.log("discountedTotal=", discountedTotal);
 
         if (discountedTotal >= 1000) {
-            shippingElement.innerText = "₹ 0.00";
+            shippingElement.innerText = "Free Shipping";
         }
     </script>
 
@@ -728,10 +853,11 @@
                     text: "Please enter a coupon code",
                     position: "center",
                     toast: true,
+                    background: 'purple',
+                    color:"gold"
                 });
                 return;
             }
-
             fetch('/apply-coupon', {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
@@ -745,6 +871,8 @@
 
                     if (data.success) {
                         const shippingCostElement = document.getElementById('shipping-cost');
+                        totalAmountElement.textContent=`₹${data.discountedTotal.toFixed(2)}`;
+                       
                         if (data.shipping === 0) {
                             shippingCostElement.textContent = "Free Shipping";
                         } else {
@@ -755,15 +883,19 @@
                             title: 'Success',
                             text: "Coupon applied successfully",
                             position: "center",
-                            toast: true
+                            toast: true,
+                            background: 'purple',
+                            color:"gold"
                         })
                     } else {
                         Swal.fire({
-                            icon: "error",
+                            icon: "info",
                             title: "Error",
                             text: data.message || "Invalid Coupon",
                             position: "center",
                             toast: true,
+                            background: 'purple',
+                            color:"gold"
                         });
                     }
                 })
@@ -775,11 +907,11 @@
                         text: "An error occurred. Please try again",
                         position: "center",
                         toast: true,
+                        background: 'purple',
+                        color:"gold"
                     });
                 })
-                .finally(() => {
-                    loadingSpinner.classList.add('d-none');
-                });
+                
         });
 
         document.getElementById('removeBtn').addEventListener("click", function () {
@@ -797,7 +929,9 @@
                             title: 'Success',
                             text: "Coupon removed successfully",
                             position: "center",
-                            toast: true
+                            toast: true,
+                            background: 'purple',
+                            color:"gold"
                         }).then(() => {
                             location.reload();
                         });
@@ -810,25 +944,23 @@
                         text: "An error occurred while removing the coupon",
                         position: "center",
                         toast: true,
+                        background: 'purple',
+                        color:"gold"
                     });
                 })
 
         });
 
         document.addEventListener('DOMContentLoaded', () => {
-
             const selectButtons = document.querySelectorAll('.select-btn');
             selectButtons.forEach(button => {
                 button.addEventListener('click', (event) => {
                     event.preventDefault();
                     const addressId = button.getAttribute('data-id');
-
-
                     selectButtons.forEach(btn => {
                         btn.disabled = true;
                         btn.classList.add('disabled');
                     });
-
 
                     const shippingChargeElement = document.getElementById('shipping-cost');
                     const originalText = shippingChargeElement.innerText;
@@ -858,7 +990,9 @@
                                     text: data.error || "Failed to select the address. Please try again.",
                                     icon: "error",
                                     toast: true,
-                                    position: "center"
+                                    position: "center",
+                                    background: 'purple',
+                                     color:"gold"
 
                                 });
                             }
@@ -879,7 +1013,9 @@
                                 text: "An error occurred while selecting the address. Please try again.",
                                 icon: "error",
                                 toast: true,
-                                position: "center"
+                                position: "center",
+                                background: 'purple',
+                                color:"gold"
                             });
                         });
                 });
@@ -891,7 +1027,6 @@
                 const { addressId, shippingCharge } = JSON.parse(loadingData);
 
                 sessionStorage.removeItem('loadingShippingCharge');
-
 
                 const shippingChargeElement = document.getElementById('shipping-coast');
                 shippingChargeElement.innerText = `₹ ${shippingCharge.toFixed(2)}`;
@@ -946,16 +1081,6 @@
                                         placeOrderButton.style.display = 'block';
                                     }
 
-
-                                    Swal.fire({
-                                        title: "Payment Method",
-                                        text: `${selectedPaymentMethod.value} payment method selected`,
-                                        icon: "success",
-                                        toast: true,
-                                        position: 'center',
-                                        showConfirmButton: false,
-                                        timer: 2000
-                                    });
                                 } else {
 
                                     Swal.fire({
@@ -964,6 +1089,8 @@
                                         icon: "error",
                                         toast: true,
                                         position: 'center',
+                                        background: 'purple',
+                                         color:"gold"
                                     });
                                 }
                             } catch (error) {
@@ -974,6 +1101,8 @@
                                     icon: "error",
                                     toast: true,
                                     position: 'center',
+                                    background: 'purple',
+                                color:"gold"
                                 });
                             }
                         }
@@ -992,6 +1121,8 @@
                             icon: "error",
                             position: 'center',
                             toast: true,
+                            background: 'purple',
+                                color:"gold"
                         });
                         return;
                     }
@@ -1008,15 +1139,9 @@
 
                             const data = await response.json();
                             if (data.success) {
-                                Swal.fire({
-                                    title: "Order Placed",
-                                    text: "Your order has been placed successfully!",
-                                    icon: "success",
-                                    position: 'center',
-                                    toast: true,
-                                }).then(() => {
+                               
                                     window.location.href = data.redirectURL;
-                                });
+                                
                             } else {
                                 Swal.fire({
                                     title: "Error",
@@ -1024,6 +1149,9 @@
                                     icon: "error",
                                     position: 'center',
                                     toast: true,
+                                    background: 'purple',
+                                color:"gold"
+                                    
                                 });
                             }
                         } catch (error) {
@@ -1034,6 +1162,8 @@
                                 icon: "error",
                                 position: 'center',
                                 toast: true,
+                                background: 'purple',
+                                color:"gold"
                             });
                         }
                     } else if (paymentMethod === 'ONLINE') {
@@ -1083,15 +1213,8 @@
                                 const verifyResult = await verifyResponse.json();
                                 if (verifyResult.success) {
 
-                                    Swal.fire({
-                                        title: "Payment Success",
-                                        text: "Your payment has been processed successfully.",
-                                        icon: "success",
-                                        position: 'center',
-                                        toast: true,
-                                    }).then(() => {
                                         window.location.href = verifyResult.redirectURL;
-                                    })
+                              
                                 } else {
                                     throw new Error("Payment verification Failed");
                                 }
@@ -1102,6 +1225,8 @@
                                     icon: "error",
                                     position: 'center',
                                     toast: true,
+                                    background: 'purple',
+                                color:"gold"
                                 })
                             }
                         },
@@ -1152,6 +1277,8 @@
                                                         icon: "error",
                                                         position: 'center',
                                                         toast: true,
+                                                        background: 'purple',
+                                                         color:"gold"
                                                     });
                                                 } else {
 
@@ -1165,6 +1292,8 @@
                                                     icon: "error",
                                                     position: 'center',
                                                     toast: true,
+                                                    background: 'purple',
+                                                    color:"gold"
                                                 });
                                             }
                                         });
@@ -1184,6 +1313,8 @@
                                                     icon: "warning",
                                                     position: 'center',
                                                     toast: true,
+                                                    background: 'purple',
+                                                    color:"gold"
                                                 });
                                             }
                                         });
@@ -1196,6 +1327,8 @@
                                         icon: "error",
                                         position: 'center',
                                         toast: true,
+                                        background: 'purple',
+                                        color:"gold"
                                     });
                                 }
                             }
@@ -1210,7 +1343,9 @@
                         text: error.message || "Failed to initialize payment. Please try again",
                         position: 'center',
                         toast: true,
-                        icon: "error"
+                        icon: "error",
+                        background: 'purple',
+                        color:"gold"
                     });
                 }
             }
@@ -1277,6 +1412,8 @@
                         icon: "error",
                         position: 'center',
                         toast: true,
+                        background: 'purple',
+                                color:"gold"
                     });
                     isValid = false;
                 }

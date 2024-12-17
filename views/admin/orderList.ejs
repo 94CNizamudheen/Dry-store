@@ -11,7 +11,7 @@
 
         .card {
             border: none;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
         }
 
         .status-badge {
@@ -35,224 +35,236 @@
             max-width: 300px;
         }
     </style>
-</head>
+    </head>
 
 
     <br><br><br>
-<!-- Main Content -->
-<div class="container-fluid py-4">
-   <div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Order Management</h3>
-                <div class="float-start">
-                    <input type="text" id="orderSearch" class="form-control" placeholder="Search orders...">
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Order ID</th>
-                                <th>Customer</th>
-                                <th>Date</th>
-                                <th>Total Amount</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                                <th>Return Requests</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% orders.forEach(order => { %>
-                            <tr>
-                                <td><%= order.orderId %></td>
-                                <td>
-                                    <%= order.customerName %><br>
-                                    <small class="text-muted"><%= order.customerEmail %></small>
-                                </td>
-                                <td><%= order.createdOn %></td>
-                                <td>
-                                    ₹<%= order.finalAmount.toFixed(2) %>
-                                    <% if (order.discount > 0) { %>
-                                        <br><small class="text-success">Saved ₹<%= order.discount.toFixed(2) %></small>
-                                    <% } %>
-                                </td>
-                                <td>
-                                    <select class="form-select form-select-sm status-select" 
-                                            data-order-id="<%= order.orderId %>">
-                                        <% statusOptions.forEach(status => { %>
-                                            <option value="<%= status %>" 
-                                                    <%= order.status === status ? 'selected' : '' %>>
-                                                <%= status %>
-                                            </option>
-                                        <% }); %>
-                                    </select>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-primary view-details" 
-                                            data-order-id="<%= order.orderId %>">
-                                        <i class="fas fa-eye"></i> View
-                                    </button>
-                                    <% if (order.status === 'Pending') { %>
-                                        <button class="btn btn-sm btn-danger cancel-order"
-                                                data-order-id="<%= order.orderId %>">
-                                            <i class="fas fa-times"></i> Cancel Order
-                                        </button>
-                                    <% } %>
-                                </td>
-                                <td>
-                                    <% order.items.forEach(item => { %>
-                                        <% if (item.returnDetails && (item.returnDetails.status === 'Return Requested' ||  item.returnDetails.status === 'Approved')) { %>
-                                            <div>
-                                                <p><%= item.productName %></p>
-                                                <% if (item.returnDetails.status !== 'Rejected') { %>
-                                                    <select class="form-select return-action" 
-                                                            data-order-id="<%= order.orderId %>" data-item-id="<%= item.productId %>">
-                                                        <option value="">Select Action</option>
-                                                        <% if (item.returnDetails.status !== 'Approved') { %>
-                                                            <option value="approve">Approve Return</option>
+    <!-- Main Content -->
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Order Management</h3>
+                        <div class="float-start">
+                            <input type="text" id="orderSearch" class="form-control" placeholder="Search orders...">
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Customer</th>
+                                        <th>Date</th>
+                                        <th>Total Amount</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                        <th>Return Requests</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% orders.forEach(order=> { %>
+                                        <tr>
+                                            <td>
+                                                <%= order.orderId %>
+                                            </td>
+                                            <td>
+                                                <%= order.customerName %><br>
+                                                    <small class="text-muted">
+                                                        <%= order.customerEmail %>
+                                                    </small>
+                                            </td>
+                                            <td>
+                                                <%= order.createdOn %>
+                                            </td>
+                                            <td>
+                                                ₹<%= order.finalAmount.toFixed(2) %>
+                                                    <% if (order.discount> 0) { %>
+                                                        <br><small class="text-success">Saved ₹<%=
+                                                                order.discount.toFixed(2) %></small>
                                                         <% } %>
-                                                        <% if (item.returnDetails.status !== 'Rejected') { %>
-                                                            <option value="reject">Reject Return</option>
+                                            </td>
+                                            <td>
+                                                <select class="form-select form-select-sm status-select" data-order-id="<%= order.orderId %>">
+                                                    <% statusProgression={ 'Pending' : ['Pending','Processing', 'Shipped', 'Delivered' , 'Cancelled' ], 'Processing' :['Processing','Shipped', 'Delivered' , 'Cancelled' ], 'Shipped' :['Shipped','Delivered', 'Return Request' ], 'Delivered' :['Delivered'],  };
+                                                       const allowedStatuses=statusProgression[order.status] || []; 
+                                                     
+                                                        allowedStatuses.forEach(status=> {%>
+                                                        <option value="<%= status %>" <%=order.status===status? 'selected' : '' %>>
+                                                            <%= status %>
+                                                        </option>
+                                                        <% }); %>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary view-details"
+                                                    data-order-id="<%= order.orderId %>">
+                                                    <i class="fas fa-eye"></i> View
+                                                </button>
+                                                <% if (order.status==='Pending' ) { %>
+                                                    <button class="btn btn-sm btn-danger cancel-order"
+                                                        data-order-id="<%= order.orderId %>">
+                                                        <i class="fas fa-times"></i> Cancel Order
+                                                    </button>
+                                                    <% } %>
+                                            </td>
+                                            <td>
+                                                <% order.items.forEach(item=> { %>
+                                                    <% if (item.returnDetails &&(item.returnDetails.status==='Return Requested' || item.returnDetails.status==='Approved' )) { %>
+                                                        <div>
+                                                            <p>
+                                                                <%= item.productName %>
+                                                            </p>
+                                                            <% if (item.returnDetails.status !=='Rejected' ) { %>
+                                                                <select class="form-select return-action"
+                                                                    data-order-id="<%= order.orderId %>"
+                                                                    data-item-id="<%= item.productId %>">
+                                                                    <option value="">Select Action</option>
+                                                                    <% if (item.returnDetails.status !=='Approved' ) { %>
+                                                                        <option value="approve">Approve Return</option>
+                                                                        <% } %>
+                                                                            <% if (item.returnDetails.status!=='Rejected' ) { %>
+                                                                                <option value="reject">Reject Return
+                                                                                </option>
+                                                                                <% } %>
+                                                                                    <% if (item.returnDetails.status !=='Rejected' && item.returnDetails.status!=='Refunded' ) { %>
+                                                                                        <option value="complete"> Complete Refund</option>
+                                                                                        <% } %>
+                                                                </select>
+                                                                <% } %>
+                                                        </div>
                                                         <% } %>
-                                                        <% if (item.returnDetails.status !== 'Rejected' && item.returnDetails.status !== 'Refunded') { %>
-                                                            <option value="complete">Complete Refund</option>
-                                                        <% } %>
-                                                    </select>
-                                                <% } %>
-                                            </div>
-                                        <% } %>
-                                    <% }); %>
-                                </td>
-                                
-                            </tr>
+                                                            <% }); %>
+                                            </td>
 
-                            <!-- Return-Requested Items Section -->
-                                
-                            <% }); %>
-                        </tbody>
-                    </table>
+                                        </tr>
+
+                                        <!-- Return-Requested Items Section -->
+
+                                        <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+
     </div>
-</div>
-
-</div>
-<div class="pagination-area mt-15 mb-50">
-    <nav aria-label="Page navigation example">
-        <ul class="pagination justify-content-center">
-            <!-- Previous Arrow -->
-            <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
-                <a class="page-link" href="?page=<%= currentPage - 1 %>" tabindex="-1" aria-disabled="true">
-                    &laquo;
-                </a>
-            </li>
-
-            <!-- Page Numbers -->
-            <% for (let i = 1; i <= totalPages; i++) { %>
-                <li class="page-item <%= i === currentPage ? 'active' : '' %>">
-                    <a class="page-link" href="?page=<%= i %>">
-                        <%= i %>
+    <div class="pagination-area mt-15 mb-50">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                <!-- Previous Arrow -->
+                <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                    <a class="page-link" href="?page=<%= currentPage - 1 %>" tabindex="-1" aria-disabled="true">
+                        &laquo;
                     </a>
                 </li>
-            <% } %>
 
-            <!-- Next Arrow -->
-            <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
-                <a class="page-link" href="?page=<%= currentPage + 1 %>">
-                    &raquo;
-                </a>
-            </li>
-        </ul>
-    </nav>
-</div>
+                <!-- Page Numbers -->
+                <% for (let i=1; i <=totalPages; i++) { %>
+                    <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                        <a class="page-link" href="?page=<%= i %>">
+                            <%= i %>
+                        </a>
+                    </li>
+                    <% } %>
+
+                        <!-- Next Arrow -->
+                        <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                            <a class="page-link" href="?page=<%= currentPage + 1 %>">
+                                &raquo;
+                            </a>
+                        </li>
+            </ul>
+        </nav>
+    </div>
 
 
-<!-- Order Details Modal -->
-<div class="modal fade" id="orderDetailsModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Order Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body" id="orderDetailsContent">
-                <!-- Content will be loaded dynamically -->
+    <!-- Order Details Modal -->
+    <div class="modal fade" id="orderDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Order Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="orderDetailsContent">
+                    <!-- Content will be loaded dynamically -->
+                </div>
             </div>
         </div>
     </div>
-</div>
-</section>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-<script>
-    window.onload = function () {
-        // Status update handler
-        document.querySelectorAll('.status-select').forEach(select => {
-            select.addEventListener('change', async function () {
-                const orderId = this.dataset.orderId;
-                const newStatus = this.value;
+    </section>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        window.onload = function () {
+            // Status update handler
+            document.querySelectorAll('.status-select').forEach(select => {
+                select.addEventListener('change', async function () {
+                    const orderId = this.dataset.orderId;
+                    const newStatus = this.value;
 
-                try {
-                    const response = await fetch('/admin/orderList/update-status', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            orderId: orderId,
-                            status: newStatus
-                        })
-                    });
-
-                    const data = await response.json();
-                    if (data.success) {
-                        await Swal.fire({
-                            title: 'Success!',
-                            text: 'Status updated successfully',
-                            icon: 'success',
-                            confirmButtonText: 'OK',
-                            toast:true,
-                            position:"center"
+                    try {
+                        const response = await fetch('/admin/orderList/update-status', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                orderId: orderId,
+                                status: newStatus
+                            })
                         });
-                        window.location.reload();
-                    } else {
+
+                        const data = await response.json();
+                        if (data.success) {
+                            await Swal.fire({
+                                title: 'Success!',
+                                text: 'Status updated successfully',
+                                icon: 'success',
+                                confirmButtonText: 'OK',
+                                toast: true,
+                                position: "center"
+                            });
+                            window.location.reload();
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: `Failed to update status: ${data.message}`,
+                                icon: 'error',
+                                confirmButtonText: 'OK',
+                                toast: true,
+                                position: "center"
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Error updating status:', error);
                         Swal.fire({
                             title: 'Error!',
-                            text: `Failed to update status: ${data.message}`,
+                            text: 'Failed to update status due to a network error',
                             icon: 'error',
                             confirmButtonText: 'OK',
-                            toast:true,
-                            position:"center"
+                            toast: true,
+                            position: "center"
                         });
                     }
-                } catch (error) {
-                    console.error('Error updating status:', error);
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Failed to update status due to a network error',
-                        icon: 'error',
-                        confirmButtonText: 'OK',
-                        toast:true,
-                        position:"center"
-                    });
-                }
+                });
             });
-        });
 
-        // View details handler
-        document.querySelectorAll('.view-details').forEach(button => {
-            button.addEventListener('click', async function () {
-                const orderId = this.dataset.orderId;
+            // View details handler
+            document.querySelectorAll('.view-details').forEach(button => {
+                button.addEventListener('click', async function () {
+                    const orderId = this.dataset.orderId;
 
-                try {
-                    const response = await fetch(`/admin/orderList/${orderId}`);
-                    const orderDetails = await response.json();
+                    try {
+                        const response = await fetch(`/admin/orderList/${orderId}`);
+                        const orderDetails = await response.json();
 
-                    document.getElementById('orderDetailsContent').innerHTML = `
+                        document.getElementById('orderDetailsContent').innerHTML = `
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <h6>Customer Information</h6>
@@ -309,170 +321,180 @@
                         </table>
                     `;
 
-                    // Show the modal
-                    new bootstrap.Modal(document.getElementById('orderDetailsModal')).show();
-                } catch (error) {
-                    console.error('Error fetching order details:', error);
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Failed to load order details',
-                        icon: 'error',
-                        confirmButtonText: 'OK',
-                        toast:true,
-                         position:"center"
-                    });
-                }
-            });
-        });
-
-        // Search functionality
-        document.getElementById('orderSearch').addEventListener('input', function () {
-            const searchTerm = this.value.toLowerCase();
-            const rows = document.querySelectorAll('tbody tr');
-
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
-            });
-        });
-    };
-</script>
-<script>
-    document.querySelectorAll('.cancel-order').forEach(link => {
-        link.addEventListener('click', async function (event) {
-            event.preventDefault(); // Prevent default link action
-
-            const orderId = this.dataset.orderId;
-            const confirmation = await Swal.fire({
-                title: 'Are you sure?',
-                text: "Do you really want to cancel this order?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, cancel it!',
-                cancelButtonText: 'No, keep it',
-                toast:true,
-                position:"center"
-            });
-
-            if (confirmation.isConfirmed) {
-                try {
-                    const response = await fetch(`/admin/cancelOrder/${orderId}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    });
-
-                    const data = await response.json();
-                    if (data.success) {
-                        await Swal.fire({
-                            title: 'Cancelled!',
-                            text: 'The order has been cancelled successfully.',
-                            icon: 'success',
-                            confirmButtonText: 'OK',
-                            toast:true,
-                            position:"center"
-                        });
-                        window.location.reload();
-                    } else {
+                        // Show the modal
+                        new bootstrap.Modal(document.getElementById('orderDetailsModal')).show();
+                    } catch (error) {
+                        console.error('Error fetching order details:', error);
                         Swal.fire({
                             title: 'Error!',
-                            text: `Failed to cancel order: ${data.message}`,
+                            text: 'Failed to load order details',
                             icon: 'error',
                             confirmButtonText: 'OK',
-                            toast:true,
-                             position:"center"
+                            toast: true,
+                            position: "center"
                         });
                     }
-                } catch (error) {
-                    console.error('Error cancelling order:', error);
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Failed to cancel the order due to a network error.',
-                        icon: 'error',
-                        confirmButtonText: 'OK',
-                        toast:true,
-                        position:"center"
-                    });
-                }
-            }
-        });
-    });
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const returnActions = document.querySelectorAll('.return-action');
+                });
+            });
 
-        returnActions.forEach(select => {
-            select.addEventListener('change', async (event) => {
-                const returnAction = event.target.value;
-                const orderId = event.target.dataset.orderId;
-                const itemId = event.target.dataset.itemId;
-                console.log("itemId:",itemId);
-                console.log("orderId:",orderId);
-                console.log("returnAction:",returnAction);
+            // Search functionality
+            document.getElementById('orderSearch').addEventListener('input', function () {
+                const searchTerm = this.value.toLowerCase();
+                const rows = document.querySelectorAll('tbody tr');
 
-                if (returnAction) {
-                    const confirmResult = await Swal.fire({
-                        title: 'Confirm Action',
-                        text: `Are you sure you want to ${returnAction} this return request?`,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Yes',
-                        cancelButtonText: 'No',
-                        toast:true,
-                        position:"center"
-                    });
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchTerm) ? '' : 'none';
+                });
+            });
+        };
+    </script>
+    <script>
+        document.querySelectorAll('.cancel-order').forEach(link => {
+            link.addEventListener('click', async function (event) {
+                event.preventDefault(); // Prevent default link action
 
-                    if (confirmResult.isConfirmed) {
-                        try {
-                            const response = await fetch('/admin/returnRequestHandle', {
-                                method: 'PATCH',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ orderId, itemId, returnAction })
-                            });
+                const orderId = this.dataset.orderId;
+                const confirmation = await Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Do you really want to cancel this order?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, cancel it!',
+                    cancelButtonText: 'No, keep it',
+                    toast: true,
+                    position: "center"
+                });
 
-                            const data = await response.json();
-
-                            if (data.success) {
-                                Swal.fire({
-                                    icon:"success",
-                                    text:data.message,
-                                    title:'Success!',
-                                    toast:true,
-                                    position:"center"
-                                }).then(()=>location.reload())
-                            } else {
-                                Swal.fire({
-                                    icon:"error",
-                                    text:data.message,
-                                    title:'Error!',
-                                    toast:true,
-                                    position:"center"
-                                })
+                if (confirmation.isConfirmed) {
+                    try {
+                        const response = await fetch(`/admin/cancelOrder/${orderId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
                             }
-                        } catch (error) {
-                            console.error('Error handling return request:', error);
+                        });
+
+                        const data = await response.json();
+                        if (data.success) {
+                            await Swal.fire({
+                                title: 'Cancelled!',
+                                text: 'The order has been cancelled successfully.',
+                                icon: 'success',
+                                confirmButtonText: 'OK',
+                                toast: true,
+                                position: "center"
+                            });
+                            window.location.reload();
+                        } else {
                             Swal.fire({
-                                    icon:"error",
-                                    text: 'Something went wrong!',
-                                    title:'Error!',
-                                    toast:true,
-                                    position:"center"
-                                })
+                                title: 'Error!',
+                                text: `Failed to cancel order: ${data.message}`,
+                                icon: 'error',
+                                confirmButtonText: 'OK',
+                                toast: true,
+                                position: "center"
+                            });
                         }
-                    } else {
-                        // Reset dropdown to default if action is canceled
-                        event.target.value = '';
+                    } catch (error) {
+                        console.error('Error cancelling order:', error);
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Failed to cancel the order due to a network error.',
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                            toast: true,
+                            position: "center"
+                        });
                     }
                 }
             });
         });
-    });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const returnActions = document.querySelectorAll('.return-action');
+
+            returnActions.forEach(select => {
+                select.addEventListener('change', async (event) => {
+                    const returnAction = event.target.value;
+                    const orderId = event.target.dataset.orderId;
+                    const itemId = event.target.dataset.itemId;
+                    console.log("itemId:", itemId);
+                    console.log("orderId:", orderId);
+                    console.log("returnAction:", returnAction);
+
+                    if (returnAction) {
+                        const confirmResult = await Swal.fire({
+                            title: 'Confirm Action',
+                            text: `Are you sure you want to ${returnAction} this return request?`,
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Yes',
+                            cancelButtonText: 'No',
+                            toast: true,
+                            position: "center",
+                            background: 'purple',
+                            color: "gold"
+                        });
+
+                        if (confirmResult.isConfirmed) {
+                            try {
+                                const response = await fetch('/admin/returnRequestHandle', {
+                                    method: 'PATCH',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ orderId, itemId, returnAction })
+                                });
+
+                                const data = await response.json();
+
+                                if (data.success) {
+                                    Swal.fire({
+                                        icon: "success",
+                                        text: data.message,
+                                        title: 'Success!',
+                                        toast: true,
+                                        position: "center",
+                                        background: 'purple',
+                                        color: "gold"
+                                    }).then(() => location.reload())
+                                } else {
+                                    Swal.fire({
+                                        icon: "error",
+                                        text: data.message,
+                                        title: 'Error!',
+                                        toast: true,
+                                        position: "center",
+                                        background: 'purple',
+                                        color: "gold"
+                                    })
+                                }
+                            } catch (error) {
+                                console.error('Error handling return request:', error);
+                                Swal.fire({
+                                    icon: "error",
+                                    text: 'Something went wrong!',
+                                    title: 'Error!',
+                                    toast: true,
+                                    position: "center",
+                                    background: 'purple',
+                                    color: "gold"
+                                })
+                            }
+                        } else {
+                            // Reset dropdown to default if action is canceled
+                            event.target.value = '';
+                        }
+                    }
+                });
+            });
+        });
 
 
-</script>
+    </script>
+   
 
 
 
-<%- include('../partials/admin/footer.ejs') %>
+    <%- include('../partials/admin/footer.ejs') %>

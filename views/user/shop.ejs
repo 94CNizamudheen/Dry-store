@@ -65,41 +65,33 @@
                                     <div class="active-filters">
                                         <% if (currentCategory) { %>
                                             <span class="filter-tag">
-                                                <%= categoryGroups.find(cat=> cat._id.toString() ===
-                                                    currentCategory)?.name || 'Category' %>
+                                                <%= categoryGroups.find(cat=> cat._id.toString() ===currentCategory)?.name || 'Category' %>
                                                     <a href="/shop?<%= new URLSearchParams({
                                             ...(currentSort ? {sort: currentSort} : {}),
                                             ...(currentPriceRange.min ? {minPrice: currentPriceRange.min, maxPrice: currentPriceRange.max} : {}),
-                                            ...(search ? {search: search} : {})
-                                        }).toString() %>" class="remove-filter">&times;</a>
+                                            ...(search ? {search: search} : {})}).toString() %>" class="remove-filter">&times;</a>
                                             </span>
                                             <% } %>
 
                                                 <% if (currentSort && currentSort !=='newest' ) { %>
                                                     <span class="filter-tag">
-                                                        <% const sortLabels={ 'popularity' : 'Popularity' , 'rating'
-                                                            : 'Average Rating' , 'price-asc' : 'Price: Low to High'
-                                                            , 'price-desc' : 'Price: High to Low' , 'name-asc'
-                                                            : 'Name: A-Z' , 'name-desc' : 'Name: Z-A' }; %>
+                                                        <% const sortLabels={ 'popularity' : 'Popularity' , 'rating': 'Average Rating' , 'price-asc' : 'Price: Low to High', 'price-desc' : 'Price: High to Low' , 'name-asc': 'Name: A-Z' , 'name-desc' : 'Name: Z-A' }; %>
                                                             <%= sortLabels[currentSort] %>
-                                                                <a href="/shop?<%= new URLSearchParams({
+                                            <a href="/shop?<%= new URLSearchParams({
                                             ...(currentCategory ? {category: currentCategory} : {}),
                                             ...(currentPriceRange.min ? {minPrice: currentPriceRange.min, maxPrice: currentPriceRange.max} : {}),
-                                            ...(search ? {search: search} : {})
-                                        }).toString() %>" class="remove-filter">&times;</a>
+                                            ...(search ? {search: search} : {})}).toString() %>" class="remove-filter">&times;</a>
                                                     </span>
                                                     <% } %>
 
                                                         <% if (currentPriceRange.min !==undefined) { %>
                                                             <span class="filter-tag">
                                                                 Price: ₹<%= currentPriceRange.min %>-<%=
-                                                                        currentPriceRange.max===Infinity ? '+' : '₹' +
-                                                                        currentPriceRange.max %>
+                                                                        currentPriceRange.max===Infinity ? '+' : '₹' +currentPriceRange.max %>
                                                                         <a href="/shop?<%= new URLSearchParams({
                                             ...(currentCategory ? {category: currentCategory} : {}),
                                             ...(currentSort && currentSort !== 'newest' ? {sort: currentSort} : {}),
-                                            ...(search ? {search: search} : {})
-                                        }).toString() %>" class="remove-filter">&times;</a>
+                                            ...(search ? {search: search} : {})}).toString() %>" class="remove-filter">&times;</a>
                                                             </span>
                                                             <% } %>
 
@@ -109,19 +101,14 @@
                                                                             <a href="/shop?<%= new URLSearchParams({
                                             ...(currentCategory ? {category: currentCategory} : {}),
                                             ...(currentSort && currentSort !== 'newest' ? {sort: currentSort} : {}),
-                                            ...(currentPriceRange.min ? {minPrice: currentPriceRange.min, maxPrice: currentPriceRange.max} : {})
-                                        }).toString() %>" class="remove-filter">&times;</a>
+                                            ...(currentPriceRange.min ? {minPrice: currentPriceRange.min, maxPrice: currentPriceRange.max} : {})}).toString() %>" class="remove-filter">&times;</a>
                                                                     </span>
                                                                     <% } %>
 
-                                                                        <% if (currentCategory || (currentSort &&
-                                                                            currentSort !=='newest' ) ||
-                                                                            currentPriceRange.min !==undefined ||
-                                                                            search) { %>
-                                                                            <a href="/shop"
-                                                                                class="clear-all-filters">Clear All
-                                                                                Filters</a>
-                                                                            <% } %>
+                                                                    <% if (currentCategory || (currentSort &&currentSort !=='newest' ) ||  currentPriceRange.min !==undefined || search) { %>
+                                                                        <a href="/shop"
+                                                                    class="clear-all-filters">Clear All Filters</a>
+                                             <% } %>
                                     </div>
                                 </div>
 
@@ -239,7 +226,7 @@
                                                                     </a>
                                                                 </div>
                                                                 <div class="product-badges">
-                                                                    <% if (product.productOffer > 0) { %>
+                                                                    <% if (product.productOffer > 0 && product.productOffer > product.category.categoryOffer ) { %>
                                                                         <span class="sale"><%= product.productOffer %>% Product Offer</span>
                                                                     <% } else if (product.category.categoryOffer > 0) { %>
                                                                         <span class="sale"><%= product.category.categoryOffer %>% Category Offer</span>
@@ -304,8 +291,7 @@
                                                                 </a>
                                                             </li>
                                                             <% } %>
-
-                                                                <% if (products.length===9) { %>
+                                                            <% if (products.length===9) { %>
                                                                     <li class="">
                                                                         <a class="page-link"
                                                                             href="?page=<%= currentPage + 1 %>">
@@ -450,6 +436,8 @@
                                 icon: 'info',
                                 toast: true,
                                 position: 'center',
+                                background: 'purple',
+                                color:"gold"
 
                             });
 
@@ -463,6 +451,8 @@
                                 showConfirmButton: true,
                                 toast: true,
                                 position: 'center',
+                                background: 'purple',
+                                color:"gold"
                             })
                             if (!data.isExisting) {
                                 const cartCountElements = document.querySelectorAll('#cartCountDisplay, .header-action-icon-2 .pro-count.blue');
@@ -480,11 +470,13 @@
                             }
                         } else {
                             Swal.fire({
-                                title: 'Error!',
+                                title: 'Notice!',
                                 text: data.message || 'Unable to add item to cart.',
-                                icon: 'error',
+                                icon: 'info',
                                 toast: true,
                                 position: 'center',
+                                background: 'purple',
+                                color:"gold"
                             });
                         }
                     } catch (error) {
@@ -496,6 +488,9 @@
                             icon: 'error',
                             toast: true,
                             position: 'center',
+                            background: 'purple',
+                            color:"gold"
+                            
                         });
                     } finally {
                         button.disabled = false;
@@ -530,6 +525,8 @@
                             position: 'center',
                             timer: 2000,
                             showConfirmButton: true,
+                            background: 'purple',
+                            color:"gold"
                         });
 
                         if (!result.isExisting) {
@@ -553,6 +550,8 @@
                             position: 'center',
                             timer: 2000,
                             showConfirmButton: true,
+                            background: 'purple',
+                            color:"gold"
                         });
                     }
                 } catch (error) {
@@ -565,6 +564,8 @@
                         position: 'center',
                         timer: 3000,
                         showConfirmButton: false,
+                        background: 'purple',
+                        color:"gold"
                     });
                 } finally {
                     button.disabled = false;
@@ -614,11 +615,7 @@
                 link.href = linkUrl.toString();
             });
 
-
-
         });
-
-
         const SwalConfig = {
             customClass: {
                 confirmButton: 'btn btn-primary',

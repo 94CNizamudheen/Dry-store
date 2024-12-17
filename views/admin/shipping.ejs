@@ -77,14 +77,18 @@
                                 <tbody id="stateTableBody">
                                     <% shipping.forEach(element=> {%>
                                         <tr>
-                                            <td><%= element.state %></td>
-                                            <td><input type="number" class="form-control charge-input" value="<%= element.charge %>" data-state="<%= element.state %>"></td>
+                                            <td>
+                                                <%= element.state %>
+                                            </td>
+                                            <td><input type="number" class="form-control charge-input"
+                                                    value="<%= element.charge %>" data-state="<%= element.state %>">
+                                            </td>
                                             <td><button class="btn btn-warning update-shipping-btn">Update</button></td>
                                         </tr>
                                         <% }) %>
                                 </tbody>
                             </table>
-                          
+
                         </div>
                     </div>
                 </div>
@@ -114,6 +118,8 @@
                             text: "State added successfully!",
                             toast: true,
                             position: "center",
+                            background: 'purple',
+                            color: "gold"
                         }).then(() => window.location.reload())
                     } else {
                         Swal.fire({
@@ -121,6 +127,8 @@
                             text: result.message || "Failed to add state.",
                             toast: true,
                             position: "center",
+                            background: 'purple',
+                            color: "gold"
                         });
                     }
                 } catch (error) {
@@ -129,6 +137,8 @@
                         text: 'An error Occured:' + error.message,
                         toast: true,
                         position: "center",
+                        background: 'purple',
+                        color: "gold"
                     });
 
                 }
@@ -138,6 +148,8 @@
                     text: "Please fill out the fields",
                     toast: true,
                     position: "center",
+                    background: 'purple',
+                    color: "gold"
                 });
 
             }
@@ -169,6 +181,8 @@
                             text: result.message || "State and charge updated successfully!",
                             toast: true,
                             position: "center",
+                            background: 'purple',
+                            color: "gold"
                         }).then(() => window.location.reload());
                     } else {
                         Swal.fire({
@@ -176,6 +190,8 @@
                             text: result.message || "Failed to update.",
                             toast: true,
                             position: "center",
+                            background: 'purple',
+                            color: "gold"
                         });
                     }
                 } catch (error) {
@@ -184,6 +200,8 @@
                         text: 'An error occurred: ' + error.message,
                         toast: true,
                         position: "center",
+                        background: 'purple',
+                        color: "gold"
                     });
                 }
             });

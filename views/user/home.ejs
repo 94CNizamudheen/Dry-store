@@ -140,7 +140,7 @@
         <div class="custom-footer">
             Discover the Finest Blends: Spicy Dry Fruits, Sweet Nuts, Mixed Seeds & More!
         </div>
-        <section class="featured section-padding position-relative text-center">
+        <!-- <section class="featured section-padding position-relative text-center">
             <div class="container">
                 <h1>Our products</h1>
                 <div class="row">
@@ -183,7 +183,7 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </section> -->
         <section class="product-tabs section-padding position-relative wow fadeIn animated">
             <div class="bg-square"></div>
             <div class="container">
@@ -192,19 +192,19 @@
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active" id="nav-tab-one" data-bs-toggle="tab"
                                 data-bs-target="#tab-one" type="button" role="tab" aria-controls="tab-one"
-                                aria-selected="true">Featured</button>
+                                aria-selected="true">New added</button>
                         </li>
-                        <li class="nav-item" role="presentation">
+                        <!-- <li class="nav-item" role="presentation">
                             <button class="nav-link" id="nav-tab-two" data-bs-toggle="tab" data-bs-target="#tab-two"
                                 type="button" role="tab" aria-controls="tab-two" aria-selected="false">Popular</button>
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="nav-tab-three" data-bs-toggle="tab" data-bs-target="#tab-three"
-                                type="button" role="tab" aria-controls="tab-three" aria-selected="false">New
-                                added</button>
-                        </li>
+                                type="button" role="tab" aria-controls="tab-three" aria-selected="false">Most ra
+                                </button>
+                        </li> -->
                     </ul>
-                    <a href="#" class="view-more d-none d-md-flex">View More<i
+                    <a href="/shop" class="view-more d-none d-md-flex">View More<i
                             class="fi-rs-angle-double-small-right"></i></a>
                 </div>
                 <!--End nav-tabs-->
@@ -234,7 +234,7 @@
                                                 </a>
                                             </div>
                                             <div class="product-badges product-badges-position product-badges-mrg">
-                                                <span class="hot">Hot</span>
+                                                <span class="hot">New</span>
                                             </div>
                                         </div>
                                         <div class="product-content-wrap">
@@ -246,16 +246,23 @@
                                             <h2><a href="shop-product-right.html">
                                                     <%= products[i].productName %>
                                                 </a></h2>
-                                            <div class="rating-result" title="90%">
-                                                <span><span>
-                                                        <%= products[i].productOffer %>
-                                                    </span></span>
-                                            </div>
+                                                <div class="product-badges">
+                                                    <% if (products[i].productOffer > 0 && products[i].productOffer > products[i].category.categoryOffer ) { %>
+                                                        <span class="sale"><%= products[i].productOffer %>% Product Offer</span>
+                                                    <% } else if (products[i].category.categoryOffer > 0) { %>
+                                                        <span class="sale"><%= products[i].category.categoryOffer %>% Category Offer</span>
+                                                    <% } %>
+                                                    
+                                                    <% if (products[i].quantity <= 10 && products[i].quantity > 0) { %>
+                                                        <span class="hot">Only few left</span>
+                                                    <% } %>
+                                                </div>
                                             <div
                                                 class="stock-status <%= products[i].quantity > 0 ? 'in-stock text-success ml-5' : 'text-danger ml-5' %>">
                                                 <%= products[i].quantity> 0 ? `Stock left:
                                                     ${products[i].quantity}` : 'Out of Stock' %>
                                             </div>
+                                            
                                             <div class="product-price">
                                                 <span>₹<%= products[i].salePrice %> </span>
                                                 <span class="old-price">₹<%= products[i].regularPrice %></span>
@@ -353,31 +360,33 @@
         <section class="section-padding">
             <div class="container wow fadeIn animated">
 
-                <h3 class="section-title mb-20"><span>You may</span>Also like </h3>
+                <h3 class="section-title mb-20"><span>Popular</span>Products </h3>
                 <div class="carausel-6-columns-cover position-relative">
                     <div class="slider-arrow slider-arrow-2 carausel-6-columns-arrow" id="carausel-6-columns-2-arrows">
                     </div>
                     <div class="carausel-6-columns carausel-arrow-center" id="carausel-6-columns-2">
-                        <% for(let i=0; i < products.length; i++) { %>
+                        <% for(let i=0; i < popularProducts.length; i++) { %>
                             <div class="product-cart-wrap small hover-up m-1">
 
                                 <div class="product-img-action-wrap">
                                     <div class="product-img product-img-zoom">
                                         <a href="shop-product-right.html">
                                             <img class="default-img"
-                                                src="/uploads/images/<%= products[i].productImage[0] %>" alt="">
+                                                src="/uploads/images/<%= popularProducts[i].productImage[0] %>" alt="">
                                             <img class="hover-img"
-                                                src="/uploads/images/<%= products[i].productImage[0] %>" alt="">
+                                                src="/uploads/images/<%= popularProducts[i].productImage[0] %>" alt="">
                                         </a>
                                     </div>
                                     <div class="product-action-1">
-                                        <a aria-label="Quick view" class="action-btn small hover-up"
-                                            data-bs-toggle="modal" data-bs-target="#quickViewModal">
-                                            <i class="fi-rs-eye"></i></a>
-                                        <a aria-label="Add To Wishlist" class="action-btn small hover-up" href=""
-                                            tabindex="0"><i class="fi-rs-heart"></i></a>
-                                        <a aria-label="Compare" class="action-btn small hover-up"
-                                            href="shop-compare.html" tabindex="0"><i class="fi-rs-shuffle"></i></a>
+                                        <a aria-label="Add To Cart" class="action-btn hover-up"href="javascript:void(0);" id="addToCartButton"
+                                                    data-product-id="<%= popularProducts[i].productId %>">
+                                                    <i class="fi-rs-shopping-bag-add"></i>
+                                            <a aria-label="Add To Wishlist"
+                                            class="action-btn hover-up add-to-wishlist" href="#"
+                                            data-product-id="<%= popularProducts[i].productId %>">
+                                            <i class="fi-rs-heart"></i>
+                                        <!-- <a aria-label="Compare" class="action-btn small hover-up"
+                                            href="shop-compare.html" tabindex="0"><i class="fi-rs-shuffle"></i></a> -->
                                     </div>
                                     <div class="product-badges product-badges-position product-badges-mrg">
                                         <span class="hot">Fresh</span>
@@ -385,15 +394,15 @@
                                 </div>
                                 <div class="product-content-wrap">
                                     <h2><a href="shop-product-right.html">
-                                            <%= products[i].productName %>
+                                            <%= popularProducts[i].productName %>
                                         </a></h2>
                                     <div class="rating-result" title="90%">
                                         <span>
                                         </span>
                                     </div>
                                     <div class="product-price">
-                                        <span>₹ <%= products[i].salePrice %> </span>
-                                        <span class="old-price">₹ <%= products[i].regularPrice %></span>
+                                        <span>₹ <%= popularProducts[i].salePrice %> </span>
+                                        <span class="old-price">₹ <%= popularProducts[i].regularPrice %></span>
                                     </div>
                                 </div>
                             </div>
@@ -586,6 +595,9 @@
                             position: 'center',
                             timer: 2000,
                             showConfirmButton: true,
+                            background: 'purple',
+                            color:"gold"
+                            
                         });
 
                         if (!result.isExisting) {
@@ -609,6 +621,8 @@
                             position: 'center',
                             timer: 2000,
                             showConfirmButton: true,
+                            background: 'purple',
+                            color:"gold"
                         });
                     }
                 } catch (error) {
@@ -621,6 +635,8 @@
                         position: 'center',
                         timer: 3000,
                         showConfirmButton: false,
+                        background: 'purple',
+                        color:"gold"
                     });
                 } finally {
                     button.disabled = false;
@@ -661,6 +677,8 @@
                                 icon: 'info',
                                 toast: true,
                                 position: 'center',
+                                background: 'purple',
+                                color:"gold"
 
                             });
 
@@ -674,6 +692,8 @@
                                 showConfirmButton: true,
                                 toast: true,
                                 position: 'center',
+                                background: 'purple',
+                                color:"gold"
 
                             })
                             if (!data.isExisting) {
@@ -692,11 +712,13 @@
                             }
                         } else {
                             Swal.fire({
-                                title: 'Error!',
+                                title: 'Notice!',
                                 text: data.message || 'Unable to add item to cart.',
-                                icon: 'error',
+                                icon: 'info',
                                 toast: true,
                                 position: 'center',
+                                background: 'purple',
+                                color:"gold"
                             });
                         }
                     } catch (error) {
@@ -708,6 +730,8 @@
                             icon: 'error',
                             toast: true,
                             position: 'center',
+                            background: 'purple',
+                                color:"gold"
                         });
                     } finally {
                         button.disabled = false;

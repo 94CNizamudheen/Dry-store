@@ -1,0 +1,115 @@
+<%- include('../partials/user/header.ejs')  %>
+    <style>
+      
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        .profile-image {
+            max-width: 250px;
+            border-radius: 50%;
+            border: 5px solid white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 25px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="btn navbar-brand text-white" href="/">Explore My E-Commerce Project</a>
+            
+            
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container">
+            <img src="/uploads/sample-images/Nizamudheen c.jpg" alt="Project Creator" class="profile-image mb-4">
+            <h1 class="display-5 fw-bold text-white">My First E-Commerce Project</h1>
+            <p class="lead text-muted">A comprehensive web application showcasing full-stack development skills</p>
+        </div>
+    </div>
+
+    <!-- Project Details -->
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="section-title">Project Overview</h2>
+                <div class="feature-card">
+                    <h3>Project Highlights</h3>
+                    <ul class="list-unstyled">
+                        <li>✨ Developed a full-featured E-Commerce platform</li>
+                        <li>🔐 Implemented robust User and Admin sides</li>
+                        <li>💰 Integrated advanced features like Super Coins system</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="feature-card h-100">
+                    <h3 class="section-title">User-Side Features</h3>
+                    <ul>
+                        <li>Super Coins Scratch & Win system</li>
+                        <li>Product Review functionality</li>
+                        <li>Integrated Wallet system</li>
+                        <li>Razorpay Payment Integration</li>
+                        <li>Automatic PIN Generation</li>
+                        <li>Partial Order Cancellation</li>
+                        <li>Automatic Order Cancellation</li>
+                        <li>Quck buy</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="feature-card h-100">
+                    <h3 class="section-title">Admin-Side Features</h3>
+                    <ul>
+                        <li>Comprehensive Data Reports</li>
+                        <li>Time-Based Analytics (Day/Week/Month/Quarter)</li>
+                        <li>Visualization Charts</li>
+                        <li>Referral Code Management</li>
+                        <li>Shipping Charge Control</li>
+                        <li>Order Management</li>
+                        <li>Detailed Sales Reporting</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white py-4 text-center">
+        <div class="container">
+            <p class="text-muted">© 2024 My E-Commerce Project. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>

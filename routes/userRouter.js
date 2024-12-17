@@ -63,6 +63,7 @@ router.get('/change-password',headerData,userAuth,profileController.changePasswo
 router.post('/change-password',userAuth,profileController.changePasswordValid);
 router.post('/verify-change-password-otp',userAuth,profileController.verifyPasswordChangeOtp);
 router.post('/resend-verify-password-otp',userAuth,profileController.resendPasswordChangeOtp);
+router.get('/about',profileController.about);
 
 //address mgt
 

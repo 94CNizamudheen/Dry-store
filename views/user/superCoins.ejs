@@ -130,12 +130,12 @@
             <div class="">
                 <div class="row">
                     <div class="col-12 text-center mb-4">
-                        <h1>Super Coin Rewards</h1>
+                        <h1>Scrach & Win</h1>
 
                         <!-- Reward Modes -->
                         <div class="d-flex justify-content-center gap-3 mb-4">
                             <button class="btn btn-reward" data-bs-toggle="modal" data-bs-target="#scratchModal">
-                                <i class="fas fa-scratch-card"></i> Scratch Card (250 Coin)
+                                <i class="fas fa-scratch-card"></i>(250 Coin)
                             </button>
                             <!-- <button class="btn btn-reward" data-bs-toggle="modal" data-bs-target="#spinModal">
                                 <i class="fas fa-dice"></i> Spin Wheel (250 Coin)
@@ -240,7 +240,11 @@
                                 showCancelButton: true,
                                 confirmButtonColor: '#3085d6',
                                 cancelButtonColor: '#d33',
-                                confirmButtonText: 'Yes, Scratch!'
+                                confirmButtonText: 'Yes, Scratch!',
+                                background: 'purple',
+                                color:"gold",
+                                toast:true,
+                                position:"center",
                             });
 
                             return result.isConfirmed;
@@ -369,7 +373,11 @@
                             title: 'Oops...',
                             text: message,
                             confirmButtonColor: '#3085d6',
-                            confirmButtonText: 'OK'
+                            confirmButtonText: 'OK',
+                            background: 'purple',
+                            color:"gold",
+                            toast:true,
+
                         });
                     }
 
@@ -382,7 +390,10 @@
                             title: 'Network Error',
                             text: 'Unable to fetch reward. Please try again later.',
                             confirmButtonColor: '#3085d6',
-                            confirmButtonText: 'OK'
+                            confirmButtonText: 'OK',
+                            background: 'purple',
+                            color:"gold",
+                            toast:true,
                         });
                     }
 

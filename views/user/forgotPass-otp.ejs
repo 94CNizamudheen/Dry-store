@@ -179,6 +179,8 @@
                             timer: 1500,
                             position: 'center',
                             toast: true,
+                            background: 'purple',
+                            color:"gold"
                         }).then(() => {
                             window.location.href = response.redirectUrl;
                         });
@@ -211,6 +213,8 @@
                             showConfirmButton: false,
                             position: 'center',
                             toast: true,
+                            background: 'purple',
+                            color:"gold"
                         });
                     } else {
                         Swal.fire({
@@ -219,6 +223,8 @@
                             text: response.message,
                             position: 'center',
                             toast: true,
+                            background: 'purple',
+                            color:"gold"
                         });
                     }
                 },
@@ -229,6 +235,8 @@
                         text: "Failed to resend OTP. Please try again later.",
                         position: 'center',
                         toast: true,
+                        background: 'purple',
+                        color:"gold"
                     });
                 }
             });

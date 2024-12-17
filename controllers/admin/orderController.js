@@ -141,7 +141,6 @@ const updateOrderStatus = async (req, res) => {
         return res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
-
 const cancelOrder=async(req,res)=>{
     try {
         console.log("cancel order initiated");
@@ -182,7 +181,6 @@ const handleReturnRequest = async (req, res) => {
     try {
       const { orderId, itemId, returnAction } = req.body;
       console.log({ orderId, itemId, returnAction } )
-  
       if (!orderId || !itemId || !returnAction) {
         return res.status(400).json({ success: false, message: 'Invalid request data' });
       }

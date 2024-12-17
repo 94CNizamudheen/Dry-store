@@ -347,32 +347,29 @@
                 </div>
                 <div class="mobile-menu-wrap mobile-header-border"> <nav>
                         <ul class="mobile-menu">
-                            <li class="menu-item-has-children"><span class="menu-expand"></span><a href="/">Home</a> 
-                            </li>
-                            <li class="menu-item-has-children"><span class="menu-expand"></span><a href="/shop">shop</a>
-
-                            </li>
-                            <li class="menu-item-has-children"><span class="menu-expand"></span><a href="#">Mega menu</a>
-
-                            </li>
-                            <li class="menu-item-has-children"><span class="menu-expand"></span><a href="#">Pages</a>
-                                <ul class="dropdown">
-                                    <li><a href="/about">About Us</a></li>
-                                    <li><a href="/contac">Contact</a></li>
-                                    <li><a href="/user-profile">My Account</a></li>
-                                    <li><a href="/logIn">login/register</a></li>
-                                    <li><a href="page-terms.html">Terms of Service</a></li>
-                                    
-                                </ul>
-                            </li>
-                            <li class="menu-item-has-children"><span class="menu-expand"></span><a href="#">Language</a>
+                            <li class="menu-item-has-children"><span class="menu-expand"></span><a href="/">Home 🏠</a> </li>
+                            <li class="menu-item-has-children"><span class="menu-expand"></span><a href="/shop">shop 🛍️</a></li>
+                            <li class="menu-item-has-children"><span class="menu-expand"></span><a href="/superCoins">Super Coins 🪙</a></li>
+                            <li class="menu-item-has-children"><span class="menu-expand"></span><a href="/wallet">Wllet💳</a></li>
+                            <li class="menu-item-has-children"><span class="menu-expand"></span><a href="/wishlist">My wishlist ❤️</a></li>
+                            <li class="menu-item-has-children"><span class="menu-expand"></span><a href="/cart">My Cart 🛒</a></li>
+                            <li class="menu-item-has-children"><span class="menu-expand"></span><a href="/about">About 📄</a></li>
+                            <li class="menu-item-has-children"><span class="menu-expand"></span><a href="/user-profile">My Account 👤</a></li>
+                            <% if(locals.user) {%>
+                                <li class="menu-item-has-children"><span class="menu-expand"></span><a href="/logOut">Logout 🚪</a></li>
+                                <% }else{ %>
+                                    <li class="menu-item-has-children"><span class="menu-expand"></span><a href="/logIn">Login 🔑</a></li>
+                            <% } %>
+                                
+                            
+                            <!-- <li class="menu-item-has-children"><span class="menu-expand"></span><a href="#">Language</a>
                                 <ul class="dropdown">
                                     <li><a href="#">English</a></li>
                                     <li><a href="#">Malayalam</a></li>
                                     <li><a href="#">Tamil</a></li>
                                     <li><a href="#">Hindi</a></li>
                                 </ul>
-                            </li>
+                            </li> -->
                         </ul>
                     </nav>
                     <!-- mobile menu end -->
@@ -388,14 +385,7 @@
                         <a href="#">(+01) - 2345 - 6789 </a>
                     </div>
                 </div>
-                <div class="mobile-social-icon">
-                    <h5 class="mb-15 text-grey-4">Follow Us</h5>
-                    <a href="#"><img src="assets/imgs/theme/icons/icon-facebook.svg" alt=""></a>
-                    <a href="#"><img src="assets/imgs/theme/icons/icon-twitter.svg" alt=""></a>
-                    <a href="#"><img src="assets/imgs/theme/icons/icon-instagram.svg" alt=""></a>
-                    <a href="#"><img src="assets/imgs/theme/icons/icon-pinterest.svg" alt=""></a>
-                    <a href="#"><img src="assets/imgs/theme/icons/icon-youtube.svg" alt=""></a>
-                </div>
+               
             </div>
         </div>
     </div>

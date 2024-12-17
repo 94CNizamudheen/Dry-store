@@ -194,7 +194,9 @@
                             title: "Oops",
                             text: "Category already exists",
                             toast: true,
-                            position: "center"
+                            position: "center",
+                            background: 'purple',
+                            color: "gold"
                         });
                     } else {
                         Swal.fire({
@@ -202,7 +204,9 @@
                             title: "Oops",
                             text: "An error occurred while adding category",
                             toast: true,
-                            position: "center"
+                            position: "center",
+                            background: 'purple',
+                            color: "gold"
                         });
                     }
                 });
@@ -286,7 +290,9 @@
                             toast: true,
                             position: "center",
                             timer: 2000,
-                            showConfirmButton: false
+                            showConfirmButton: false,
+                            background: 'purple',
+                            color: "gold"
                         }).then(() => {
                             location.reload();
                         });
@@ -298,7 +304,9 @@
                             toast: true,
                             position: "center",
                             timer: 2000,
-                            showConfirmButton: false
+                            showConfirmButton: false,
+                            background: 'purple',
+                            color: "gold"
                         });
                     }
                 } catch (error) {
@@ -309,7 +317,9 @@
                         toast: true,
                         position: "center",
                         timer: 2000,
-                        showConfirmButton: false
+                        showConfirmButton: false,
+                        background: 'purple',
+                        color: "gold"
                     });
                     console.log("error while adding offer", error);
                 }
@@ -335,7 +345,9 @@
                         toast: true,
                         position: "center",
                         timer: 2000,
-                        showConfirmButton: false
+                        showConfirmButton: false,
+                        background: 'purple',
+                        color: "gold"
                     }).then(() => {
                         location.reload();
                     });
@@ -347,7 +359,9 @@
                         toast: true,
                         position: "center",
                         timer: 2000,
-                        showConfirmButton: false
+                        showConfirmButton: false,
+                        background: 'purple',
+                        color: "gold"
                     });
                 }
             } catch (error) {
@@ -358,7 +372,9 @@
                     toast: true,
                     position: "center",
                     timer: 2000,
-                    showConfirmButton: false
+                    showConfirmButton: false,
+                    background: 'purple',
+                    color: "gold"
                 });
                 console.log("error removing offer");
             }

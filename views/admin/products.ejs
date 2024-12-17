@@ -195,7 +195,9 @@ async function addOffer(productId) {
                         timer: 1000, 
                         timerProgressBar: true,
                         toast:true,
-                        position: "center"
+                        position: "center",
+                        background: 'purple',
+                        color:"gold"
                     }).then(() => {
                         location.reload(); 
                     });
@@ -221,7 +223,9 @@ function removeOffer(productId) {
         cancelButtonColor: "#d33",
         confirmButtonText: "Yes, remove",
         toast:true,
-        position: "center"
+        position: "center",
+        background: 'purple',
+        color:"gold"
     }).then(async (result) => {
         if (result.isConfirmed) {
             $.ajax({
@@ -239,7 +243,9 @@ function removeOffer(productId) {
                             timer: 1000, 
                             timerProgressBar: true,
                             toast:true,
-                              position: "center"
+                              position: "center",
+                              background: 'purple',
+                            color:"gold"
                         }).then(() => {
                             location.reload(); 
                         });

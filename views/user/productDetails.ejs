@@ -480,7 +480,9 @@
                     icon:"info",
                     text:"Please provide both a rating and a comment!",
                     toast:true,
-                    position:"center"
+                    position:"center",
+                    background: 'purple',
+                    color:"gold"
                 })
             }
         });
@@ -542,6 +544,9 @@
                             position: 'center',
                             timer: 2000,
                             showConfirmButton: true,
+                            background: 'purple',
+                            color:"gold"
+                            
                         });
 
                         if (!result.isExisting) {
@@ -565,6 +570,8 @@
                             position: 'center',
                             timer: 2000,
                             showConfirmButton: true,
+                            background: 'purple',
+                            color:"gold"
                         });
                     }
                 } catch (error) {
@@ -577,6 +584,8 @@
                         position: 'center',
                         timer: 3000,
                         showConfirmButton: false,
+                        background: 'purple',
+                        color:"gold"
                     });
                 } finally {
                     button.disabled = false;
@@ -615,6 +624,8 @@
                                 icon: 'info',
                                 toast: true,
                                 position: 'center',
+                                background: 'purple',
+                                color:"gold"
 
                             });
 
@@ -628,6 +639,8 @@
                                 showConfirmButton: true,
                                 toast: true,
                                 position: 'center',
+                                background: 'purple',
+                                color:"gold"
                             })
                             if (!data.isExisting) {
                                 // Select all possible cart count elements
@@ -650,6 +663,8 @@
                                 icon: 'error',
                                 toast: true,
                                 position: 'center',
+                                background: 'purple',
+                            color:"gold"
                             });
                         }
                     } catch (error) {
@@ -661,6 +676,8 @@
                             icon: 'error',
                             toast: true,
                             position: 'center',
+                            background: 'purple',
+                            color:"gold"
                         });
                     } finally {
                         button.disabled = false;

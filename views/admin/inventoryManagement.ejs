@@ -1,293 +1,316 @@
 <%- include('../partials/admin/header.ejs') %>
-<body class="bg-light">
-    <div class="container py-4">
-        <!-- Main Content -->
-        <div class="card shadow-sm">
-            <div class="card-header bg-white py-3">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h1 class="h3 mb-0 text-gray-800">Inventory Management</h1>
 
-                </div>
-            </div>
-            <div class="card-body">
-                <!-- Alert Messages -->
-                <div class="alert alert-success alert-dismissible fade show d-none" role="alert" id="successAlert">
-                    Operation completed successfully
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
+    <body class="bg-light">
+        <div class="container py-4">
+            <!-- Main Content -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h1 class="h3 mb-0 text-gray-800">Inventory Management</h1>
 
-                <!-- Inventory Table -->
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Image</th>
-                                <th>Name</th>
-                                <th>Category</th>
-                                <th>Quantity</th>
-                                <th>Unit Price</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% products.forEach(product=> {%>
-                            <tr>
-                                <td class="text-center">
-                                    <div
-                                        class="d-flex align-items-center justify-content-center"
-                                        style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden;">
-                                        <img
-                                            src="/uploads/images/<%= product.productImage[0] %>"
-                                            alt="Product Image"
-                                            class="img-fluid rounded-circle"
-                                            style="width: 100%; height: auto;"
-                                        />
-                                    </div>
-                                </td>
-                                <td><%= product.productName %></td>
-                                <td><%= product.category.name %></td>
-                                <td><%= product.quantity %></td>
-                                <td><%= product.salePrice ? product.salePrice.toFixed(2) : product.regularPrice.toFixed(2) %></td>
-                                <td>
-                                    <% if(product.status==="Available") {%>
-                                    <span class="badge bg-success"><%= product.status %></span></td>
-                                    <% }else{ %>
-                                        <span class="badge bg-danger"><%= product.status %></span></td>
-                                    <% } %>
-                                <td>
-                                    <div class="btn-group" role="group">
-                                        <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal"
-                                         data-bs-target="#addStockModal" onclick="openModal('<%= product._id %>', true)">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                                         data-bs-target="#reduceStockModal" onclick="openModal('<%= product._id %>', false)">
-                                            <i class="fas fa-minus"></i>
-                                        </button>
-                                      
-                                    </div>
-                                </td>
-                            </tr>
-                           <% }) %>
-                        </tbody>
-                    </table>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Alert Messages -->
+                    <div class="alert alert-success alert-dismissible fade show d-none" role="alert" id="successAlert">
+                        Operation completed successfully
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <!-- Inventory Table -->
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Name</th>
+                                    <th>Category</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Price</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% products.forEach(product=> {%>
+                                    <tr>
+                                        <td class="text-center">
+                                            <div class="d-flex align-items-center justify-content-center"
+                                                style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden;">
+                                                <img src="/uploads/images/<%= product.productImage[0] %>"
+                                                    alt="Product Image" class="img-fluid rounded-circle"
+                                                    style="width: 100%; height: auto;" />
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <%= product.productName %>
+                                        </td>
+                                        <td>
+                                            <%= product.category.name %>
+                                        </td>
+                                        <td>
+                                            <%= product.quantity %>
+                                        </td>
+                                        <td>
+                                            <%= product.salePrice ? product.salePrice.toFixed(2) :
+                                                product.regularPrice.toFixed(2) %>
+                                        </td>
+                                        <td>
+                                            <% if(product.status==="Available" ) {%>
+                                                <span class="badge bg-success">
+                                                    <%= product.status %>
+                                                </span>
+                                        </td>
+                                        <% }else{ %>
+                                            <span class="badge bg-danger">
+                                                <%= product.status %>
+                                            </span></td>
+                                            <% } %>
+                                                <td>
+                                                    <div class="btn-group" role="group">
+                                                        <button type="button" class="btn btn-success btn-sm"
+                                                            data-bs-toggle="modal" data-bs-target="#addStockModal"
+                                                            onclick="openModal('<%= product._id %>', true)">
+                                                            <i class="fas fa-plus"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-danger btn-sm"
+                                                            data-bs-toggle="modal" data-bs-target="#reduceStockModal"
+                                                            onclick="openModal('<%= product._id %>', false)">
+                                                            <i class="fas fa-minus"></i>
+                                                        </button>
+
+                                                    </div>
+                                                </td>
+                                    </tr>
+                                    <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="pagination-area mt-15 mb-50">
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center">
-                <!-- Previous Arrow -->
-                <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
-                    <a class="page-link" href="?page=<%= currentPage - 1 %>" tabindex="-1" aria-disabled="true">
-                        &laquo;
-                    </a>
-                </li>
-    
-                <!-- Page Numbers -->
-                <% for (let i = 1; i <= totalPages; i++) { %>
-                    <li class="page-item <%= i === currentPage ? 'active' : '' %>">
-                        <a class="page-link" href="?page=<%= i %>">
-                            <%= i %>
+        <div class="pagination-area mt-15 mb-50">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    <!-- Previous Arrow -->
+                    <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                        <a class="page-link" href="?page=<%= currentPage - 1 %>" tabindex="-1" aria-disabled="true">
+                            &laquo;
                         </a>
                     </li>
-                <% } %>
-    
-                <!-- Next Arrow -->
-                <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
-                    <a class="page-link" href="?page=<%= currentPage + 1 %>">
-                        &raquo;
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    </div>
- 
-    <!-- Add Stock Modal -->
-    <div class="modal fade" id="addStockModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add Stock</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="addQuantity" class="form-label">Quantity to Add</label>
-                        <input type="number" class="form-control" id="addQuantity" required>
+
+                    <!-- Page Numbers -->
+                    <% for (let i=1; i <=totalPages; i++) { %>
+                        <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                            <a class="page-link" href="?page=<%= i %>">
+                                <%= i %>
+                            </a>
+                        </li>
+                        <% } %>
+
+                            <!-- Next Arrow -->
+                            <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                                <a class="page-link" href="?page=<%= currentPage + 1 %>">
+                                    &raquo;
+                                </a>
+                            </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Add Stock Modal -->
+        <div class="modal fade" id="addStockModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Stock</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
-                    <div class="mb-3">
-                        <label for="addNotes" class="form-label">Notes</label>
-                        <textarea class="form-control" id="addNotes" rows="3"></textarea>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="addQuantity" class="form-label">Quantity to Add</label>
+                            <input type="number" class="form-control" id="addQuantity" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="addNotes" class="form-label">Notes</label>
+                            <textarea class="form-control" id="addNotes" rows="3"></textarea>
+                        </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success" onclick="updateStock(true)">Add Stock</button>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-success" onclick="updateStock(true)">Add Stock</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Reduce Stock Modal -->
-    <div class="modal fade" id="reduceStockModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Reduce Stock</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="reduceStockForm">
-                        <div class="mb-3">
-                            <label for="reduceQuantity" class="form-label">Quantity to Reduce</label>
-                            <input type="number" class="form-control" id="reduceQuantity" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="reduceReason" class="form-label">Reason</label>
-                            <select class="form-select" id="reduceReason" required>
-                                <option value="">Select Reason</option>
-                                <option value="sale">Sale</option>
-                                <option value="damage">Damaged</option>
-                                <option value="return">Return to Supplier</option>
-                                <option value="other">Other</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="reduceNotes" class="form-label">Notes</label>
-                            <textarea class="form-control" id="reduceNotes" rows="3"></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-danger" onclick="updateStock(false)">Reduce Stock</button>
+        <!-- Reduce Stock Modal -->
+        <div class="modal fade" id="reduceStockModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Reduce Stock</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="reduceStockForm">
+                            <div class="mb-3">
+                                <label for="reduceQuantity" class="form-label">Quantity to Reduce</label>
+                                <input type="number" class="form-control" id="reduceQuantity" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="reduceReason" class="form-label">Reason</label>
+                                <select class="form-select" id="reduceReason" required>
+                                    <option value="">Select Reason</option>
+                                    <option value="sale">Sale</option>
+                                    <option value="damage">Damaged</option>
+                                    <option value="return">Return to Supplier</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="reduceNotes" class="form-label">Notes</label>
+                                <textarea class="form-control" id="reduceNotes" rows="3"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" onclick="updateStock(false)">Reduce Stock</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Scripts -->
 
-    <script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <!-- Scripts -->
 
-        let currentProductId = null;
+        <script>
 
-        function openModal(productId, isAddStock) {
-            currentProductId = productId; // Store the current product ID
-            if (isAddStock) {
-                document.getElementById('addQuantity').value = ''; // Clear previous input
-                document.getElementById('addNotes').value = '';
-            } else {
-                document.getElementById('reduceQuantity').value = ''; // Clear previous input
-                document.getElementById('reduceReason').value = '';
-                document.getElementById('reduceNotes').value = '';
+            let currentProductId = null;
+
+            function openModal(productId, isAddStock) {
+                currentProductId = productId; // Store the current product ID
+                if (isAddStock) {
+                    document.getElementById('addQuantity').value = ''; // Clear previous input
+                    document.getElementById('addNotes').value = '';
+                } else {
+                    document.getElementById('reduceQuantity').value = ''; // Clear previous input
+                    document.getElementById('reduceReason').value = '';
+                    document.getElementById('reduceNotes').value = '';
+                }
             }
-        }
 
 
 
-        function showSuccessMessage(message) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: message,
-                timer: 3000,
-                timerProgressBar: true,
-                showConfirmButton: false,
-                toast:true,
-                position:"center"
-            });
-        }
-    
-        function showErrorMessage(message) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: message,
-                timer: 3000,
-                timerProgressBar: true,
-                showConfirmButton: false,
-                toast:true,
-                position:"center"
-            });
-        }
-    
-       function updateStock(isAddStock) {
-    if (!currentProductId) {
-        console.error("No product ID selected.");
-        return;
-    }
-
-    let data;
-
-    if (isAddStock) {
-        data = {
-            quantityChange: parseInt(document.getElementById("addQuantity").value, 10),
-            reason: "Add Stock",
-            notes: document.getElementById("addNotes").value,
-        };
-    } else {
-        data = {
-            quantityChange: -Math.abs(parseInt(document.getElementById("reduceQuantity").value, 10)),
-            reason: document.getElementById("reduceReason").value,
-            notes: document.getElementById("reduceNotes").value,
-        };
-    }
-
-    fetch(`/admin/updateInventory/${currentProductId}`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                console.error(data.error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: "Failed to update inventory.",
-                    timer: 3000,
-                    timerProgressBar: true,
-                    toast:true,
-                    position:"center"
-                });
-            } else {
+            function showSuccessMessage(message) {
                 Swal.fire({
                     icon: 'success',
                     title: 'Success!',
-                    text: "Inventory updated successfully.",
+                    text: message,
                     timer: 3000,
                     timerProgressBar: true,
-                    toast:true,
-                    position:"center"
-                }).then(() => {
-                    location.reload();
+                    showConfirmButton: false,
+                    toast: true,
+                    position: "center",
+                    background: 'purple',
+                    color: "gold"
                 });
             }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: "An unexpected error occurred.",
-                timer: 3000,
-                timerProgressBar: true,
-                toast:true,
-                position:"center"
-            });
-        });
-}
 
-    </script>
-    
-</body>
+            function showErrorMessage(message) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: message,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                    toast: true,
+                    position: "center",
+                    background: 'purple',
+                    color: "gold"
+                });
+            }
 
-<%- include('../partials/admin/footer.ejs') %>
+            function updateStock(isAddStock) {
+                if (!currentProductId) {
+                    console.error("No product ID selected.");
+                    return;
+                }
+
+                let data;
+
+                if (isAddStock) {
+                    data = {
+                        quantityChange: parseInt(document.getElementById("addQuantity").value, 10),
+                        reason: "Add Stock",
+                        notes: document.getElementById("addNotes").value,
+                    };
+                } else {
+                    data = {
+                        quantityChange: -Math.abs(parseInt(document.getElementById("reduceQuantity").value, 10)),
+                        reason: document.getElementById("reduceReason").value,
+                        notes: document.getElementById("reduceNotes").value,
+                    };
+                }
+
+                fetch(`/admin/updateInventory/${currentProductId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            console.error(data.error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: "Failed to update inventory.",
+                                timer: 3000,
+                                timerProgressBar: true,
+                                toast: true,
+                                position: "center",
+                                background: 'purple',
+                                color: "gold"
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: "Inventory updated successfully.",
+                                timer: 3000,
+                                timerProgressBar: true,
+                                toast: true,
+                                position: "center",
+                                background: 'purple',
+                                color: "gold"
+                            }).then(() => {
+                                location.reload();
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: "An unexpected error occurred.",
+                            timer: 3000,
+                            timerProgressBar: true,
+                            toast: true,
+                            position: "center",
+                            background: 'purple',
+                            color: "gold"
+                        });
+                    });
+            }
+
+        </script>
+
+    </body>
+
+    <%- include('../partials/admin/footer.ejs') %>
