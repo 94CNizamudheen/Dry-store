@@ -3,41 +3,45 @@
         .card.border-success {
             border: 2px solid green;
             background-color: #f7fdf7;
-
+    
         }
-
+    
         .card {
             box-shadow: 5px 5px 10px #ccc, -5px -5px 10px #fff;
             padding: 10px;
         }
-
+    
         .card-title {
             font-weight: bold;
             margin-bottom: 10px;
         }
-
+    
         .wallet-timeline-container {
             display: flex;
             flex-wrap: wrap;
             align-items: flex-start;
             gap: 20px;
         }
+    
         .wallet-card {
             flex: 0 0 300px;
             max-width: 300px;
             border-radius: 15px;
             background: #f8f9fa;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+    
         .wallet-card .card-header {
             background-color: #6c757d !important;
             border-radius: 15px 15px 0 0;
             color: white;
         }
+    
         .wallet-balance {
             color: #650a5c;
             font-size: 1.5rem;
         }
+    
         .checkout-timeline {
             display: flex;
             justify-content: space-between;
@@ -46,6 +50,7 @@
             flex-grow: 1;
             min-width: 300px;
         }
+    
         .timeline-connector {
             position: absolute;
             height: 4px;
@@ -55,6 +60,7 @@
             right: 0;
             z-index: 0;
         }
+    
         .timeline-item {
             display: flex;
             flex-direction: column;
@@ -63,6 +69,7 @@
             position: relative;
             z-index: 1;
         }
+    
         .timeline-icon {
             width: 60px;
             height: 60px;
@@ -76,51 +83,191 @@
             margin-bottom: 10px;
             transition: all 0.3s ease;
         }
+    
         .timeline-item.active .timeline-icon {
             background-color: #349636;
             color: white;
-            box-shadow: 0 0 0 4px rgba(0,123,255,0.3);
+            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.3);
         }
+    
         .timeline-text {
             text-align: center;
             color: #6c757d;
             font-weight: 500;
         }
+    
         .timeline-item.active .timeline-text {
             color: #007bff;
             font-weight: bold;
         }
+    
         @media (max-width: 992px) {
             .wallet-timeline-container {
                 flex-direction: column;
                 align-items: center;
             }
+    
             .wallet-card {
                 max-width: 100%;
                 width: 100%;
             }
+    
             .checkout-timeline {
                 flex-direction: column;
             }
+    
             .timeline-connector {
                 display: none;
             }
+    
             .timeline-item {
                 flex-direction: row;
                 width: 100%;
                 margin-bottom: 15px;
                 justify-content: flex-start;
             }
+    
             .timeline-icon {
                 margin-right: 15px;
                 margin-bottom: 0;
             }
+    
             .timeline-text {
                 text-align: left;
             }
         }
-    </style>
+        @media screen and (max-width: 768px) {
+    .coupon-input-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
 
+    .coupon-input {
+        margin-bottom: 10px;
+        width: 100%;
+    }
+
+    .coupon-buttons {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .btn:last-child {
+        margin-bottom: 0;
+    }
+}
+
+/* Ensuring Full Width on Small Screens */
+@media screen and (max-width: 480px) {
+    .panel-body {
+        padding: 10px;
+    }
+
+    .coupon-input,
+    .btn {
+        font-size: 14px;
+        padding: 8px;
+    }
+}
+    </style>
+<style>
+    .coupons-container {
+        font-family: 'Arial', sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .no-coupons {
+        text-align: center;
+        color: #888;
+        font-style: italic;
+    }
+
+    .coupon-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+    }
+
+    .coupon-card {
+        width: 300px;
+        border: 2px dashed #3498db;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+        position: relative;
+    }
+
+    .coupon-card:hover {
+        transform: scale(1.05);
+    }
+
+    .coupon-header {
+        background-color: #f1f1f1;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .discount-badge {
+        font-size: 24px;
+        font-weight: bold;
+        color: #2ecc71;
+    }
+
+    .coupon-body {
+        display: flex;
+        flex-direction: column;
+        padding: 15px;
+        background-color: white;
+    }
+
+    .coupon-code-section {
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    .coupon-code-label {
+        display: block;
+        color: #7f8c8d;
+        font-size: 12px;
+        margin-bottom: 5px;
+    }
+
+    .coupon-code {
+        background-color: #ecf0f1;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-weight: bold;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        display: inline-block;
+    }
+
+    .coupon-details {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px dashed #bdc3c7;
+        padding-top: 10px;
+    }
+
+    .expires-label {
+        color: #7f8c8d;
+        font-size: 12px;
+    }
+
+    .expires-date {
+        font-weight: bold;
+        color: #e74c3c;
+    }
+</style>
 
     <div class="page-header breadcrumb-wrap">
         <div class="container">
@@ -332,13 +479,8 @@
                                         </div>
                                     </div>
                                     <div class="">
-                                        <div class="toggle_info">
-                                            <span><i class="fi-rs-label mr-10"></i><span class="text-muted">Have a
-                                                    coupon?</span>
-                                                <a href="#coupon" data-bs-toggle="collapse" class="collapsed"
-                                                    aria-expanded="false">Click here to enter your code</a></span>
-                                        </div>
-                                        <div class="panel-collapse collapse coupon_form" id="coupon">
+                                       
+                                        <div class="" id="coupon">
                                             <div class="panel-body">
 
                                                 <div class="input-group">
@@ -358,62 +500,37 @@
                                         </div>
                                     </div>
                                     <br>
-                                    <div class="toggle_info">
-                                        <span><i class="fi-rs-label mr-10"></i>
-                                            <a href="#coupons" data-bs-toggle="collapse" class="collapsed"
-                                                aria-expanded="false">Show Coupons</a></span>
-                                    </div>
-                                    <div class="panel-collapse collapse coupon_form" id="coupons">
-                                        <div class="panel-body">
-                                            <div class="container mt-4">
-                                                <div class="row ">
-                                                    <% if(coupons.length<=0) {%>
-                                                        <h3 class="text-danger">No active coupons</h3>
-                                                        <% }else{ %>
-                                                            <div class="col-sm-12">
-                                                                <h3 class="mb-3 text-success">Active Coupons</h3>
+                                    
+                                    <div class="coupons-container">
+                                        <% if(coupons.length <= 0) { %>
+                                            <p class="no-coupons">No coupons available right now</p>
+                                        <% } else { %>
+                                            <div class="coupon-list">
+                                                <% coupons.forEach((coupon) => { %>
+                                                    <% if (new Date(coupon.expiryOn) >= new Date() && coupon.usageLimit - coupon.timesUsed > 0) { %>
+                                                        <div class="coupon-card">
+                                                            <div class="coupon-header">
+                                                                <div class="discount-badge">
+                                                                    <%= coupon.discountType === 'percentage' ? coupon.discountValue + '% OFF' : '₹' + coupon.discountValue + ' OFF' %>
+                                                                </div>
                                                             </div>
-                                                            <% coupons.forEach((coupon, index) => {%> 
-                                                               
-                                                               <%  if (new Date(coupon.expiryOn) >= new Date() && coupon.usageLimit - coupon.timesUsed > 0) { %>
-                                                                    <div class="col-md-5 mb-3">
-                                                                        <div
-                                                                            class="card <%= (index % 2 === 0 ? 'border-success bg-light' : 'border-warning bg-light') %>">
-                                                                            <div
-                                                                                class="card-header bg-<%= (index % 2 === 0 ? 'success' : 'warning') %> text-white">
-                                                                                <h5>
-                                                                                    <% if (coupon.minimumPrice) { %>
-                                                                                        Minimum Purchase: ₹<%= coupon.minimumPrice %>
-                                                                                    <% } %>
-                                                                                </h5>
-                                                                            </div>
-                                                                            <div class="card-body">
-                                                                                <p class="card-text">
-                                                                                    <span class="badge bg-info">
-                                                                                        <%= coupon.discountType === 'percentage'? coupon.discountValue + '% OFF': '₹' + coupon.discountValue + ' OFF' %>
-                                                                                    </span>
-                                                                                </p>
-                                                                                <ul class="list-unstyled">
-                                                                                    <li><strong>Code:</strong><br>
-                                                                                        <%= coupon.code %>
-                                                                                    </li>
-                                                                                    <li><strong>Expires:</strong>
-                                                                                        <%= new Date(coupon.expiryOn).toLocaleDateString() %>
-                                                                                    </li>
-                                                                                    <li><strong>Usage Limit:</strong>
-                                                                                        <%= coupon.usageLimit - coupon.timesUsed %> Left
-                                                                                    </li>
-                                                                                </ul>
-                                                                            </div>
-                                                                        </div>
+                                                            <div class="coupon-body">
+                                                                <div class="coupon-code-section">
+                                                                    <span class="coupon-code-label">Coupon Code</span>
+                                                                    <div class="coupon-code">
+                                                                        <%= coupon.code %>
                                                                     </div>
-                                                            <% } %>
-                                                            <% }) %>
-                                                        <% } %>
-                                                </div>
+                                                                </div>
+                                                                <div class="coupon-details">
+                                                                    <span class="expires-label">Expires</span>
+                                                                    <span class="expires-date"><%= new Date(coupon.expiryOn).toLocaleDateString() %></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    <% } %>
+                                                <% }) %>
                                             </div>
-
-                                        </div>
+                                        <% } %>
                                     </div>
 
 
@@ -822,8 +939,6 @@
         );
         const shippingElement = document.getElementById('shipping-cost');
 
-        console.log("discountedTotal=", discountedTotal);
-
         if (discountedTotal >= 1000) {
             shippingElement.innerText = "Free Shipping";
         }
@@ -845,13 +960,11 @@
             const couponInput = document.getElementById('couponInput').value.trim();
             const totalAmountElement = document.querySelector('.fw-bold.text-success');
             const totalAmount = parseFloat(totalAmountElement.textContent.replace('₹', '').trim() || '0');
-            console.log('Total Amount:', totalAmount);
             if (!couponInput) {
                 Swal.fire({
                     icon: "error",
-                    title: "Error",
                     text: "Please enter a coupon code",
-                    position: "center",
+                    position: "top-end",
                     toast: true,
                     background: 'purple',
                     color:"gold"
@@ -880,19 +993,17 @@
                         }
                         Swal.fire({
                             icon: "success",
-                            title: 'Success',
                             text: "Coupon applied successfully",
-                            position: "center",
+                            position: "top-end",
                             toast: true,
                             background: 'purple',
                             color:"gold"
-                        })
+                        }).then(()=>window.location.reload())
                     } else {
                         Swal.fire({
                             icon: "info",
-                            title: "Error",
                             text: data.message || "Invalid Coupon",
-                            position: "center",
+                            position: "top-end",
                             toast: true,
                             background: 'purple',
                             color:"gold"
@@ -903,9 +1014,8 @@
 
                     Swal.fire({
                         icon: "error",
-                        title: "Error",
                         text: "An error occurred. Please try again",
-                        position: "center",
+                        position: "top-end",
                         toast: true,
                         background: 'purple',
                         color:"gold"
@@ -926,9 +1036,8 @@
 
                         Swal.fire({
                             icon: "success",
-                            title: 'Success',
                             text: "Coupon removed successfully",
-                            position: "center",
+                            position: "top-end",
                             toast: true,
                             background: 'purple',
                             color:"gold"
@@ -940,9 +1049,8 @@
                 .catch(error => {
                     Swal.fire({
                         icon: "error",
-                        title: "Error",
                         text: "An error occurred while removing the coupon",
-                        position: "center",
+                        position: "top-end",
                         toast: true,
                         background: 'purple',
                         color:"gold"
@@ -986,13 +1094,12 @@
                                 shippingChargeElement.innerText = originalText;
 
                                 Swal.fire({
-                                    title: "Error",
                                     text: data.error || "Failed to select the address. Please try again.",
                                     icon: "error",
                                     toast: true,
-                                    position: "center",
+                                    position: "top-end",
                                     background: 'purple',
-                                     color:"gold"
+                                    color:"gold"
 
                                 });
                             }
@@ -1009,11 +1116,10 @@
                             shippingChargeElement.innerText = originalText;
 
                             Swal.fire({
-                                title: "Error",
                                 text: "An error occurred while selecting the address. Please try again.",
                                 icon: "error",
                                 toast: true,
-                                position: "center",
+                                position: "top-end",
                                 background: 'purple',
                                 color:"gold"
                             });
@@ -1084,11 +1190,10 @@
                                 } else {
 
                                     Swal.fire({
-                                        title: "Error",
                                         text: result.error || "Failed to set payment method",
                                         icon: "error",
                                         toast: true,
-                                        position: 'center',
+                                        position: "top-end",
                                         background: 'purple',
                                          color:"gold"
                                     });
@@ -1096,13 +1201,12 @@
                             } catch (error) {
                                 console.error("Error sending payment method:", error);
                                 Swal.fire({
-                                    title: "Error",
                                     text: "An error occurred while setting payment method",
                                     icon: "error",
                                     toast: true,
-                                    position: 'center',
+                                    position: "top-end",
                                     background: 'purple',
-                                color:"gold"
+                                    color:"gold"
                                 });
                             }
                         }
@@ -1116,13 +1220,13 @@
 
                     if (!selectedPaymentMethod) {
                         Swal.fire({
-                            title: "Error",
+                            
                             text: "Please select a payment method",
                             icon: "error",
-                            position: 'center',
+                            position: "top-end",
                             toast: true,
                             background: 'purple',
-                                color:"gold"
+                            color:"gold"
                         });
                         return;
                     }
@@ -1144,10 +1248,10 @@
                                 
                             } else {
                                 Swal.fire({
-                                    title: "Error",
+                                        
                                     text: data.error || "An error occurred while placing your order.",
                                     icon: "error",
-                                    position: 'center',
+                                    position: "top-end",
                                     toast: true,
                                     background: 'purple',
                                 color:"gold"
@@ -1157,10 +1261,9 @@
                         } catch (error) {
                             console.error("Error placing order:", error);
                             Swal.fire({
-                                title: "Error",
                                 text: "An error occurred. Please try again.",
                                 icon: "error",
-                                position: 'center',
+                                position: "top-end",
                                 toast: true,
                                 background: 'purple',
                                 color:"gold"
@@ -1220,13 +1323,12 @@
                                 }
                             } catch (error) {
                                 Swal.fire({
-                                    title: "Payment Failed",
                                     text: "Payment verification Failed. Please try again",
                                     icon: "error",
-                                    position: 'center',
+                                    position: "top-end",
                                     toast: true,
                                     background: 'purple',
-                                color:"gold"
+                                    color:"gold"
                                 })
                             }
                         },
@@ -1272,13 +1374,12 @@
                                                 if (!failedOrderResult.success) {
                                                     console.error('Failed to save order:', failedOrderResult.error);
                                                     Swal.fire({
-                                                        title: "Error",
                                                         text: "Unable to process your order. Please contact support.",
                                                         icon: "error",
-                                                        position: 'center',
+                                                        position: "top-end",
                                                         toast: true,
                                                         background: 'purple',
-                                                         color:"gold"
+                                                        color:"gold"
                                                     });
                                                 } else {
 
@@ -1287,10 +1388,9 @@
                                             } catch (error) {
                                                 console.error('Error saving failed order:', error);
                                                 Swal.fire({
-                                                    title: "Error",
                                                     text: "An error occurred. Please contact support.",
                                                     icon: "error",
-                                                    position: 'center',
+                                                    position: "top-end",
                                                     toast: true,
                                                     background: 'purple',
                                                     color:"gold"
@@ -1308,10 +1408,10 @@
                                                 initializeRazorpay(amount, paymentOption);
                                             } else {
                                                 Swal.fire({
-                                                    title: "Error",
+                                                    
                                                     text: "Please select a payment option.",
                                                     icon: "warning",
-                                                    position: 'center',
+                                                    position: "top-end",
                                                     toast: true,
                                                     background: 'purple',
                                                     color:"gold"
@@ -1322,10 +1422,9 @@
                                 } catch (error) {
                                     console.error('Error handling payment closure:', error);
                                     Swal.fire({
-                                        title: "Error",
                                         text: "An error occurred. Please contact support.",
                                         icon: "error",
-                                        position: 'center',
+                                        position: "top-end",
                                         toast: true,
                                         background: 'purple',
                                         color:"gold"
@@ -1339,9 +1438,8 @@
                 } catch (error) {
                     console.error('Razorpay initialization Error', error);
                     Swal.fire({
-                        title: "Error",
                         text: error.message || "Failed to initialize payment. Please try again",
-                        position: 'center',
+                        position: "top-end",
                         toast: true,
                         icon: "error",
                         background: 'purple',
@@ -1407,13 +1505,12 @@
 
                 if (phone && altPhone && phone === altPhone) {
                     Swal.fire({
-                        title: "Error",
                         text: "Phone number and alternate phone number should be different.",
                         icon: "error",
-                        position: 'center',
+                        position: "top-end",
                         toast: true,
                         background: 'purple',
-                                color:"gold"
+                        color:"gold"
                     });
                     isValid = false;
                 }
@@ -1460,12 +1557,27 @@
                                 townsDropdown.appendChild(option);
                             });
                         } else {
-                            alert('Invalid Pincode or no towns available');
+                        Swal.fire({
+                        text: "Invalid Pincode or no towns available.",
+                        icon: "notice",
+                        position: "top-end",
+                        toast: true,
+                        background: 'purple',
+                        color:"gold"
+                    });
                         }
                     })
                     .catch(error => console.error('Error fetching town details:', error));
             } else {
-                alert('Please enter a valid 6-digit pincode.');
+                
+                Swal.fire({
+                        text: "Please enter a valid 6-digit pincode.",
+                        icon: "notice",
+                        position: "top-end",
+                        toast: true,
+                        background: 'purple',
+                        color:"gold"
+                    });
             }
         });
 

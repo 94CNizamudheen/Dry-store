@@ -69,7 +69,7 @@ const addProducts = async (req, res) => {
         await newProduct.save();
         return res.redirect('/admin/addProduct');
     } catch (error) {
-        console.error("Error saving product:", error);
+        
         res.redirect("/admin/pageError");
     }
 };
@@ -111,8 +111,6 @@ const getAllProducts= async(req,res)=>{
         }else{
             res.render('page-404');
         }
-
-
     } catch (error) {
         res.redirect('/pageError');
     }
@@ -121,7 +119,7 @@ const getAllProducts= async(req,res)=>{
 const addProductOffer = async (req, res) => {
     try {
         const { percentage, productId } = req.body;
-        console.log(percentage);
+       
         if(isNaN(percentage)||percentage<=0){
             return res.status(400).json({success:false,message:"Invalid percentage"});
         };
@@ -137,25 +135,11 @@ const addProductOffer = async (req, res) => {
         await product.save();
 
 
-        // const findProduct = await Product.findOne({ _id: productId });
-        // const findCategory = await Category.findOne({ _id: findProduct.category });
-
-        // if (findCategory.categoryOffer >= percentage) {
-        //     return res.json({ status: false, message: 'This product already has a Category Offer and is and its more than this % ' });
-        // }
-
-        // findProduct.salePrice = findProduct.regularPrice - Math.floor(findProduct.regularPrice * (percentage / 100));
-        // findProduct.productOffer = parseInt(percentage);
-
-        // await findProduct.save();
-
-        // findCategory.categoryOffer = 0;
-        // await findCategory.save();
 
         return res.json({ status: true,message:"Product offer added successfully"});
 
     } catch (error) {
-        console.error(error);
+       return res.json({status:false,message:"An error occured "})
 
         if (!res.headersSent) {
             return res.status(500).json({ message: "Internal server error" });
@@ -183,10 +167,6 @@ const removeProductOffer=async(req,res)=>{
         product.productOffer=0;
         await product.save();
 
-
-        // findProduct.salePrice=  findProduct.salePrice + Math.floor(findProduct.regularPrice*(percentage/100));
-        // findProduct.productOffer=0;
-        // await findProduct.save();
         res.json({status:true,message:"Product offer removed successfully"})
     } catch (error) {
         return res.status(500).json({ status: false, message: "Internal server error" });
@@ -225,7 +205,6 @@ const getEditProduct = async (req, res) => {
             brand: brand,
         });
     } catch (error) {
-        console.error(error);
         res.redirect('/pageError');
     }
 };
@@ -272,7 +251,6 @@ const editProduct = async (req, res) => {
         
         res.redirect('/admin/products');
     } catch (error) {
-        console.error(error);
         res.redirect('/pageError');
     }
 };
@@ -284,9 +262,8 @@ const deleteSingleImage= async(req,res)=>{
         const imagePath=path.join("public","upload","product-images",imageNameToServer);
         if(fs.existsSync(imagePath)){
             await fs.unlinkSync(imagePath);
-            console.log(`image ${imageNameToServer} successfully deleted`);
         }else{
-            console.log(`image ${imageNameToServer} not found`);
+
         }
         res.send({status:true,})
 
@@ -311,14 +288,12 @@ const deleteSingleImage= async(req,res)=>{
         })
         
     } catch (error) {
-        console.error("error for loading invetory");
         res.redirect('/pageError');
     }
  };
 
  const updateInventory = async(req,res)=>{
     try {
-        console.log("Inventory updation Invoked");
         const {productId}= req.params;
         const {quantityChange,reason,notes}= req.body;
         if(!quantityChange ||!reason){
@@ -345,7 +320,6 @@ const deleteSingleImage= async(req,res)=>{
         res.status(200).json({message:"Inventory updated SuccessFully.",product});
 
     } catch (error) {
-        console.error('Error for stock updation',error);
         res.status(500).json({error:"Internal server error while updating product inventory"});
     }
  };

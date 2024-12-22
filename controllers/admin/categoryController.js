@@ -46,7 +46,6 @@ const addCategory = async (req, res) => {
         return res.json({ message: "Category added successfully" });
         
     } catch (error) {
-        console.error("Error adding category:", error);
         res.status(500).json({ error: "Internal server error" });
     }
 };
@@ -55,16 +54,11 @@ const addCategory = async (req, res) => {
         try {
             const percentage= parseInt(req.body.percentage);
             const categoryId= req.body.categoryId;
-            console.log(`percnetage ${percentage}`);
-            console.log(`cat ${categoryId}`);
-
             if (isNaN(percentage) || percentage <= 0) {
                 return res.status(400).json({ status: false, message: "Invalid percentage value" });
             }
 
             const category= await Category.findById(categoryId);
-            console.log(category);
-            
             if(!category){
                 return res.status(404).json({status:false,message:"category not found"})
             }
@@ -79,16 +73,7 @@ const addCategory = async (req, res) => {
                 await product.save();
             }
             
-            // const hasProductOffer= products.some((product)=>product.productOffer >= percentage);
-            // if(hasProductOffer){
-            //     return res.json({status:false,message:"Product offer % is more than this % " })
-            // }
-            // await Category.updateOne({_id:categoryId},{$set:{categoryOffer:percentage}});
-            // for(const product of products){
-            //     product.productOffer=0;
-            //     product.salePrice-=Math.floor(product.regularPrice*(percentage/100));
-            //     await product.save();
-            // } 
+            
             res.json({status:true ,message: "Category offer added successfully"});
         }catch (error) {
             res.status(500).json({status:false,message:"Internal server Error"})
@@ -113,9 +98,7 @@ const addCategory = async (req, res) => {
                     }else{
                         product.salePrice=product.regularPrice;
                     }
-                    // product.salePrice +=Math.floor(product.regularPrice*(percentage/100));
-                    // product.productOffer=0;
-                    // await product.save();
+                    
                     await product.save()
                 }
                

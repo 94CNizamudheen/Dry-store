@@ -60,7 +60,6 @@ const loadCart = async (req, res) => {
 
         });
     } catch (error) {
-        console.error("Error loading cart page:", error);
         res.status(500).redirect("/pageNotfound");
     }
 };
@@ -68,7 +67,7 @@ const loadCart = async (req, res) => {
 const addToCart = async (req, res) => {
     try {
         const user = req.session.user;
-        console.log(user)
+        
         if (!user) {
             return res.status(401).json({
                 success: false,
@@ -137,7 +136,6 @@ const addToCart = async (req, res) => {
             remainingStock,
         });
     } catch (error) {
-        console.error("Error adding to cart:", error);
         res.status(500).json({
             success: false,
             message: "Failed to add item to cart",
@@ -207,7 +205,6 @@ const updateQuantity = async (req, res) => {
             totalDiscount: data.totalDiscount
         });
     } catch (error) {
-        console.error("Error updating quantity:", error);
         res.status(500).json({ error: "Server error" });
     }
 };
@@ -253,14 +250,12 @@ const removeItem = async (req, res) => {
             res.status(404).json({ error: "Product not found in cart" });
         }
     } catch (error) {
-        console.error("Error removing item:", error);
         res.status(500).json({ error: "Server error" });
     }
 };
 
 const applyCoupon = async (req, res) => {
     try {
-        console.log("apply coupon invoked");
         const { code, totalAmount } = req.body;
         const userId = req.session.user;
         const selectedAddressId=req.session.selectedAddress;
@@ -317,7 +312,6 @@ const applyCoupon = async (req, res) => {
                 : "Coupon applied successfully",
         });
     } catch (error) {
-        console.error("Error for applying coupon", error);
         res.status(500).json({
             message: "Internal server Error. Please try again",
             success: false,
@@ -332,7 +326,6 @@ const removeCoupon = async (req, res) => {
 
         req.session.save((err) => {
             if (err) {
-                console.error("session save error", err);
                 return res
                     .status(500)
                     .json({ success: false, message: "Error remove coupen" });
@@ -340,7 +333,6 @@ const removeCoupon = async (req, res) => {
             res.json({ success: true, message: "Coupon removed Successfully" });
         });
     } catch (error) {
-        console.error("Error for remove coupon", error);
         res.json({ success: false, message: "Internal server Error" });
     }
 };

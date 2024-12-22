@@ -20,9 +20,9 @@ const loadCouponPage= async(req,res)=>{
 };
 const createCoupon=async(req,res)=>{
     try {
-        console.log("create coupen invoked");
+       
         const{code,expiryOn,discountType,discountValue,minimumPrice,usageLimit,isList}=req.body;
-        console.log("form :",{code,expiryOn,discountType,discountValue,minimumPrice,usageLimit,isList});
+       
         if(!code||!expiryOn||!discountType||!discountValue||!usageLimit){
             return res.status(400).json({message:"All required feilds must be filled."});
         }
@@ -45,14 +45,13 @@ const createCoupon=async(req,res)=>{
         res.status(201).json({message:"Coupen created successfully!"});
         
     } catch (error) {
-        console.error('Error for creating coupen',error);
         res.status(500).json({message:"Server error. Please try again"});
     }
 };
 
 const updateCoupon=async(req,res)=>{
     try {
-        console.log('update Coupen invoked');
+    
         const {id}=req.params;
         const{code,expiryOn,discountType,discountValue,minimumPrice,usageLimit,isList}=req.body;
         const coupon= await Coupon.findById(id);
@@ -70,7 +69,7 @@ const updateCoupon=async(req,res)=>{
         await coupon.save();
         res.status(200).json({message:"Coupon updated successfully"})
     } catch (error) {
-        console.error("Error for updating Coupon",error);
+        
         res.status(500).json({message:"Internal server Error"})
     }
 
@@ -78,7 +77,6 @@ const updateCoupon=async(req,res)=>{
 const removeCoupon= async(req,res)=>{
     try {
 
-        console.log('remove Coupen invoked');
         const {id}= req.params;
         if(!mongoose.Types.ObjectId.isValid(id)){
             return res.status(400).json({message:"Invalid coupon Id"})
@@ -89,7 +87,7 @@ const removeCoupon= async(req,res)=>{
         }
         res.status(200).json({message:"Coupen Removed Successfully"});
     } catch (error) {
-        console.error('Error for remove coupen',error);
+       
         res.status(500).json({message:"Internal server error"});
     }
 }

@@ -194,7 +194,7 @@
                             title: "Oops",
                             text: "Category already exists",
                             toast: true,
-                            position: "center",
+                            position:"top-end",
                             background: 'purple',
                             color: "gold"
                         });
@@ -204,7 +204,7 @@
                             title: "Oops",
                             text: "An error occurred while adding category",
                             toast: true,
-                            position: "center",
+                            position:"top-end",
                             background: 'purple',
                             color: "gold"
                         });
@@ -254,22 +254,18 @@
         };
 
         async function addCategoryOffer(categoryId) {
-            console.log("add function called");
-            console.log(`category id is ${categoryId}`);
-
             const { value: amount } = await Swal.fire({
                 title: "Offer in percentage",
                 input: "number",
                 inputLabel: "Percentage",
                 inputPlaceholder: "%",
                 toast: true,
-                position: "center",
+                position:"top-end",
                 showConfirmButton: true // For input prompt
             });
 
             if (amount) {
                 try {
-                    console.log(`category id is ${categoryId}`);
                     const response = await fetch("/admin/addCategoryOffer", {
                         method: "POST",
                         headers: {
@@ -284,11 +280,10 @@
                     const data = await response.json();
                     if (response.ok && data.status === true) {
                         Swal.fire({
-                            title: "Offer Added",
                             text: "Offer has been added",
                             icon: "success",
                             toast: true,
-                            position: "center",
+                            position:"top-end",
                             timer: 2000,
                             showConfirmButton: false,
                             background: 'purple',
@@ -298,11 +293,10 @@
                         });
                     } else {
                         Swal.fire({
-                            title: "Failed",
                             text: data.message || "Adding offer failed",
                             icon: "error",
                             toast: true,
-                            position: "center",
+                            position:"top-end",
                             timer: 2000,
                             showConfirmButton: false,
                             background: 'purple',
@@ -311,17 +305,16 @@
                     }
                 } catch (error) {
                     Swal.fire({
-                        title: "Error",
+                        
                         text: "An error occurred while adding the offer",
                         icon: "error",
                         toast: true,
-                        position: "center",
+                        position:"top-end",
                         timer: 2000,
                         showConfirmButton: false,
                         background: 'purple',
                         color: "gold"
                     });
-                    console.log("error while adding offer", error);
                 }
             }
         }
@@ -339,11 +332,10 @@
                 const data = await response.json();
                 if (response.ok && data.status === true) {
                     Swal.fire({
-                        title: "Offer Removed",
                         text: "The offer has been removed",
                         icon: "success",
                         toast: true,
-                        position: "center",
+                        position:"top-end",
                         timer: 2000,
                         showConfirmButton: false,
                         background: 'purple',
@@ -353,11 +345,11 @@
                     });
                 } else {
                     Swal.fire({
-                        title: "Error",
+                       
                         text: data.message || "Remove offer failed",
                         icon: "error",
                         toast: true,
-                        position: "center",
+                        position:"top-end",
                         timer: 2000,
                         showConfirmButton: false,
                         background: 'purple',
@@ -366,17 +358,15 @@
                 }
             } catch (error) {
                 Swal.fire({
-                    title: "Error",
                     text: "An error occurred while removing the offer",
                     icon: "error",
                     toast: true,
-                    position: "center",
+                    position:"top-end",
                     timer: 2000,
                     showConfirmButton: false,
                     background: 'purple',
                     color: "gold"
                 });
-                console.log("error removing offer");
             }
         }
 

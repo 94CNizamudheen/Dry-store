@@ -324,47 +324,7 @@
                                                 <% } %>
                                             </div>
                                             
-                                            <!-- <div class="col-lg-4">
-                                                <h4 class="mb-30">Customer reviews</h4>
-                                                <div class="d-flex mb-30">
-                                                    <div class="product-rate d-inline-block mr-15">
-                                                        <div class="product-rating" style="width:90%">
-                                                        </div>
-                                                    </div>
-                                                    <h6>4.8 out of 5</h6>
-                                                </div>
-                                                <div class="progress">
-                                                    <span>5 star</span>
-                                                    <div class="progress-bar" role="progressbar" style="width: 50%;"
-                                                        aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">50%
-                                                    </div>
-                                                </div>
-                                                <div class="progress">
-                                                    <span>4 star</span>
-                                                    <div class="progress-bar" role="progressbar" style="width: 25%;"
-                                                        aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%
-                                                    </div>
-                                                </div>
-                                                <div class="progress">
-                                                    <span>3 star</span>
-                                                    <div class="progress-bar" role="progressbar" style="width: 45%;"
-                                                        aria-valuenow="45" aria-valuemin="0" aria-valuemax="100">45%
-                                                    </div>
-                                                </div>
-                                                <div class="progress">
-                                                    <span>2 star</span>
-                                                    <div class="progress-bar" role="progressbar" style="width: 65%;"
-                                                        aria-valuenow="65" aria-valuemin="0" aria-valuemax="100">65%
-                                                    </div>
-                                                </div>
-                                                <div class="progress mb-30">
-                                                    <span>1 star</span>
-                                                    <div class="progress-bar" role="progressbar" style="width: 85%;"
-                                                        aria-valuenow="85" aria-valuemin="0" aria-valuemax="100">85%
-                                                    </div>
-                                                </div>
-                                                <a href="#" class="font-xs text-muted">How are ratings calculated?</a>
-                                            </div> -->
+                                            
                                         </div>
                                     </div>
                                     <!--comment form-->
@@ -480,7 +440,7 @@
                     icon:"info",
                     text:"Please provide both a rating and a comment!",
                     toast:true,
-                    position:"center",
+                    position: 'top-end',
                     background: 'purple',
                     color:"gold"
                 })
@@ -537,11 +497,11 @@
 
                     if (response.ok) {
                         Swal.fire({
-                            title: result.isExisting ? 'Notice' : 'Success',
+                           
                             text: result.message,
                             icon: result.isExisting ? 'info' : 'success',
                             toast: true,
-                            position: 'center',
+                            position: 'top-end',
                             timer: 2000,
                             showConfirmButton: true,
                             background: 'purple',
@@ -563,11 +523,11 @@
                         }
                     } else {
                         Swal.fire({
-                            title: 'Notice',
+                           
                             text: result.message || 'Failed to add to wishlist.',
                             icon: 'info',
                             toast: true,
-                            position: 'center',
+                            position: 'top-end',
                             timer: 2000,
                             showConfirmButton: true,
                             background: 'purple',
@@ -577,11 +537,11 @@
                 } catch (error) {
                     console.error('Error adding to Wishlist:', error);
                     Swal.fire({
-                        title: 'Error',
+                        
                         text: 'Something went wrong. Please try again.',
                         icon: 'error',
                         toast: true,
-                        position: 'center',
+                        position: 'top-end',
                         timer: 3000,
                         showConfirmButton: false,
                         background: 'purple',
@@ -619,11 +579,11 @@
 
                         if (response.status === 401) {
                             Swal.fire({
-                                title: 'Login Required!',
+                                
                                 text: 'Please login to add items to your cart.',
                                 icon: 'info',
                                 toast: true,
-                                position: 'center',
+                                position: 'top-end',
                                 background: 'purple',
                                 color:"gold"
 
@@ -632,13 +592,13 @@
                         }
                         if (data.success) {
                             Swal.fire({
-                                title: data.isExisting ? 'Notice!' : 'Success!',
+                               
                                 text: data.message,
                                 icon: data.isExisting ? 'info' : 'success',
                                 timer: 2000,
                                 showConfirmButton: true,
                                 toast: true,
-                                position: 'center',
+                                position: 'top-end',
                                 background: 'purple',
                                 color:"gold"
                             })
@@ -658,11 +618,11 @@
                             }
                         } else {
                             Swal.fire({
-                                title: 'Error!',
+                               
                                 text: data.message || 'Unable to add item to cart.',
                                 icon: 'error',
                                 toast: true,
-                                position: 'center',
+                                position: 'top-end',
                                 background: 'purple',
                             color:"gold"
                             });
@@ -671,11 +631,11 @@
                         console.error("Fetch error:", error);
 
                         Swal.fire({
-                            title: 'Network Error!',
+                           
                             text: 'Something went wrong. Please try again.',
                             icon: 'error',
                             toast: true,
-                            position: 'center',
+                            position: 'top-end',
                             background: 'purple',
                             color:"gold"
                         });

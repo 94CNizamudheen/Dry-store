@@ -163,7 +163,6 @@ const loadCheckOutPage = async (req, res) => {
             appliedCouponCode: req.session.couponCode
         });
     } catch (error) {
-        console.error('Error loading checkout page:', error);
         res.redirect('/pageNotFound').status(500).json({ error: "Internal server error" });
     }
 };
@@ -187,7 +186,6 @@ const postAddAddress = async (req, res) => {
         }
         res.redirect('/check-out');
     } catch (error) {
-        console.error("Error for adding Address", error);
         res.redirect('/pageNotFound')
     }
 };
@@ -209,7 +207,6 @@ const selectAddress = async (req, res) => {
         if (!addressId) {
             return res.status(400).json({ success: false, error: "Address ID is required." });
         }
-
         const addressDoc = await Address.findOne(
             { userId, 'address._id': addressId },
             { 'address.$': 1 }
@@ -232,14 +229,12 @@ const selectAddress = async (req, res) => {
             message: "Address and shipping charge updated successfully",
         });
     } catch (error) {
-        console.error("Error selecting address:", error);
         res.status(500).json({ success: false, error: "Internal server error" });
     }
 };
 //===============================================================================================
 const handlePaymentMethod = async (req, res) => {
     try {
-        console.log("Processing payment method");
 
         const userId = req.session.user;
         const { paymentOption } = req.body;
@@ -248,8 +243,7 @@ const handlePaymentMethod = async (req, res) => {
         const code = req.session.couponCode
         const coupon = await Coupon.findOne({ code });
 
-        //  cart retrieval to support both scenarios
-        console.log("ProductId", productId);
+        //  cart retrieval to support qiuck buy and cart
         let cart, total;
         if (productId) {
             //Single product scenario
@@ -284,8 +278,6 @@ const handlePaymentMethod = async (req, res) => {
         if (paymentOption === "COD" && finalAmount > 1000) {
             return res.status(400).json({ error: "Maximum amount for Cash On Delivery is ₹1000/- " })
         }
-
-        console.log("paymentOption selected:", paymentOption);
         const validPaymentOption = ['COD', 'ONLINE', "WALLET"];
         if (paymentOption === 'WALLET') {
             if (user.wallet.balance < finalAmount) {
@@ -298,10 +290,8 @@ const handlePaymentMethod = async (req, res) => {
         }
 
         req.session.paymentMethod = paymentOption;
-        console.log("pay mthd in session:", req.session.paymentMethod);
         res.json({ success: true });
     } catch (error) {
-        console.error("Error for handling payment method:", error);
         res.status(500).json({ error: "Internal server error" });
     }
 };
@@ -309,7 +299,6 @@ const handlePaymentMethod = async (req, res) => {
 
 const placeOrderForCODandWALLET = async (req, res) => {
     try {
-        console.log("Place Order initiated");
 
         const userId = req.session.user;
         const selectedAddressId = req.session.selectedAddress;
@@ -363,7 +352,6 @@ const placeOrderForCODandWALLET = async (req, res) => {
                 return res.status(400).json({ error: "Insufficient wallet balance." });
             }
             let points = user.rewardPoints += Math.floor(finalAmount * 0.02);
-            console.log('Revard points:', points);
             user.wallet.balance -= finalAmount;
             await user.save();
         }
@@ -404,8 +392,6 @@ const placeOrderForCODandWALLET = async (req, res) => {
         await newOrder.save();
 
         if (productId) {
-
-            console.log('Single product purchase, cart remains unchanged');
         } else {
 
             await Cart.deleteOne({ userId });
@@ -421,10 +407,8 @@ const placeOrderForCODandWALLET = async (req, res) => {
             } else {
                 coupon.userUsage.push({ userId, usageCount: 1 });
             }
-
             await coupon.save();
         }
-
         for (const item of cart.items) {
             const product = await Product.findById(item.productId._id);
             const newQuantity = product.quantity - item.quantity;
@@ -443,7 +427,6 @@ const placeOrderForCODandWALLET = async (req, res) => {
         delete req.session.quickbuyQuantity
         res.status(200).json({ success: true, redirectURL: `/order-success-page?message=${encodeURIComponent('Order Compleated')}`, });
     } catch (error) {
-        console.error("Error occurred in Place Order:", error);
         res.status(500).json({ error: "Internal server error" });
     }
 };
@@ -453,7 +436,6 @@ const loadOrderSuccessPage = async (req, res) => {
         const message = req.query.message || 'Your order is complete!';
         res.render('order-success-page', { message })
     } catch (error) {
-        console.error('error for load order success page');
         res.status(500).json({ error: "Internal server error" });
     }
 };
@@ -469,8 +451,6 @@ const cancelOrder = async (req, res) => {
                 message: "Order ID is required"
             });
         }
-        console.log('Attempting to cancel order:', orderId);
-
         const order = await Order.findOne({ orderId: orderId }).populate('orderedItems.product user');
 
         if (!order) {
@@ -503,7 +483,6 @@ const cancelOrder = async (req, res) => {
             }
         }
         if ((order.paymentDetails.method === 'ONLINE' || order.paymentDetails.method === 'WALLET') && order.paymentDetails.paymentStatus === "Completed") {
-            console.log(`Processing refund for Order ${orderId}`);
 
             const user = await User.findById(order.user._id);
 
@@ -526,7 +505,6 @@ const cancelOrder = async (req, res) => {
                     description: `Refunded for cancelled order ${orderId}`,
                 });
                 await user.save();
-                console.log(`Refund of ₹${order.finalAmount} added to user's Wallet  `);
             } else if (refundMethod === "BANK") {
                 return res.status(500).json({
                     success: false,
@@ -538,8 +516,6 @@ const cancelOrder = async (req, res) => {
 
         order.status = 'Cancelled';
         await order.save();
-
-        console.log(`Order ${orderId} cancelled and products restocked`);
         return res.status(200).json({
             success: true,
             message: "Order cancelled successfully",
@@ -547,7 +523,6 @@ const cancelOrder = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error cancelling order:', error);
         return res.status(500).json({
             success: false,
             message: "Failed to cancel order",
@@ -674,7 +649,6 @@ const cancelOrderItem = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error cancelling order item:', error);
         return res.status(500).json({
             success: false,
             message: "Failed to cancel order item",
@@ -703,7 +677,6 @@ const checkOrderPayment = async (req, res) => {
 
 
     } catch (error) {
-        console.error("error for checking the order payment", error);
         res.status(500).json({
             success: false,
             message: "Failed to check payment status"
@@ -736,7 +709,6 @@ const createRazorpayOrder = async (req, res) => {
             },
         });
     } catch (error) {
-        console.error("Error creating order:", error);
         res.status(500).json({ error: "Error creating Razorpay order" });
     }
 };
@@ -751,7 +723,7 @@ const verifyRazorpayPaymentAndPlaceOrder = async (req, res) => {
         });
 
         const payment = await razorpay.payments.fetch(razorpay_payment_id);
-        console.log(payment);
+      
         if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
             return res.status(400).json({
                 success: false,
@@ -761,7 +733,7 @@ const verifyRazorpayPaymentAndPlaceOrder = async (req, res) => {
         const hmac = crypto.createHmac('sha256', `${process.env.RAZORPAY_KEY_SECRET}`);
         hmac.update(`${razorpay_order_id}|${razorpay_payment_id}`);
         const generated_signature = hmac.digest('hex');
-        console.log(generated_signature, razorpay_signature);
+        
         if (generated_signature !== razorpay_signature) {
             return res.status(400).json({ success: false, error: 'Invalid signature' });
         }
@@ -844,15 +816,10 @@ const verifyRazorpayPaymentAndPlaceOrder = async (req, res) => {
                 });
 
                 await newOrder.save();
-                if (productId) {
-
-                    console.log('Single product purchase, cart remains unchanged');
-                } else {
-                    
+                if (!productId) {
                     await Cart.deleteOne({ userId });
-                }
         
-
+                }
                 if (coupon) {
                     const userCouponUsage = coupon.userUsage.find(u => u.userId.toString() === userId.toString());
                     if (userCouponUsage) {
@@ -896,7 +863,6 @@ const verifyRazorpayPaymentAndPlaceOrder = async (req, res) => {
             return await placeOrderAfterPayment();
         }
     } catch (error) {
-        console.error('Payment verification Failed error : ', error);
         res.status(500).json({
             success: false,
             error: "Payment verification Failed"
@@ -1007,7 +973,6 @@ const failedOrderSave = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error for failed order saving', error);
         res.status(500).json({ message: "Internal serverr error For saving order" })
     }
 };
@@ -1016,7 +981,7 @@ const repayPayment = async (req, res) => {
     try {
         const userId = req.session.user;
         const { razorpay_payment_id, razorpay_order_id, razorpay_signature, orderId } = req.body;
-        console.log("body data", req.body)
+        
         const razorpay = new Razorpay({
             key_id: process.env.RAZORPAY_KEY_ID,
             key_secret: process.env.RAZORPAY_KEY_SECRET
@@ -1025,7 +990,7 @@ const repayPayment = async (req, res) => {
             return res.status(404).json({ success: false, message: "Order id missing" })
         }
         const payment = await razorpay.payments.fetch(razorpay_payment_id);
-        console.log(payment);
+        
         if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
             return res.status(400).json({
                 success: false,
@@ -1035,7 +1000,7 @@ const repayPayment = async (req, res) => {
         const hmac = crypto.createHmac('sha256', `${process.env.RAZORPAY_KEY_SECRET}`);
         hmac.update(`${razorpay_order_id}|${razorpay_payment_id}`);
         const generated_signature = hmac.digest('hex');
-        console.log(generated_signature, razorpay_signature);
+        
         if (generated_signature !== razorpay_signature) {
             return res.status(400).json({ success: false, error: 'Invalid signature' });
         }
@@ -1047,12 +1012,9 @@ const repayPayment = async (req, res) => {
                 "paymentDetails.transactionId": razorpay_payment_id,
             }
         }, { new: true });
-
-        console.log("Order updated successfully", updatedOrder);
         res.status(200).json({ success: true, message: " Repayment Successfull" })
 
     } catch (error) {
-        console.error("Error for Update and retry verification", error);
         res.status(500).json({ success: false, message: "Internal Error for Updating order" });
     }
 };
@@ -1061,7 +1023,7 @@ const initializeReturn = async (req, res) => {
         const { orderId, productId } = req.body;
 
         const order = await Order.findOne({ orderId: orderId });
-        console.log('order:', order);
+     
         if (!order) {
             return res.status(404).json({ success: false, message: "Order not Found" });
         }
@@ -1072,7 +1034,7 @@ const initializeReturn = async (req, res) => {
         if (orderItem.returnDetails.status !== "Not Requested") {
             return res.status(404).json({ success: false, message: "Already requested or returned" });
         }
-        console.log("ordered item", orderItem);
+    
         const daysSinceOrder = (new Date() - order.deliveredOn) / (1000 * 60 * 60 * 24);
         if (daysSinceOrder > 2) {
             return res.status(400).json({ success: false, message: 'Return window has expired' });
@@ -1082,7 +1044,7 @@ const initializeReturn = async (req, res) => {
         await order.save();
         res.status(200).json({ success: true, })
     } catch (error) {
-        console.error('error for return request', error);
+      
         res.status(500).json({ success: false, message: "Internal server error" })
     }
 }

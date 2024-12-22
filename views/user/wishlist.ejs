@@ -95,17 +95,7 @@
                     const result = await response.json();
 
                     if (response.ok) {
-                        Swal.fire({
-                            title: 'Success',
-                            text: result.message,
-                            icon: 'success',
-                            toast: true,
-                            position: "center",
-                            timer: 2000,
-                            showConfirmButton: false,
-                            background: 'purple',
-                            color:"gold"
-                        });
+                        
 
                         // Remove the product row from the DOM
                         const productRow = button.closest('tr');
@@ -122,11 +112,11 @@
                         }
                     } else {
                         Swal.fire({
-                            title: "Error",
+                           
                             icon: "error",
                             text: "Failed to remove item",
                             toast: true,
-                            position: "center",
+                            position: 'top-end',
                             timer: 2000,
                             showConfirmButton: true,
                             background: 'purple',
@@ -136,11 +126,11 @@
                 } catch (error) {
                     console.error("Error removing item: ", error);
                     Swal.fire({
-                        title: "Error",
+                        
                         icon: "error",
                         text: "An error occurred. Please try again.",
                         toast: true,
-                        position: "center",
+                        position: 'top-end',
                         timer: 2000,
                         showConfirmButton: true,
                         background: 'purple',
@@ -183,7 +173,7 @@
                                 text: 'Please login to add items to your cart.',
                                 icon: 'info',
                                 toast: true,
-                                position: 'center',
+                                position: 'top-end',
                                 background: 'purple',
                             color:"gold"
 
@@ -192,13 +182,13 @@
                         }
                         if (data.success) {
                             Swal.fire({
-                                title: data.isExisting ? 'Notice!' : 'Success!',
+                               
                                 text: data.message,
                                 icon: data.isExisting ? 'info' : 'success',
                                 timer: 2000,
                                 showConfirmButton: true,
                                 toast: true,
-                                position: 'center',
+                                position: 'top-end',
                                 background: 'purple',
                             color:"gold"
 
@@ -219,11 +209,11 @@
                             }
                         } else {
                             Swal.fire({
-                                title: 'Error!',
+                          
                                 text: data.message || 'Unable to add item to cart.',
                                 icon: 'error',
                                 toast: true,
-                                position: 'center',
+                                position: 'top-end',
                                 background: 'purple',
                             color:"gold"
                             });
@@ -236,7 +226,7 @@
                             text: 'Something went wrong. Please try again.',
                             icon: 'error',
                             toast: true,
-                            position: 'center',
+                            position: 'top-end',
                             background: 'purple',
                             color:"gold"
                         });

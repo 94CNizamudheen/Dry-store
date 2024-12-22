@@ -209,10 +209,10 @@
                     }
                 } catch (error) {
                     Swal.fire({
-                        icon: "error",
+                      
                         title: error.message,
                         showConfirmButton: true,
-                        position: 'center',
+                        position: 'top-end',
                         toast: true,
                         background: 'purple',
                     color:"gold"
@@ -241,11 +241,11 @@
                 } catch (error) {
                     console.error("Error removing item:", error);
                     Swal.fire({
-                        icon: "error",
+                        
                         title: "Error removing item",
                         timer: 1500,
                         showConfirmButton: false,
-                        position: 'center',
+                        position: 'top-end',
                         toast: true,
                         background: 'purple',
                     color:"gold"

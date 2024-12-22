@@ -60,11 +60,7 @@
                         <h2 class="mb-2">Dashboard</h2>
                         <p class="text-muted mb-0">Overview of your business data</p>
                     </div>
-                    <!-- <div>
-                        <button class="btn btn-primary">
-                            <i class="fas fa-plus me-2"></i>Create Report
-                        </button>
-                    </div> -->
+                  
                 </div>
         
                 <!-- Statistics Section -->
@@ -269,21 +265,7 @@
                             </div>
                         </div>
                         
-                        <!-- <div class="card mt-4">
-                            <div class="card-header">
-                                <h5 class="card-title">Ledger Actions</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="d-grid gap-2">
-                                    <button class="btn btn-primary" id="generateMonthlyLedger" data-bs-toggle="modal" data-bs-target="#ledgerModal">Generate
-                                        Monthly Ledger</button>
-                                    <button class="btn btn-secondary" id="generateQuarterlyReport" data-bs-toggle="modal"
-                                        data-bs-target="#ledgerModal">Generate Quarterly Report</button>
-                                    <button class="btn btn-success" id="generateYearlyLedger" data-bs-toggle="modal" data-bs-target="#ledgerModal">Generate
-                                        Yearly Ledger</button>
-                                </div>
-                            </div>
-                        </div> -->
+                     
                     </div>
                 </div>
                 <div class="modal fade" id="ledgerModal" tabindex="-1" aria-labelledby="ledgerModalLabel" aria-hidden="true">
@@ -434,7 +416,8 @@
             });
 
         } catch (error) {
-            console.error("Error loading chart data:", error);
+            throw new Error(error);
+            
         }
     }
 
@@ -564,7 +547,6 @@
                 // Create chart
                 createChart(data, label, chartType);
             } catch (error) {
-                console.error('Error fetching chart data:', error);
                 alert('Failed to load chart data');
             }
         }
@@ -651,9 +633,14 @@
             salesChart.data.datasets[0].data = data.salesCounts;
             salesChart.update();
         } catch (error) {
-            console.error('Error fetching sales data:', error);
-         
-            alert('Could not load sales data. Please try again later.');
+            Swal.fire({
+                icon:"info",
+                text:"Could not load sales data. Please try again later.",
+                toast:true,
+                position:"top-end",
+                backgroundColor:"purple",
+                color:"gold",
+           })
         }
     }
 
@@ -701,8 +688,15 @@
                     </tr>`;
             });
         } catch (error) {
-            console.error('Error:', error);
-            alert('Could not generate the ledger. Please try again.');
+            
+            Swal.fire({
+                icon:"info",
+                text:"Could not generate the ledger. Please try again.",
+                toast:true,
+                position:"top-end",
+                backgroundColor:"purple",
+                color:"gold",
+           })
         }
     }
 });

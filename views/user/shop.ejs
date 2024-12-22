@@ -45,11 +45,8 @@
     <style>
 
     </style>
-
+    
     <main class="main">
-
-        <br>
-
         <section class="product-tabs pt-25 pb-20 wow fadeIn animated">
             <div class="container">
                 <% if (search) { %>
@@ -211,19 +208,13 @@
                                                                     </a>
                                                                 </div>
                                                                 <div class="product-action-1">
-                                                                    <a aria-label="Quick view" class="action-btn hover-up"  data-bs-toggle="modal"
-                                                                        data-bs-target="#quickViewModal">
-                                                                        <i class="fi-rs-eye"></i>
-                                                                    </a>
+                                                                   
                                                                     <a aria-label="Add To Wishlist"
                                                                         class="action-btn hover-up add-to-wishlist"
                                                                         href="#" data-product-id="<%= product._id %>">
                                                                         <i class="fi-rs-heart"></i>
                                                                     </a>
-                                                                    <a aria-label="Compare" class="action-btn hover-up"
-                                                                        href="#">
-                                                                        <i class="fi-rs-shuffle"></i>
-                                                                    </a>
+                                                                   
                                                                 </div>
                                                                 <div class="product-badges">
                                                                     <% if (product.productOffer > 0 && product.productOffer > product.category.categoryOffer ) { %>
@@ -249,9 +240,8 @@
                                                                         <%= product.productName %>
                                                                     </a>
                                                                 </h2>
-                                                                
-                                                                <div
-                                                                    class="stock-status <%= product.quantity > 0 ? 'in-stock text-success ml-5' : 'text-danger ml-5' %>">
+                                                            
+                                                                <div class="stock-status <%= product.quantity > 0 ? 'in-stock text-success ml-5' : 'text-danger ml-5' %>">
                                                                     <%= product.quantity> 0 ? `Stock left:
                                                                         ${product.quantity}` : 'Out of Stock' %>
                                                                 </div>
@@ -262,13 +252,10 @@
                                                                         <span class="old-price">₹<%=product.regularPrice %></span>
                                                                         <% } %>
                                                                 </div>
-
+                                                            
                                                                 <% if (product.quantity> 0) { %>
                                                                     <div class="product-action-1 show">
-                                                                        <a aria-label="Add To Cart"
-                                                                            class="action-btn hover-up"
-                                                                            href="javascript:void(0);"
-                                                                            id="addToCartButton"
+                                                                        <a aria-label="Add To Cart" class="action-btn hover-up" href="javascript:void(0);" id="addToCartButton"
                                                                             data-product-id="<%= product._id %>">
                                                                             <i class="fi-rs-shopping-bag-add"></i>
                                                                         </a>
@@ -308,97 +295,25 @@
                         </div>
             </div>
 
-            <section class="popular-categories section-padding mt-15">
-                <div class="container wow fadeIn animated">
-
-                    <h3 class="section-title mb-20"><span>Popular</span> Categories</h3>
-                    <div class="carausel-6-columns-cover position-relative">
-                        <div class="slider-arrow slider-arrow-2 carausel-6-columns-arrow"
-                            id="carausel-6-columns-arrows">
-                        </div>
-                        <div class="carausel-6-columns" id="carausel-6-columns">
-                            <% for(let i=0;i<categories.length;i++) {%>
-                                <div class="card-1">
-
-                                    <figure class=" img-hover-scale overflow-hidden">
-                                        <a href="shop-grid-right.html"><img src="assets/imgs/shop/category-thumb-1.jpg"
-                                                alt=""></a>
-                                    </figure>
-
-                                    <h5><a href="shop-grid-right.html">
-                                            <%= categories[i].name %>
-                                        </a></h5>
-                                </div>
-                                <% } %>
-                        </div>
+<section class="section-padding">
+    <div class="container pb-20">
+        <h3 class="section-title mb-20 wow fadeIn animated"><span>Featured</span> Brands</h3>
+        <div class="carausel-6-columns-cover position-relative wow fadeIn animated">
+            <div class="slider-arrow slider-arrow-2 carausel-6-columns-arrow" id="carausel-6-columns-3-arrows">
+            </div>
+            <div class="carausel-6-columns text-center" id="carausel-6-columns-3">
+                <% for(let i=0;i<brands.length;i++) {%>
+                    <div class="brand-logo p-5">
+                        <img class="img-grey-hover" src="/uploads/images/<%=brands[i].brandImage[0] %>" alt="">
                     </div>
-
-                </div>
-            </section>
-
-
-            <section class="section-padding">
-                <div class="container pb-20">
-                    <h3 class="section-title mb-20 wow fadeIn animated"><span>Featured</span> Brands</h3>
-                    <div class="carausel-6-columns-cover position-relative wow fadeIn animated">
-                        <div class="slider-arrow slider-arrow-2 carausel-6-columns-arrow"
-                            id="carausel-6-columns-3-arrows">
-                        </div>
-                        <div class="carausel-6-columns text-center" id="carausel-6-columns-3">
-                            <% for(let i=0;i<brands.length;i++) {%>
-                                <div class="brand-logo p-5">
-                                    <img class="img-grey-hover" src="/uploads/images/<%=brands[i].brandImage[0] %>"
-                                        alt="">
-                                </div>
-                                <% }%>
-                        </div>
-                    </div>
-                </div>
-            </section>
+                    <% }%>
+            </div>
+        </div>
+    </div>
+</section>
 
             
-            <section class="featured section-padding">
-                <div class="container pb-25">
-                    <div class="row">
-                        <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
-                            <div class="banner-features wow fadeIn animated hover-up">
-                                <img src="assets/imgs/theme/icons/feature-1.png" alt="">
-                                <h4 class="bg-1">Free Shipping</h4>
-                            </div>
-                        </div>
-                        <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
-                            <div class="banner-features wow fadeIn animated hover-up">
-                                <img src="assets/imgs/theme/icons/feature-2.png" alt="">
-                                <h4 class="bg-3">Online Order</h4>
-                            </div>
-                        </div>
-                        <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
-                            <div class="banner-features wow fadeIn animated hover-up">
-                                <img src="assets/imgs/theme/icons/feature-3.png" alt="">
-                                <h4 class="bg-2">Save Money</h4>
-                            </div>
-                        </div>
-                        <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
-                            <div class="banner-features wow fadeIn animated hover-up">
-                                <img src="assets/imgs/theme/icons/feature-4.png" alt="">
-                                <h4 class="bg-4">Promotions</h4>
-                            </div>
-                        </div>
-                        <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
-                            <div class="banner-features wow fadeIn animated hover-up">
-                                <img src="assets/imgs/theme/icons/feature-5.png" alt="">
-                                <h4 class="bg-5">Happy Sell</h4>
-                            </div>
-                        </div>
-                        <div class="col-lg-2 col-md-4 mb-md-3 mb-lg-0">
-                            <div class="banner-features wow fadeIn animated hover-up">
-                                <img src="assets/imgs/theme/icons/feature-6.png" alt="">
-                                <h4 class="bg-6">24/7 Support</h4>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            
     </main>
 
     
@@ -435,7 +350,7 @@
                                 text: 'Please login to add items to your cart.',
                                 icon: 'info',
                                 toast: true,
-                                position: 'center',
+                                position: 'top-end',
                                 background: 'purple',
                                 color:"gold"
 
@@ -444,13 +359,13 @@
                         }
                         if (data.success) {
                             Swal.fire({
-                                title: data.isExisting ? 'Notice!' : 'Success!',
+                                
                                 text: data.message,
                                 icon: data.isExisting ? 'info' : 'success',
                                 timer: 2000,
                                 showConfirmButton: true,
                                 toast: true,
-                                position: 'center',
+                                position: 'top-end',
                                 background: 'purple',
                                 color:"gold"
                             })
@@ -470,11 +385,11 @@
                             }
                         } else {
                             Swal.fire({
-                                title: 'Notice!',
+                               
                                 text: data.message || 'Unable to add item to cart.',
                                 icon: 'info',
                                 toast: true,
-                                position: 'center',
+                                position: 'top-end',
                                 background: 'purple',
                                 color:"gold"
                             });
@@ -487,7 +402,7 @@
                             text: 'Something went wrong. Please try again.',
                             icon: 'error',
                             toast: true,
-                            position: 'center',
+                            position: 'top-end',
                             background: 'purple',
                             color:"gold"
                             
@@ -518,11 +433,11 @@
 
                     if (response.ok) {
                         Swal.fire({
-                            title: result.isExisting ? 'Notice' : 'Success',
+                            
                             text: result.message,
                             icon: result.isExisting ? 'info' : 'success',
                             toast: true,
-                            position: 'center',
+                            position: 'top-end',
                             timer: 2000,
                             showConfirmButton: true,
                             background: 'purple',
@@ -543,11 +458,11 @@
                         }
                     } else {
                         Swal.fire({
-                            title: 'Notice',
+                           
                             text: result.message || 'Failed to add to wishlist.',
                             icon: 'info',
                             toast: true,
-                            position: 'center',
+                            position: 'top-end',
                             timer: 2000,
                             showConfirmButton: true,
                             background: 'purple',
@@ -557,11 +472,11 @@
                 } catch (error) {
                     console.error('Error adding to Wishlist:', error);
                     Swal.fire({
-                        title: 'Error',
+                       
                         text: 'Something went wrong. Please try again.',
                         icon: 'error',
                         toast: true,
-                        position: 'center',
+                        position: 'top-end',
                         timer: 3000,
                         showConfirmButton: false,
                         background: 'purple',

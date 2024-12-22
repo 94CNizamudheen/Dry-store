@@ -189,13 +189,12 @@ async function addOffer(productId) {
             success: (response) => {
                 if (response.status === true) {
                     Swal.fire({
-                        title: 'Offer added',
                         text: "The offer has been added successfully",
                         icon: "success",
                         timer: 1000, 
                         timerProgressBar: true,
                         toast:true,
-                        position: "center",
+                        position: "top-end",
                         background: 'purple',
                         color:"gold"
                     }).then(() => {
@@ -215,7 +214,6 @@ async function addOffer(productId) {
 
 function removeOffer(productId) { 
     Swal.fire({
-        title: 'Remove Offer',
         text: 'Are you sure you want to remove this product offer?',
         icon: 'warning',
         showCancelButton: true,
@@ -223,7 +221,7 @@ function removeOffer(productId) {
         cancelButtonColor: "#d33",
         confirmButtonText: "Yes, remove",
         toast:true,
-        position: "center",
+        position: "top-end",
         background: 'purple',
         color:"gold"
     }).then(async (result) => {
@@ -237,13 +235,12 @@ function removeOffer(productId) {
                 success: (response) => {
                     if (response.status === true) {
                         Swal.fire({
-                            title: "Removed",
                             text: "The product offer has been removed successfully",
                             icon: "success",
                             timer: 1000, 
                             timerProgressBar: true,
                             toast:true,
-                              position: "center",
+                            position: "top-end",
                               background: 'purple',
                             color:"gold"
                         }).then(() => {

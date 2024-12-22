@@ -81,45 +81,7 @@
             </div>
         </div>
 
-        <!-- Referral Payout History -->
-        <!-- <div class="row mt-4">
-        <div class="col-12">
-            <div class="card card-hover">
-                <div class="card-header bg-info text-white">
-                    <h4 class="card-title mb-0">Referral Payout History</h4>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Referrer</th>
-                                    <th>Referred Users</th>
-                                    <th>Referrer Reward</th>
-                                    <th>New User Reward</th>
-                                    <th>Earned Total</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>2024-06-15</td>
-                                    <td>John Doe</td>
-                                    <td>5</td>
-                                    <td>₹100</td>
-                                    <td>₹50</td>
-                                    <td>₹250</td>
-                                    <td><span class="badge bg-success">Paid</span></td>
-                                </tr>
-                                
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> -->
+       
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
@@ -151,9 +113,9 @@
                 if (result.success) {
                     Swal.fire({
                         toast: true,
-                        position: 'center',
+                        position: "top-end",
                         icon: 'success',
-                        title: result.message,
+                        text: result.message,
                         showConfirmButton: false,
                         timer: 1000,
                         background: 'purple',
@@ -167,9 +129,8 @@
             } catch (error) {
                 Swal.fire({
                     toast: true,
-                    position: 'center',
+                    position: "top-end",
                     icon: 'error',
-                    title: 'Failed to update rewards configuration.',
                     text: error.message,
                     showConfirmButton: false,
                     timer: 3000,

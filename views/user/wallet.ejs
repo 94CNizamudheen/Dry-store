@@ -199,7 +199,7 @@
                 if (amount <= 0) {
                     Swal.fire({
                         toast: true,
-                        position: 'center',
+                        position: "top-end",
                         icon: 'error',
                         title: 'Please enter a valid amount',
                         showConfirmButton: false,
@@ -246,10 +246,9 @@
 
                             if (verifyResult.success) {
                                 Swal.fire({
-                                    title: 'Payment Success',
                                     text: 'Your payment has been processed successfully.',
                                     icon: 'success',
-                                    position: 'center',
+                                    position: "top-end",
                                     toast: true,
                                     timer: 2000,
                                     background: 'purple',
@@ -263,10 +262,9 @@
                         } catch (error) {
                             console.error('Verification Error:', error);
                             Swal.fire({
-                                title: 'Payment Failed',
                                 text: 'Payment verification failed. Please try again',
                                 icon: 'error',
-                                position: 'center',
+                                position: "top-end",
                                 toast: true,
                                 timer: 2000,
                                 background: 'purple',
@@ -291,10 +289,9 @@
             } catch (error) {
                 console.error('Razorpay initialization Error', error);
                 Swal.fire({
-                    title: 'Error',
                     text: 'Failed to initialize payment. Please try again',
                     icon: 'error',
-                    position: 'center',
+                    position: "top-end",
                     toast: true,
                     timer: 2000,
                     background: 'purple',

@@ -29,7 +29,6 @@ const getAddBrands = async (req, res) => {
         const brands = await Brand.find(); 
         return res.render('add-brands', { data: brands, error: null }); 
     } catch (error) {
-        console.error("Error fetching brands:", error);
         res.redirect('/pageError');
     }
 };
@@ -60,9 +59,7 @@ const addBrands= async(req,res)=>{
                 error:{image:"Brand name or image is missing."},
               
             }) 
-        }
-          
-        
+        } 
     } catch (error) {
         res.redirect('/pageError')
     }
@@ -106,18 +103,13 @@ const deleteBrands = async (req, res) => {
 
         if (brandImage) {
             const imagePath = path.join(__dirname, "/uploads/images", brandImage); 
-            console.log("Image path:", imagePath);
+           
 
             if (fs.existsSync(imagePath)) {
                 await fs.unlinkSync(imagePath);
-                console.log(`Brand image ${brandImage} successfully deleted`);
-            } else {
-                console.log(`Brand image ${brandImage} not found`);
+               
             }
-        } else {
-            console.log("No brand image found");
-        }
-
+        } 
         await Brand.deleteOne({ _id: id });
         res.redirect("/admin/addBrands");
 

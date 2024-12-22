@@ -54,14 +54,12 @@ const loadOrderDetails = async (req, res) => {
             });
 
         } catch (error) {
-            console.error('Error loading order details:', error);
             res.status(500).json({ message: "Internal server error" });
         }
     };
 const getOrderDetails = async (req, res) => {
     try {
         const orderId = req.params.orderId;
-
         const order = await Order.findOne({ orderId: orderId })
             .populate({
                 path: 'orderedItems.product',
@@ -103,7 +101,6 @@ const getOrderDetails = async (req, res) => {
         res.json(orderDetails);
 
     } catch (error) {
-        console.error('Error fetching order details:', error);
         res.status(500).json({ message: "Internal server error" });
     }
 };
@@ -111,8 +108,6 @@ const getOrderDetails = async (req, res) => {
 const updateOrderStatus = async (req, res) => {
     try {
         const { orderId, status } = req.body;
-
-        console.log("updation initiated");
         if (!orderId || !status) {
             return res.status(400).json({ success: false, message: "Order ID and status are required" });
         }
@@ -137,13 +132,12 @@ const updateOrderStatus = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error updating order status:', error);
         return res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
 const cancelOrder=async(req,res)=>{
     try {
-        console.log("cancel order initiated");
+       
         const {orderId}= req.params;
         const order= await Order.findOne({orderId:orderId}).populate('orderedItems.product');
         if(!order){
@@ -172,7 +166,6 @@ const cancelOrder=async(req,res)=>{
 
 
     } catch (error) {
-        console.error('Error for cancelling order',error);
         res.status('500').json({message:"Internal server Error"});
     }
 }
@@ -180,7 +173,6 @@ const cancelOrder=async(req,res)=>{
 const handleReturnRequest = async (req, res) => {
     try {
       const { orderId, itemId, returnAction } = req.body;
-      console.log({ orderId, itemId, returnAction } )
       if (!orderId || !itemId || !returnAction) {
         return res.status(400).json({ success: false, message: 'Invalid request data' });
       }
@@ -213,7 +205,7 @@ const handleReturnRequest = async (req, res) => {
         return res.status(404).json({ success: false, message: 'Order or item not found' });
       }
     } catch (error) {
-      console.error('Error handling return request:', error);
+      
       res.status(500).json({ success: false, message: 'Internal server error' });
     }
   };

@@ -60,11 +60,10 @@
             if (response.ok) {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Category updated successfully!',
                     showConfirmButton: false,
                     timer: 1500,
                     toast:true,
-                    position:"center",
+                    position:"top-end",
                     background: 'purple',
                     color:"gold"
                 }).then(() => {
@@ -76,10 +75,9 @@
         } catch (error) {
             Swal.fire({
                 icon: 'error',
-                title: 'Oops...',
                 text: 'Something went wrong. Please try again later.',
                 toast:true,
-                position:"center",
+                position:"top-end",
                 background: 'purple',
                     color:"gold"
             });

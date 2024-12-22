@@ -37,11 +37,9 @@ const sendVerificationEmail=async(email,otp)=>{
             html:`<b><h4>your OTP is ${otp}</h4><br></b>`
         }
         const info= await transporter.sendMail(mailOptions);
-        console.log("email sent",info);
         return true;
 
     } catch (error) {
-        console.error("rrror for sending email",error);
         return false;
     }
 };
@@ -51,7 +49,8 @@ const securePassword=async(password)=>{
         const hashedPassword = await bcrypt.hash(password, 10)
         return hashedPassword;
     } catch (error) {
-        console.error("Error hashing password:", error);
+     throw new Error(error);
+     
     }
 }
 
@@ -75,7 +74,6 @@ const forgotEmailValid=async(req,res)=>{
                 req.session.userOtp= otp,
                 req.session.email=email,
                 res.render('forgotPass-otp');
-                console.log("otp:",otp);
             }else{
                 res.json({success:false,message:"Failed to send Otp. Please try again"});
             }
@@ -117,15 +115,12 @@ const resendOtp= async(req,res)=>{
         const otp= generateOtp();
         req.session.userOtp=otp;
         const email= req.session.email;
-        console.log("resending Otp to :",email );
         const emailSend= await sendVerificationEmail(email,otp)
         if(emailSend){
-            console.log('resended Otp:',otp);
             res.status(200).json({success:true,message:"Resend message succussful"})
 
         }
     } catch (error) {
-        console.error("Error in resend Otp",error);
         res.status(500).json({success:false,message:"Internal server error"})
     }
 }
@@ -134,15 +129,10 @@ const postNewPassword=async(req,res)=>{
     try {
         const {newPassword,confirmPassword} =req.body;
         const email=req.session.email;
-        console.log(req.session.email);
         if(newPassword===confirmPassword){
             const hashedPassword=await securePassword(newPassword);
             const update = await User.findOneAndUpdate({ email:email},{$set:{password:hashedPassword}},{ new: true });
-            console.log("upddate",update);
-            
             res.redirect('/logIn')
-
-            console.log(newPassword);
         }else{
             res.render('reset-password',{
                 message:"Password not Matching"
@@ -174,14 +164,8 @@ const postNewPassword=async(req,res)=>{
                 user:userData,
                 userAddress:addressData,
                 userOrders:orders,
-            });
-
-          
-
-            // const coupons
-            
+            });   
         } catch (error) {
-            console.error('Error for retrive profile Data. ',error);
             res.redirect('/pageNotFound')
         }
     }
@@ -206,8 +190,6 @@ const changeEmailValid=async(req,res)=>{
                 req.session.userData=req.body;
                 req.session.email=email;
                 res.render('change-email-otp');
-                console.log("email send:",email);
-                console.log("otp: ",otp);
             }else{
                 res.json('email Error');
             }
@@ -229,7 +211,6 @@ const verifyEmailChangeOtp = async (req, res) => {
             res.json({ success: false, message: "OTP not matching" });
         }
     } catch (error) {
-        console.error("Error in verifyEmailChangeOtp:", error);
         res.status(500).json({ success: false, message: "An error occurred. Please try again later." });
     }
 };
@@ -239,15 +220,12 @@ const resendEmailChangeOtp=async(req,res)=>{
         const otp= generateOtp();
         req.session.userOtp=otp;
         const email= req.session.email;
-        console.log("resending Otp to :",email );
         const emailSend= await sendVerificationEmail(email,otp)
         if(emailSend){
-            console.log('resended Otp:',otp);
             res.status(200).json({success:true,message:"Resend message succussful"})
 
         }
     } catch (error) {
-        console.error("Error in resend Otp",error);
         res.status(500).json({success:false,message:"Internal server error"})
     }
 };
@@ -263,7 +241,6 @@ const loadNewEmailPage=async(req,res)=>{
 const updateEmail=async(req,res)=>{
     try {
         const userId=req.session.user;
-        // const currentEmail= req.session.email;
         const newEmail=req.body.newEmail;
         await User.findByIdAndUpdate(userId,{email:newEmail})
         res.redirect('/user-profile')
@@ -291,7 +268,6 @@ const changePasswordValid=async(req,res)=>{
                 req.session.userData=req.body;
                 req.session.email=email,
                 res.render('change-password-otp');
-                console.log("Otp is:",otp);
             }else{
                 res.json({
                     success:false,
@@ -304,7 +280,6 @@ const changePasswordValid=async(req,res)=>{
             })
         }
     } catch (error) {
-        console.log("error in change password validation",error);
         res.redirect('/pageNotFound');
     }
 };
@@ -317,7 +292,6 @@ const verifyPasswordChangeOtp=async(req,res)=>{
             res.json({success:false,message:"Otp not Matching"});
         }
     } catch (error) {
-        console.error("error for verify Otp in change password",error);
         res.status(500).json({success:false,message:"Internal server Error.Please try again"})
        
     }
@@ -328,14 +302,11 @@ const resendPasswordChangeOtp=async(req,res)=>{
         const otp= generateOtp();
         req.session.userOtp=otp;
         const email=req.session.email;
-        console.log("resnding otp to:",email);
         const emailSend= await sendVerificationEmail(email,otp);
         if(emailSend){
             res.status(200).json({success:true,message:"Otp reseding success"});
-            console.log("otp is: ",otp);
         }
     } catch (error) {
-        console.error("Error for resending otp",error);
         res.status(500).json({success:false,message:"Internal server error"})
     }
 };
@@ -365,7 +336,6 @@ const postAddAddress=async(req,res)=>{
         }
         res.redirect('/user-profile');
     } catch (error) {
-        console.error("Error for adding Address",error);
         res.redirect('/pageNotFound')
     }
 };
@@ -393,14 +363,12 @@ const editAddress= async(req,res)=>{
 
 
     } catch (error) {
-        console.error("Error for rendering edit address page",error);
         res.redirect('/pageNotFound')
     }
 };
 
 const postEditAddress=async(req,res)=>{
     try {
-        console.log("edit address invoked");
         const data=req.body;
         const addressId=req.query.id;
         const user= req.session.user;
@@ -430,7 +398,6 @@ const postEditAddress=async(req,res)=>{
         res.redirect('/user-profile');
 
     } catch (error) {
-        console.error("error for edit Profile page",error);
         res.redirect('/pageNotFound')
     }
 };
@@ -447,7 +414,6 @@ const deleteAddess=async(req,res)=>{
         await Address.updateOne({"address._id":addressId},{$pull:{address:{_id:addressId}}})
         res.status(200).json({ message: "Address deleted successfully" });
     } catch (error) {
-        console.error('error for delete address',error);
         res.redirect('/pageNotFound');
     }
 }

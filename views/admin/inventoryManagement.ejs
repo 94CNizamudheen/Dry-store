@@ -206,13 +206,12 @@
             function showSuccessMessage(message) {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Success!',
                     text: message,
                     timer: 3000,
                     timerProgressBar: true,
                     showConfirmButton: false,
                     toast: true,
-                    position: "center",
+                    position: "top-end",
                     background: 'purple',
                     color: "gold"
                 });
@@ -221,13 +220,12 @@
             function showErrorMessage(message) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Error!',
                     text: message,
                     timer: 3000,
                     timerProgressBar: true,
                     showConfirmButton: false,
                     toast: true,
-                    position: "center",
+                    position: "top-end",
                     background: 'purple',
                     color: "gold"
                 });
@@ -268,24 +266,22 @@
                             console.error(data.error);
                             Swal.fire({
                                 icon: 'error',
-                                title: 'Error!',
                                 text: "Failed to update inventory.",
                                 timer: 3000,
                                 timerProgressBar: true,
                                 toast: true,
-                                position: "center",
+                                position: "top-end",
                                 background: 'purple',
                                 color: "gold"
                             });
                         } else {
                             Swal.fire({
                                 icon: 'success',
-                                title: 'Success!',
                                 text: "Inventory updated successfully.",
                                 timer: 3000,
                                 timerProgressBar: true,
                                 toast: true,
-                                position: "center",
+                                position: "top-end",
                                 background: 'purple',
                                 color: "gold"
                             }).then(() => {
@@ -297,12 +293,11 @@
                         console.error("Error:", error);
                         Swal.fire({
                             icon: 'error',
-                            title: 'Error!',
                             text: "An unexpected error occurred.",
                             timer: 3000,
                             timerProgressBar: true,
                             toast: true,
-                            position: "center",
+                            position: "top-end",
                             background: 'purple',
                             color: "gold"
                         });

@@ -29,7 +29,6 @@ const createRechargeOrder = async (req, res) => {
             currency: "INR",
             receipt: `order_rcptid_${Date.now()}`,
         };
-        console.log("amount in recharge",amount);
         const order = await razorpay.orders.create(options);
 
         res.status(200).json({
@@ -44,7 +43,6 @@ const createRechargeOrder = async (req, res) => {
             },
         });
     } catch (error) {
-        console.error("Error creating order:", error);
         res.status(500).json({ error: "Error creating Razorpay order" });
     }
 };
@@ -52,7 +50,6 @@ const createRechargeOrder = async (req, res) => {
 const verifyAndrecharge = async (req, res) => {
     try {
         const userId = req.session.user;
-        console.log('in veryfy recieved amount is :',req.body.amount);
         const { razorpay_payment_id, razorpay_order_id, razorpay_signature,amount } = req.body;
 
         if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
@@ -93,7 +90,6 @@ const verifyAndrecharge = async (req, res) => {
             message:"Wallet recharged Successfully",
         })
     } catch (error) { 
-        console.error('error for verifying recharge',error);
         res.status(500).json({
             success:false,
             error:"Payment verification Failed",

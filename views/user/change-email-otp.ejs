@@ -157,11 +157,10 @@
                 success: function (response) {
                     if (response.success) {
                         Swal.fire({
-                            icon: "success",
                             title: "OTP verified successfully",
                             showConfirmButton: false,
                             timer: 1500,
-                            position: 'center',
+                            position: "top-end",
                             toast: true,
                             background: 'purple',
                             color: "gold"
@@ -170,10 +169,10 @@
                         });
                     } else {
                         Swal.fire({
-                            icon: "error",
+                           
                             title: "Invalid OTP",
                             text: "Please try again",
-                            position: 'center',
+                            position: "top-end",
                             toast: true,
                             background: 'purple',
                             color: "gold"
@@ -200,7 +199,7 @@
                             text: "A new OTP has been sent to your registered email.",
                             timer: 2500,
                             showConfirmButton: false,
-                            position: 'center',
+                            position: "top-end",
                             toast: true,
                         });
                     } else {
@@ -208,7 +207,7 @@
                             icon: "error",
                             title: "Failed to resend OTP",
                             text: response.message,
-                            position: 'center',
+                            position: "top-end",
                             toast: true,
                         });
                     }
@@ -218,7 +217,7 @@
                         icon: "error",
                         title: "Error",
                         text: "Failed to resend OTP. Please try again later.",
-                        position: 'center',
+                        position: "top-end",
                         toast: true,
                     });
                 }

@@ -13,7 +13,6 @@ const getReferralPage=async(req,res)=>{
             {$group:{_id:null,total:{$sum:'$rewardAmount'}}}
         ]);
         const config= await Config.findOne({key:'referralReward'});
-        console.log("config:",config)
 
         res.render('referralCode',{
             totalReferrals,
@@ -21,7 +20,6 @@ const getReferralPage=async(req,res)=>{
             config:config,
         });
     } catch (error) {
-        console.error('Error fetching referral data:', error);
         res.redirect('/pageError');
 
     }
@@ -37,7 +35,6 @@ const updateRewardsConfig=async(req,res)=>{
 
         res.status(200).json({success:true,message:'Reward Configuration updated successfully'})
     } catch (error) {
-        console.error('Error updating rewards config:', error);
         res.status(500).json({ success: false, message: 'Failed to update rewards configuration.' });
     }
 }

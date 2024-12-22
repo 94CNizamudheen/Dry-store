@@ -135,7 +135,6 @@ const downloadReports = async (req, res) => {
             });
         }
     } catch (error) {
-        console.error('Error downloading report', error);
         res.status(500).json({
             success: false,
             error: "Failed to download report",
@@ -313,7 +312,6 @@ const getDashboardData = async (req, res) => {
 
         res.json(result);
     } catch (error) {
-        console.error('Dashboard data error:', error);
         res.status(500).json({ error: 'Failed to fetch dashboard data' });
     }
 };
@@ -332,7 +330,6 @@ const getOrderPaymentData = async (req, res) => {
 
         res.json(chartData);
     } catch (error) {
-        console.error("Error fetching payment data:", error);
         res.status(500).json({ message: "Error fetching payment data" });
     }
 };
@@ -381,16 +378,12 @@ const getOrderSales = async (req, res) => {
 
 
     } catch (error) {
-        console.error("error for getting sales data",error);
         res.status(500).json({error:"failed to fetch sales data"});
 
     }
 }
 
 module.exports = { getOrderPaymentData };
-
-
-
 module.exports = {
     LoadReportsPage,
     generateReports,

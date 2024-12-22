@@ -361,10 +361,9 @@
             async function showErrorAlert(errorMessages) {
                 await Swal.fire({
                     icon: "error",
-                    title: "Validation Errors",
                     html: errorMessages.join("<br>"),
                     confirmButtonText: "OK",
-                    position: "center",
+                    position:"top-end",
                     toast: true,
                     background: 'purple',
                     color: "gold"
@@ -403,11 +402,11 @@
                     if (response.ok) {
                         await Swal.fire({
                             icon: "success",
-                            title: "Coupon Created",
+                            
                             text: "The coupon was created successfully!",
                             timer: 2000,
                             showConfirmButton: true,
-                            position: "center",
+                            position:"top-end",
                             toast: true,
                             background: 'purple',
                             color: "gold"
@@ -417,23 +416,20 @@
                     } else {
                         Swal.fire({
                             icon: "error",
-                            title: "Error",
                             text: result.message || "Something went wrong. Please try again.",
-                            position: "center",
+                            position:"top-end",
                             toast: true,
                         });
                     }
                 } catch (error) {
                     Swal.fire({
                         icon: "error",
-                        title: "Error",
                         text: "Unable to create coupon. Please try again.",
-                        position: "center",
+                        position:"top-end",
                         toast: true,
                         background: 'purple',
                         color: "gold"
                     });
-                    console.error("Error:", error);
                 }
             });
 
@@ -451,14 +447,10 @@
 
             document.querySelectorAll('.btn-delete-coupon').forEach((button) => {
                 button.addEventListener('click', (event) => {
-                    console.log('Button attributes:', event.target.attributes);
 
                     selectedCouponId = event.target.getAttribute('data-coupon-id');
 
-                    console.log('Raw selectedCouponId:', selectedCouponId);
-
                     if (!selectedCouponId || selectedCouponId === 'null') {
-                        console.error('Invalid coupon ID');
                         return;
                     }
 
@@ -473,15 +465,13 @@
                     const response = await fetch(`/admin/coupon/${selectedCouponId}`, {
                         method: 'DELETE',
                     });
-                    console.log("response:", response);
                     if (response.ok) {
                         await Swal.fire({
                             icon: "success",
-                            title: "Coupon Deleted",
                             text: "The coupon was deleted successfully!",
                             timer: 2000,
                             showConfirmButton: true,
-                            position: "center",
+                            position:"top-end",
                             toast: true,
                             background: 'purple',
                             color: "gold"
@@ -490,19 +480,16 @@
                     } else {
                         Swal.fire({
                             icon: "error",
-                            title: "Error",
                             text: "Failed to delete the coupon. Please try again.",
-                            position: "center",
+                            position:"top-end",
                             toast: true,
                             background: 'purple',
                             color: "gold"
                         });
                     }
                 } catch (error) {
-                    console.error("Error deleting coupon:", error);
                     Swal.fire({
                         icon: "error",
-                        title: "Error",
                         text: "An error occurred. Please try again later.",
                         position: "center",
                         toast: true,
@@ -561,11 +548,10 @@
                     if (response.ok) {
                         await Swal.fire({
                             icon: "success",
-                            title: "Coupon Updated",
                             text: "The coupon was updated successfully!",
                             timer: 2000,
                             showConfirmButton: true,
-                            position: "center",
+                            position:"top-end",
                             toast: true,
                             background: 'purple',
                             color: "gold"
@@ -574,19 +560,16 @@
                     } else {
                         Swal.fire({
                             icon: "error",
-                            title: "Error",
                             text: "Failed to update the coupon. Please try again.",
-                            position: "center",
+                            position:"top-end",
                             toast: true,
                             background: 'purple',
                             color: "gold"
                         });
                     }
                 } catch (error) {
-                    console.error("Error updating coupon:", error);
                     Swal.fire({
                         icon: "error",
-                        title: "Error",
                         text: "An error occurred. Please try again later.",
                         position: "center",
                         toast: true,

@@ -386,10 +386,9 @@
 
         if (!namePattern.test(document.getElementById('name').value)) {
             Swal.fire({
-                title: 'Error',
                 text: 'Name should contain alphabets only.',
                 icon: 'error',
-                position: 'center',
+                position: "top-end",
                 toast: true,
                 background: 'purple',
                 color:"gold"
@@ -398,10 +397,9 @@
         }
         if (!namePattern.test(document.getElementById('city').value)) {
             Swal.fire({
-                title: 'Error',
                 text: 'City should contain alphabets only.',
                 icon: 'error',
-                position: 'center',
+                position: "top-end",
                 toast: true,
                 background: 'purple',
                 color:"gold"
@@ -410,10 +408,9 @@
         }
         if (document.getElementById('landmark').value && !namePattern.test(document.getElementById('landmark').value)) {
             Swal.fire({
-                title: 'Error',
                 text: 'Landmark should contain alphabets only.',
                 icon: 'error',
-                position: 'center',
+                position: "top-end",
                 toast: true,
                 background: 'purple',
                 color:"gold"
@@ -422,10 +419,9 @@
         }
         if (!namePattern.test(document.getElementById('state').value)) {
             Swal.fire({
-                title: 'Error',
                 text: 'State should contain alphabets only.',
                 icon: 'error',
-                position: 'center',
+                position: "top-end",
                 toast: true,
                 background: 'purple',
                 color:"gold"
@@ -434,10 +430,9 @@
         }
         if (!pincodePattern.test(document.getElementById('pincode').value)) {
             Swal.fire({
-                title: 'Error',
                 text: 'Pincode should be a 6-digit number.',
                 icon: 'error',
-                position: 'center',
+                position: "top-end",
                 toast: true,
                 background: 'purple',
                 color:"gold"
@@ -446,10 +441,9 @@
         }
         if (!phonePattern.test(document.getElementById('phone').value)) {
             Swal.fire({
-                title: 'Error',
                 text: 'Phone number should be a 10-digit number.',
                 icon: 'error',
-                position: 'center',
+                position: "top-end",
                 toast: true,
                 background: 'purple',
                 color:"gold"
@@ -459,10 +453,9 @@
         const altPhoneValue = document.getElementById('altPhone').value;
         if (altPhoneValue && !phonePattern.test(altPhoneValue)) {
             Swal.fire({
-                title: 'Error',
                 text: 'Alternate phone number should be a 10-digit number.',
                 icon: 'error',
-                position: 'center',
+                position: "top-end",
                 toast: true,
                 background: 'purple',
                 color:"gold"
@@ -471,10 +464,9 @@
         }
         if (document.getElementById('phone').value === altPhoneValue) {
             Swal.fire({
-                title: 'Error',
                 text: 'Phone number and alternate phone number should be different.',
                 icon: 'error',
-                position: 'center',
+                position: "top-end",
                 toast: true,
                 background: 'purple',
                 color:"gold"

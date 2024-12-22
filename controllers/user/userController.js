@@ -44,7 +44,6 @@ async function getMostPopularProducts(limit=5){
         ]);
         return popularProducts
     } catch (error) {
-        console.error("Error fetching popular products:", error);
         throw error;
     }
 }
@@ -62,7 +61,8 @@ async function getAverageRating(productId){
         return reviews;
         
     } catch (error) {
-        console.error("error for fetching average rating",error);
+        throw new Error(error);
+        
     }
 }
 
@@ -89,7 +89,6 @@ async function getOrderDetails(orderId){
             expectedDeliveryDate:order.expectedDeliveryDate,
         }
     } catch (error) {
-        console.error('error for fetching order deatails'.error);
         throw new Error(error.message||"Error fetching order details")
     }
 }
@@ -97,7 +96,6 @@ async function getOrderDetails(orderId){
 const addReferralReward=async(userId)=>{
     const user= await User.findById(userId).populate('referredBy');
     const config= await Config.findOne();
-    console.log('config:',config);
     if(user.referredBy){
        
         const referrer=user.referredBy;
@@ -132,9 +130,6 @@ const addReferralReward=async(userId)=>{
         )
         await user.save();
         await referrer.save();
-        console.log(`Referral reward added successfully for user: ${user.name} and referrer: ${referrer.name}`);
-    }else{
-        console.log(`No referrer found for user: ${userId}`);
     }
 };
 
@@ -181,7 +176,6 @@ const loadHomepage = async (req, res) => {
             });
         }
     } catch (error) {
-        console.log("Home page not Found");
         res.status(500).send("server error");
     }
 };
@@ -190,7 +184,6 @@ const loadSignUp = async (req, res) => {
     try {
         return res.render("signUp",{message:""});
     } catch (error) {
-        console.log("Home page not loading:", error);
         res.status(500).send("Server error");
     }
 };
@@ -325,7 +318,6 @@ const loadShopping = async (req, res) => {
             });
         }
     } catch (error) {
-        console.log("shopping Page not loading:", error);
         res.status(500).send("Server error");
     }
 };
@@ -355,7 +347,6 @@ async function sendVerificationEmail(email, otp) {
         });
         return info.accepted.length > 0;
     } catch (error) {
-        console.error("Error sending Mail", error);
         return false;
     }
 }
@@ -392,9 +383,7 @@ const signUp = async (req, res) => {
         req.session.userOtp = otp;
         req.session.userData = { name, phone, email, password: hashedPassword ,referralCode:genaratedReferralCode,referredBy};
         res.render("verifyOtp");
-        console.log("OTP sent", otp);
     } catch (error) {
-        console.error("SignUp Error", error);
         res.redirect("/pageNotFound");
     }
 };
@@ -420,7 +409,6 @@ const logIn = async (req, res) => {
             return res.redirect("/");
         }
     } catch (error) {
-        console.error("Login error", error);
         res.render("logIn", { message: "Login failed. Please try again" });
     }
 };
@@ -442,7 +430,8 @@ const securePassword = async (password) => {
         const passwordHash = await bcrypt.hash(password, 10);
         return passwordHash;
     } catch (error) {
-        console.error("error for secure password");
+        throw new Error(error);
+        
     }
 };
 
@@ -498,7 +487,6 @@ const verifyOtp = async (req, res) => {
             });
         }
     } catch (error) {
-        console.error("Error verifying Otp", error);
         res.status(500).json({ success: false, message: "An error occured" });
     }
 };
@@ -515,7 +503,6 @@ const resendOtp = async (req, res) => {
         req.session.userOtp = otp;
         const emailSend = sendVerificationEmail(email, otp);
         if (emailSend) {
-            console.log("Resend Otp:", otp);
             res
                 .status(200)
                 .json({ success: true, message: "Resend otp successfully" });
@@ -526,7 +513,6 @@ const resendOtp = async (req, res) => {
             });
         }
     } catch (error) {
-        console.error("Resend otp Failed", error);
         res.status(500).json({
             success: false,
             message: "Internal server Error. Please try again",
@@ -538,13 +524,11 @@ const logOut = async (req, res) => {
     try {
         req.session.destroy((err) => {
             if (err) {
-                console.log("Session destry error", err.message);
                 return res.redirect("/pageNotFound");
             }
             return res.redirect("/logIn");
         });
     } catch (error) {
-        console.log("logout error", error);
         return res, redirect("/pageNotFound");
     }
 };
@@ -571,7 +555,8 @@ const getProductDetials = async (req, res) => {
             });
         }
     } catch (error) {
-        console.log("error in product details page", error);
+        throw new Error(error);
+        
     }
 };
 const loadWishlist = async (req, res) => {
@@ -590,7 +575,6 @@ const loadWishlist = async (req, res) => {
         }));
         res.render("wishlist", { products });
     } catch (error) {
-        console.error("error for rendering wishlist");
         res.redirect("/pageNotFound");
     }
 };
@@ -646,7 +630,6 @@ const addToWishlist = async (req, res) => {
             wishlistCount: wishlist.products.length, // Return updated count
         });
     } catch (error) {
-        console.error("Error adding to wishlist:", error);
         res.status(500).json({
             success: false,
             message: "Failed to update the wishlist.",
@@ -668,7 +651,6 @@ const removeFromWishlistPage=async(req,res)=>{
         await wishlist.save();
         res.status(200).json({message:"Product removed from wishlist"})
     } catch (error) {
-        console.error('Error for removing from wishlist',error);
         res.status(500).json({message:"Internal Server Error"})
     }
 };
@@ -689,7 +671,6 @@ const downoladInvoice= async(req,res)=>{
          res.send(pdfBuffer);
 
     } catch (error) {
-        console.error("Error in genarate invoice",error);
         res.status(500).json({suceess:false,message:"internal server Error genarate invoice"});
 
     }
@@ -703,7 +684,6 @@ const loadSuperCoin=async(req,res)=>{
         })
         
     } catch (error) {
-        console.error("Error for rendering supercoin page",error);
         res.redirect('/page-404');
     }
 };
@@ -721,7 +701,7 @@ const scrachReward = async (req, res) => {
         
         const rewards = Array.from({length: 90}, (_, i) => ({
             amount: i + 10,
-            // message: `Congratulations! You WON ${i + 10} Rupees`
+
         }));
         
         const reward = rewards[Math.floor(Math.random() * rewards.length)];
@@ -742,7 +722,6 @@ const scrachReward = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error("Error fetching scratch rewards", error);
         res.status(500).json({
             success: false,
             message: "An error occurred. Please try again later."
@@ -765,7 +744,6 @@ const submitReview=async(req,res)=>{
         await Product.findByIdAndUpdate(productId,{$push:{reviews:review._id}});
         res.redirect(`/productDetails?id=${productId}`);
     } catch (error) {
-        console.error(error);
         res.status(500).send('An error occurred while submitting your review.');
     }
 };

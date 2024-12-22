@@ -252,6 +252,22 @@
             margin-top: 10px;
             font-weight: bold;
         }
+        .status-icon {
+            display: block;
+            margin: 0 auto 8px;
+            color: #666; /* Default color for inactive icons */
+        }
+
+        .step.placed .status-icon,
+        .step.packaging .status-icon,
+        .step.ontheRoad .status-icon,
+        .step.orderDelivered .status-icon {
+            color: #4CAF50; /* Color for active icons */
+        }
+
+        .step.cancelled .status-icon {
+            color: #f44336; /* Color for cancelled status */
+        }
     </style>
 
 
@@ -284,12 +300,12 @@
                                                 role="tab" aria-controls="orders" aria-selected="false"><i
                                                     class="fi-rs-shopping-bag mr-10"></i>Orders</a>
                                         </li>
-                                        <li class="nav-item">
+                                        <!-- <li class="nav-item">
                                             <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab"
                                                 href="#track-orders" role="tab" aria-controls="track-orders"
                                                 aria-selected="false"><i
                                                     class="fi-rs-shopping-cart-check mr-10"></i>Track Your Order</a>
-                                        </li>
+                                        </li> -->
                                         <li class="nav-item">
                                             <a class="nav-link" id="address-tab" data-bs-toggle="tab" href="#address"
                                                 role="tab" aria-controls="address" aria-selected="true"><i
@@ -375,38 +391,42 @@
                                                             <div class="progress-tracker">
                                                                 <div class="progress-line"></div>
                                                                 <div class="progress-steps">
-                                                                    <% if (order.status==='Cancelled' ) { %>
-
-                                                                        <div class="step active ">
-                                                                            <span class="step-label text-success">Order
-                                                                                Placed</span>
+                                                                    <% if (order.status === 'Cancelled') { %>
+                                                                        <div class="step active">
+                                                                            <svg class="status-icon" width="30" height="30">
+                                                                                <use href="#icon-order-placed"/>
+                                                                            </svg>
+                                                                            <span class="step-label text-success">Order Placed</span>
                                                                         </div>
                                                                         <div class="step active cancelled">
-                                                                            <span
-                                                                                class="step-label text-danger">Cancelled</span>
+                                                                            <span class="step-label text-danger">Cancelled</span>
                                                                         </div>
-                                                                        <% } else { %>
-                                                                            <div
-                                                                                class="step <%= order.status === 'Pending' || order.status === 'Processing' || order.status === 'Shipped' || order.status === 'Delivered' ? 'placed' : '' %>">
-                                                                                <span class="step-label">Order
-                                                                                    Placed</span>
-                                                                            </div>
-                                                                            <div
-                                                                                class="step <%= order.status === 'Processing' || order.status === 'Shipped' || order.status === 'Delivered' ? 'packaging' : '' %>">
-                                                                                <span
-                                                                                    class="step-label">Packaging</span>
-                                                                            </div>
-                                                                            <div
-                                                                                class="step <%= order.status === 'Shipped' || order.status === 'Delivered' ? 'ontheRoad' : '' %>">
-                                                                                <span class="step-label">On The
-                                                                                    Road</span>
-                                                                            </div>
-                                                                            <div
-                                                                                class="step <%= order.status === 'Delivered' ? 'orderDelivered' : '' %>">
-                                                                                <span
-                                                                                    class="step-label">Delivered</span>
-                                                                            </div>
-                                                                            <% } %>
+                                                                    <% } else { %>
+                                                                        <div class="step <%= order.status === 'Pending' || order.status === 'Processing' || order.status === 'Shipped' || order.status === 'Delivered' ? 'placed' : '' %>">
+                                                                            <svg class="status-icon" width="30" height="30">
+                                                                                <use href="#icon-order-placed"/>
+                                                                            </svg>
+                                                                            <span class="step-label">Order Placed</span>
+                                                                        </div>
+                                                                        <div class="step <%= order.status === 'Processing' || order.status === 'Shipped' || order.status === 'Delivered' ? 'packaging' : '' %>">
+                                                                            <svg class="status-icon" width="30" height="30">
+                                                                                <use href="#icon-packaging"/>
+                                                                            </svg>
+                                                                            <span class="step-label">Packaging</span>
+                                                                        </div>
+                                                                        <div class="step <%= order.status === 'Shipped' || order.status === 'Delivered' ? 'ontheRoad' : '' %>">
+                                                                            <svg class="status-icon" width="30" height="30">
+                                                                                <use href="#icon-on-road"/>
+                                                                            </svg>
+                                                                            <span class="step-label">On The Road</span>
+                                                                        </div>
+                                                                        <div class="step <%= order.status === 'Delivered' ? 'orderDelivered' : '' %>">
+                                                                            <svg class="status-icon" width="30" height="30">
+                                                                                <use href="#icon-delivered"/>
+                                                                            </svg>
+                                                                            <span class="step-label">Delivered</span>
+                                                                        </div>
+                                                                    <% } %>
                                                                 </div>
                                                             </div>
                                                             <!-- Activity Feed -->
@@ -786,17 +806,7 @@
                                                             </span>
                                                         </div>
 
-                                                        <div class="header-action-icon-2 text-center">
-                                                            <a href="/coupons" class="d-block">
-                                                                <img class="svgInject mb-2" alt="Coupons"
-                                                                    src="/uploads/sample-images/coupon.png"
-                                                                    style="width: 30px; height: 30px;">
-                                                            </a>
-                                                            <h6 class="text-muted">Coupons</h6>
-                                                            <span class="badge bg-danger">
-                                                                <%= %>
-                                                            </span>
-                                                        </div>
+                                                        
                                                     </div>
                                                 </div>
                                             </div>
@@ -813,7 +823,34 @@
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     
-
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100" style="display:none;">
+  <!-- Order Placed Icon -->
+  <symbol id="icon-order-placed" viewBox="0 0 50 50">
+    <rect x="10" y="15" width="30" height="25" fill="none" stroke="currentColor" stroke-width="2"/>
+    <path d="M15 25h20M15 32h20" stroke="currentColor" stroke-width="2"/>
+    <path d="M20 15v-5h10v5" fill="none" stroke="currentColor" stroke-width="2"/>
+  </symbol>
+  
+  <!-- Packaging Icon -->
+  <symbol id="icon-packaging" viewBox="0 0 50 50">
+    <path d="M10 35l15-10 15 10-15 10z" fill="none" stroke="currentColor" stroke-width="2"/>
+    <path d="M25 25v-15M10 35v-15l15-10 15 10v15" fill="none" stroke="currentColor" stroke-width="2"/>
+  </symbol>
+  
+  <!-- On The Road Icon -->
+  <symbol id="icon-on-road" viewBox="0 0 50 50">
+    <rect x="5" y="25" width="30" height="15" fill="none" stroke="currentColor" stroke-width="2"/>
+    <circle cx="12" cy="40" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
+    <circle cx="28" cy="40" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
+    <path d="M35 30h8l2 5v5h-5" fill="none" stroke="currentColor" stroke-width="2"/>
+  </symbol>
+  
+  <!-- Delivered Icon -->
+  <symbol id="icon-delivered" viewBox="0 0 50 50">
+    <circle cx="25" cy="25" r="15" fill="none" stroke="currentColor" stroke-width="2"/>
+    <path d="M17 25l6 6 10-12" fill="none" stroke="currentColor" stroke-width="2"/>
+  </symbol>
+</svg>
 
     <script>
         function confirmDelete(addressId) {
@@ -1019,7 +1056,9 @@
                             denyButtonText: 'Refund to Bank',
                             cancelButtonText: 'Cancel',
                             tost: true,
-                            position: "center"
+                            position: "center",
+                            background: 'purple',
+                            color:"gold",
 
                         }).then((result) => {
                             if (result.isConfirmed || result.isDenied) {
@@ -1038,7 +1077,9 @@
                             confirmButtonText: 'Yes, cancel it!',
                             cancelButtonText: 'No, keep it',
                             tost: true,
-                            position: "center"
+                            position: "center",
+                            background: 'purple',
+                            color:"gold",
 
                         }).then((result) => {
                             if (result.isConfirmed) {
@@ -1067,10 +1108,12 @@
                             title: 'Partially Cancelled!',
                             text: data.message,
                             icon: 'success',
-                            position: 'center',
+                            position: 'top-end',
                             toast: true,
                             timer: 3000,
-                            showConfirmButton: false
+                            showConfirmButton: false,
+                            background: 'purple',
+                            color:"gold",
                         }).then(() => {
                             const itemElement = document.getElementById(`product-${productId}`);
                             if (itemElement) {
@@ -1092,11 +1135,13 @@
 
         function showError(message) {
             Swal.fire({
-                title: "Error",
+               
                 text: message,
                 icon: "error",
-                position: 'center',
+                position: "top-end",
                 toast: true,
+                background: 'purple',
+                color:"gold",
             });
         }
     </script>
@@ -1128,9 +1173,9 @@
                     icon: "error",
                     text: "Failed to download invoice. Please try again later.",
                     toast: true,
-                    position: "center",
+                    position: "top-end",
                     background: 'purple',
-                            color:"gold"
+                     color:"gold"
 
                 })
             })
@@ -1262,7 +1307,7 @@
                         icon: "error",
                         text: data.message || "Failed to return item",
                         toast: true,
-                        position: "center",
+                        position: "top-end",
                         background: 'purple',
                             color:"gold"
                     })
@@ -1273,9 +1318,9 @@
                     icon: "error",
                     text: 'An error occurred while processing  your return',
                     toast: true,
-                    position: "center",
+                    position: "top-end",
                     background: 'purple',
-                            color:"gold"
+                    color:"gold"
                 })
             }
         }

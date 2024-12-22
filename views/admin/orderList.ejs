@@ -65,7 +65,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <% orders.forEach(order=> { %>
+                                    <% orders.forEach(order=> {%>
                                         <tr>
                                             <td>
                                                 <%= order.orderId %>
@@ -82,19 +82,15 @@
                                             <td>
                                                 ₹<%= order.finalAmount.toFixed(2) %>
                                                     <% if (order.discount> 0) { %>
-                                                        <br><small class="text-success">Saved ₹<%=
-                                                                order.discount.toFixed(2) %></small>
+                                                        <br><small class="text-success">Saved ₹<%= order.discount.toFixed(2) %></small>
                                                         <% } %>
                                             </td>
                                             <td>
                                                 <select class="form-select form-select-sm status-select" data-order-id="<%= order.orderId %>">
                                                     <% statusProgression={ 'Pending' : ['Pending','Processing', 'Shipped', 'Delivered' , 'Cancelled' ], 'Processing' :['Processing','Shipped', 'Delivered' , 'Cancelled' ], 'Shipped' :['Shipped','Delivered', 'Return Request' ], 'Delivered' :['Delivered'],  };
                                                        const allowedStatuses=statusProgression[order.status] || []; 
-                                                     
-                                                        allowedStatuses.forEach(status=> {%>
-                                                        <option value="<%= status %>" <%=order.status===status? 'selected' : '' %>>
-                                                            <%= status %>
-                                                        </option>
+                                                      allowedStatuses.forEach(status=> {%>
+                                                        <option value="<%= status %>" <%=order.status===status? 'selected' : '' %>><%= status %></option>
                                                         <% }); %>
                                                 </select>
                                             </td>
@@ -453,9 +449,8 @@
                                     Swal.fire({
                                         icon: "success",
                                         text: data.message,
-                                        title: 'Success!',
                                         toast: true,
-                                        position: "center",
+                                        position: "top-end",
                                         background: 'purple',
                                         color: "gold"
                                     }).then(() => location.reload())
@@ -463,9 +458,8 @@
                                     Swal.fire({
                                         icon: "error",
                                         text: data.message,
-                                        title: 'Error!',
                                         toast: true,
-                                        position: "center",
+                                        position: "top-end",
                                         background: 'purple',
                                         color: "gold"
                                     })
@@ -475,9 +469,8 @@
                                 Swal.fire({
                                     icon: "error",
                                     text: 'Something went wrong!',
-                                    title: 'Error!',
                                     toast: true,
-                                    position: "center",
+                                    position: "top-end",
                                     background: 'purple',
                                     color: "gold"
                                 })
