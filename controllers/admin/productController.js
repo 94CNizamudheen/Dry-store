@@ -16,7 +16,7 @@ const getProductaddPage=async(req,res)=>{
     try {
         const category= await Category.find({isListed:true});
         const brand =await Brand.find({isBlocked:false});
-        res.render('add-product',{
+        res.render('addProduct',{
             cat:category,
             brand:brand,
         })
@@ -199,7 +199,7 @@ const getEditProduct = async (req, res) => {
         const product = await Product.findById(id);
         const category = await Category.find();
         const brand = await Brand.find({});
-        res.render('edit-product', {
+        res.render('editProduct', {
             product: product,
             cat: category,
             brand: brand,

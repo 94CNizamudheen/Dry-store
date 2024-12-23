@@ -18,24 +18,22 @@ const ShippingData = require('../../models/shippingData');
 
 const handleFailedOrder = async (orderId) => {
     try {
-        console.log(`Order ${orderId} failed. Starting 3 minute countdown for automatic cancellation.`);
         setTimeout(async () => {
-            console.log(`3-minute countdown completed for Order ${orderId}. Attempting automatic cancellation.`);
             await cancelOrderAfterTimeout(orderId);
-        }, 3 * 60 * 1000); //setted for  3 minutes in milliseconds for checking dont forget to set this 24 * 60 * 60 * 1000 milliseconds
+        }, 24 * 60 * 60 * 1000); 
 
     } catch (error) {
-        console.error(`Error handling failed order ${orderId}:`, error);
+        throw new Error(error);
+        
     }
 };
 const cancelOrderAfterTimeout = async (orderId) => {
     try {
         const order = await Order.findOne({ orderId });
         if (order.paymentDetails.paymentStatus !== "Failed") {
-            console.log("Aborting the cancellation");
+           
             return;
         }
-        console.log(`Order id ${orderId} status still Failed Canceling the order`);
         const refundMethod = "WALLET";
         const req = {
             query: {
@@ -48,7 +46,8 @@ const cancelOrderAfterTimeout = async (orderId) => {
         };
         await cancelOrder(req, res);
     } catch (error) {
-        console.error(`Error automatically cancelling Order ${orderId}:`, error);
+       throw new Error(error);
+       
     }
 };
 
@@ -69,7 +68,7 @@ const loadCheckOutPage = async (req, res) => {
         const userData = await User.findById(userId);
         const addressData = await Address.findOne({ userId: userId });
         const quickbuyQuantity= req.query.quantity;
-        console.log("quickbuyQuantity:",quickbuyQuantity);
+        
         let cartedProducts;
         if (productId) {
             req.session.productId = productId;
@@ -146,7 +145,7 @@ const loadCheckOutPage = async (req, res) => {
 
         const total = discountedTotal + shipping;
 
-        res.render('check-out', {
+        res.render('checkout', {
             user: userData,
             userAddress: addressData,
             cart: cartedProducts,
@@ -184,7 +183,7 @@ const postAddAddress = async (req, res) => {
             userAddress.address.push({ addressType, name, city, landmark, state, pincode, phone, altPhone });
             await userAddress.save();
         }
-        res.redirect('/check-out');
+        res.redirect('/checkout');
     } catch (error) {
         res.redirect('/pageNotFound')
     }
@@ -425,7 +424,7 @@ const placeOrderForCODandWALLET = async (req, res) => {
         delete req.session.shippingCharge;
         delete req.session.productId;
         delete req.session.quickbuyQuantity
-        res.status(200).json({ success: true, redirectURL: `/order-success-page?message=${encodeURIComponent('Order Compleated')}`, });
+        res.status(200).json({ success: true, redirectURL: `/orderSuccessPage?message=${encodeURIComponent('Order Compleated')}`, });
     } catch (error) {
         res.status(500).json({ error: "Internal server error" });
     }
@@ -434,7 +433,7 @@ const placeOrderForCODandWALLET = async (req, res) => {
 const loadOrderSuccessPage = async (req, res) => {
     try {
         const message = req.query.message || 'Your order is complete!';
-        res.render('order-success-page', { message })
+        res.render('orderSuccessPage', { message })
     } catch (error) {
         res.status(500).json({ error: "Internal server error" });
     }
@@ -519,7 +518,7 @@ const cancelOrder = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: "Order cancelled successfully",
-            redirectUrl: '/user-profile'
+            redirectUrl: '/userProfile'
         });
 
     } catch (error) {
@@ -645,7 +644,7 @@ const cancelOrderItem = async (req, res) => {
             message: couponRemoved
                 ? "Item cancelled. Coupon removed due to insufficient order total."
                 : "Item cancelled",
-            redirectUrl: '/user-profile'
+            redirectUrl: '/userProfile'
         });
 
     } catch (error) {
@@ -856,7 +855,7 @@ const verifyRazorpayPaymentAndPlaceOrder = async (req, res) => {
 
                 return res.status(200).json({
                     success: true,
-                    redirectURL: `/order-success-page?message=${encodeURIComponent('Order Compleated')}`,
+                    redirectURL: `/orderSuccessPage?message=${encodeURIComponent('Order Compleated')}`,
                     orderId: newOrder._id,
                 });
             };
@@ -968,7 +967,7 @@ const failedOrderSave = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            redirectURL: `/order-success-page?message=${encodeURIComponent(`"We noticed an issue with your payment. Don’t worry, you have 1 day to resolve it. If the payment isn’t completed within this time, your order will be automatically canceled. Please reach out to us if you need any assistance!"`)}`,
+            redirectURL: `/orderSuccessPage?message=${encodeURIComponent(`"We noticed an issue with your payment. Don’t worry, you have 1 day to resolve it. If the payment isn’t completed within this time, your order will be automatically canceled. Please reach out to us if you need any assistance!"`)}`,
             orderId: newOrder._id,
         });
 

@@ -57,7 +57,7 @@ const securePassword=async(password)=>{
 
 const getForgotPasswordPage= async(req,res)=>{
     try {
-        res.render('forgot-password');
+        res.render('forgotPassword');
     } catch (error) {
         res.redirect('/pageNotFound')
     }
@@ -73,7 +73,7 @@ const forgotEmailValid=async(req,res)=>{
             if(emailSend){
                 req.session.userOtp= otp,
                 req.session.email=email,
-                res.render('forgotPass-otp');
+                res.render('forgotPassOtp');
             }else{
                 res.json({success:false,message:"Failed to send Otp. Please try again"});
             }
@@ -92,7 +92,7 @@ const verifyPassForgotOtp= async(req,res)=>{
     try {
         const enteredOtp= req.body.otp;
         if(enteredOtp===req.session.userOtp){
-            res.json({success:true,redirectUrl:"/reset-password"})
+            res.json({success:true,redirectUrl:"/resetPassword"})
         }else{
             res.json({success:false,message:"Otp not Matching"});
         }
@@ -104,7 +104,7 @@ const verifyPassForgotOtp= async(req,res)=>{
 
 const getResetPasswordPage=async(req,res)=>{
     try {
-        res.render('reset-password');
+        res.render('resetPassword');
     } catch (error) {
         res.redirect('/pageNotFound')
     }
@@ -134,7 +134,7 @@ const postNewPassword=async(req,res)=>{
             const update = await User.findOneAndUpdate({ email:email},{$set:{password:hashedPassword}},{ new: true });
             res.redirect('/logIn')
         }else{
-            res.render('reset-password',{
+            res.render('resetPassword',{
                 message:"Password not Matching"
             })
         }
@@ -160,7 +160,7 @@ const postNewPassword=async(req,res)=>{
             .sort({ createdOn: -1 });
             
             
-            res.render('user-profile',{
+            res.render('userProfile',{
                 user:userData,
                 userAddress:addressData,
                 userOrders:orders,
@@ -171,7 +171,7 @@ const postNewPassword=async(req,res)=>{
     }
 const changeEmail=async(req,res)=>{
     try {
-        res.render('change-email')
+        res.render('changeEmail')
     } catch (error) {
         res.redirect('/pageNotFound')
     }
@@ -189,12 +189,12 @@ const changeEmailValid=async(req,res)=>{
                 req.session.userOtp= otp;
                 req.session.userData=req.body;
                 req.session.email=email;
-                res.render('change-email-otp');
+                res.render('changeEmailOtp');
             }else{
                 res.json('email Error');
             }
         }else{
-            res.render('change-email',{message:"user with this mail not exist"})
+            res.render('changeEmail',{message:"user with this mail not exist"})
         }
 
     } catch (error) {
@@ -206,7 +206,7 @@ const verifyEmailChangeOtp = async (req, res) => {
     try {
         const enteredOtp = req.body.otp;
         if (enteredOtp === req.session.userOtp) {
-            res.json({ success: true, message: "OTP verified successfully", redirectUrl: "/new-email" });
+            res.json({ success: true, message: "OTP verified successfully", redirectUrl: "/newEmail" });
         } else {
             res.json({ success: false, message: "OTP not matching" });
         }
@@ -232,7 +232,7 @@ const resendEmailChangeOtp=async(req,res)=>{
 
 const loadNewEmailPage=async(req,res)=>{
     try {
-        res.render('new-email');
+        res.render('newEmail');
     } catch (error) {
         res.redirect('/pageNotFound');
     }
@@ -243,7 +243,7 @@ const updateEmail=async(req,res)=>{
         const userId=req.session.user;
         const newEmail=req.body.newEmail;
         await User.findByIdAndUpdate(userId,{email:newEmail})
-        res.redirect('/user-profile')
+        res.redirect('/userProfile')
     } catch (error) {
         res.redirect('/pageNotFound');
     }
@@ -251,7 +251,7 @@ const updateEmail=async(req,res)=>{
 
 const changePasswordPage=async(req,res)=>{
     try {
-        res.render('change-password')
+        res.render('changePassword')
     } catch (error) {
         res.redirect('/pageNotFound');
     }
@@ -267,7 +267,7 @@ const changePasswordValid=async(req,res)=>{
                 req.session.userOtp=otp,
                 req.session.userData=req.body;
                 req.session.email=email,
-                res.render('change-password-otp');
+                res.render('changePasswordOtp');
             }else{
                 res.json({
                     success:false,
@@ -275,7 +275,7 @@ const changePasswordValid=async(req,res)=>{
                 });
             }
         }else{
-            res.render("change-password",{
+            res.render("changePassword",{
             message:"user with This email nt exist",
             })
         }
@@ -287,7 +287,7 @@ const verifyPasswordChangeOtp=async(req,res)=>{
     try {
         const enteredOtp=req.body.otp;
         if(enteredOtp===req.session.userOtp){
-            res.json({success:true,message:"Otp verification success",redirectUrl:"/reset-password"});
+            res.json({success:true,message:"Otp verification success",redirectUrl:"/resetPassword"});
         }else{
             res.json({success:false,message:"Otp not Matching"});
         }
@@ -313,7 +313,7 @@ const resendPasswordChangeOtp=async(req,res)=>{
 const addAddressPage=async(req,res)=>{
     try {
         const user=req.session.user;
-        res.render('add-address',{user:user})
+        res.render('addAddress',{user:user})
     } catch (error) {
         res.redirect('/pageNotFound');
     }
@@ -334,7 +334,7 @@ const postAddAddress=async(req,res)=>{
             userAddress.address.push({addressType, name, city, landmark, state, pincode, phone, altPhone});
             await userAddress.save();
         }
-        res.redirect('/user-profile');
+        res.redirect('/userProfile');
     } catch (error) {
         res.redirect('/pageNotFound')
     }
@@ -356,7 +356,7 @@ const editAddress= async(req,res)=>{
         if(!addressData){
             return res.redirect('/pageNotFount');
         }
-        res.render('edit-address',{
+        res.render('editAddress',{
             address:addressData,
             user:user
         })
@@ -395,7 +395,7 @@ const postEditAddress=async(req,res)=>{
 
             }}
         )
-        res.redirect('/user-profile');
+        res.redirect('/userProfile');
 
     } catch (error) {
         res.redirect('/pageNotFound')
@@ -421,7 +421,7 @@ const about=async(req,res)=>{
     try {
         res.render('about')
     } catch (error) {
-        res.redirect('/page-404')
+        res.redirect('/404')
     }
 }
 

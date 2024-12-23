@@ -10,7 +10,7 @@ const loadLogin = (req, res) => {
     if (req.session.admin) {
         return res.redirect("/admin/dashboard");
     }
-    return res.render("admin-logIn", { message: null });
+    return res.render("adminLogIn", { message: null });
 };
 
 const logIn = async (req, res) => {
@@ -26,15 +26,15 @@ const logIn = async (req, res) => {
                     req.session.admin = true;
                     return res.redirect("/admin/dashboard");
                 } else {
-                    return res.render("admin-logIn", { message: "invalid details" });
+                    return res.render("adminLogIn", { message: "invalid details" });
                 }
             } else {
-                return res.render("admin-logIn", {
+                return res.render("adminLogIn", {
                     message: "Invalid details",
                 });
             }
         } else {
-            return res.render("admin-logIn", {
+            return res.render("adminLogIn", {
                 message: "Admin not found with this email",
             });
         }

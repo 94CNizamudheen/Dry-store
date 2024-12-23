@@ -90,7 +90,7 @@ router.post('/check-out-add-address',userAuth,orderController.postAddAddress);
 router.get('/select-address',userAuth,orderController.selectAddress);
 router.post('/handle-payment',userAuth,orderController.handlePaymentMethod);
 router.post('/place-order',userAuth,orderController.placeOrderForCODandWALLET);
-router.get('/order-success-page',userAuth,orderController.loadOrderSuccessPage);
+router.get('/orderSuccessPage',userAuth,orderController.loadOrderSuccessPage);
 router.get('/cancel-order',userAuth,orderController.cancelOrder);
 router.patch('/cancel-order-item',userAuth,orderController.cancelOrderItem);
 router.get('/check-order-payment', userAuth, orderController.checkOrderPayment);

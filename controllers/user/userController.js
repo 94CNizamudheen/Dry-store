@@ -135,7 +135,7 @@ const addReferralReward=async(userId)=>{
 
 const pageNotFound = async (req, res) => {
     try {
-        res.render("page-404");
+        res.render("404");
     } catch (error) {
         res.redirect("/pageNoteFound");
     }
@@ -684,7 +684,7 @@ const loadSuperCoin=async(req,res)=>{
         })
         
     } catch (error) {
-        res.redirect('/page-404');
+        res.redirect('/404');
     }
 };
 const scrachReward = async (req, res) => {
