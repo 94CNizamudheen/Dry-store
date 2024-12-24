@@ -472,7 +472,7 @@
             quickBuyBtn.addEventListener('click', () => {
                 const productId = quickBuyBtn.getAttribute('data-product-id');
                 const quantity = quantityInput.value;
-                window.location.href = `/check-out?productId=${productId}&quantity=${quantity}`;
+                window.location.href = `/checkout?productId=${productId}&quantity=${quantity}`;
             });
         });
     </script>

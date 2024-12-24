@@ -100,6 +100,10 @@
             color: #007bff;
             font-weight: bold;
         }
+        .text-danger {
+            font-size: 0.875em;
+            margin-top: 0.25rem;
+        }
     
         @media (max-width: 992px) {
             .wallet-timeline-container {
@@ -272,7 +276,7 @@
     <div class="page-header breadcrumb-wrap">
         <div class="container">
             <div class="breadcrumb">
-                <a href="index.html" rel="nofollow">Home</a>
+                <a href="/" rel="nofollow">Home</a>
                 <span></span> Shop <span></span> Checkout
             </div>
         </div>
@@ -353,9 +357,7 @@
                                                     id="differentaddress" />
                                                 <label class="form-check-label label_info" data-bs-toggle="collapse"
                                                     data-target="#collapseAddress" href="#collapseAddress"
-                                                    aria-controls="collapseAddress" for="differentaddress"><span>Ship to
-                                                        a different
-                                                        address?</span></label>
+                                                    aria-controls="collapseAddress" for="differentaddress"><span>Ship to a different address?</span></label>
                                             </div>
                                         </div>
                                     </div>
@@ -363,103 +365,84 @@
                                         <div class="card mx-auto card-address">
                                             <div class="card-body">
                                                 <h4 class="card-title mb-4">Add Address</h4>
-                                                <form id="addressForm" action="/check-out-add-address" method="POST"
-                                                    class="container">
+                                                <form id="addressForm"  >
                                                     <div class="row">
                                                         <!-- First Column -->
                                                         <div class="col-md-6">
                                                             <div class="row mb-3">
                                                                 <div class="col-12">
-                                                                    <label for="addressType" class="form-label">Address
-                                                                        Type</label>
-                                                                    <input type="text" id="addressType"
-                                                                        name="addressType" class="form-control"
-                                                                        placeholder="e.g., Home, Office" required />
+                                                                    <label for="addressType" class="form-label">Address Type</label>
+                                                                    <input type="text" id="addressType" name="addressType" class="form-control"
+                                                                        placeholder="e.g., Home, Office" />
                                                                 </div>
                                                             </div>
-
+                                
                                                             <div class="row mb-3">
                                                                 <div class="col-12">
-                                                                    <label for="name" class="form-label">Full
-                                                                        Name</label>
-                                                                    <input type="text" id="name" name="name"
-                                                                        class="form-control" placeholder="Full Name"
-                                                                        required />
+                                                                    <label for="name" class="form-label">Full Name</label>
+                                                                    <input type="text" id="name" name="name" class="form-control"
+                                                                        placeholder="Full Name" />
                                                                 </div>
                                                             </div>
-
+                                
                                                             <div class="row mb-3">
                                                                 <div class="col-12">
-                                                                    <label for="pincode"
-                                                                        class="form-label">Pincode</label>
-                                                                    <input type="text" id="pincode" name="pincode"
-                                                                        class="form-control"
-                                                                        placeholder="6-digit Pincode" required />
-                                                                    <div id="pincode-validation-message"
-                                                                        class="text-muted small mt-1"></div>
+                                                                    <label for="pincode" class="form-label">Pincode</label>
+                                                                    <input type="text" id="pincode" name="pincode" class="form-control"
+                                                                        placeholder="6-digit Pincode" />
+                                                                    <div id="pincode-validation-message" class="text-muted small mt-1"></div>
                                                                 </div>
                                                             </div>
-
+                                
                                                             <!-- Towns Selection - Initially Hidden -->
-                                                            <div id="townsContainer" class="row mb-3"
-                                                                style="display: none;">
+                                                            <div id="townsContainer" class="row mb-3" style="display: none;">
                                                                 <div class="col-12">
-                                                                    <label for="towns" class="form-label">Select
-                                                                        City</label>
-                                                                    <select id="towns" name="towns[]"
-                                                                        class="form-select" multiple required>
+                                                                    <label for="towns" class="form-label">Select City</label>
+                                                                    <select id="towns" name="towns[]" class="form-select" multiple required>
                                                                         <!-- Options will be dynamically populated -->
                                                                     </select>
                                                                 </div>
                                                             </div>
                                                         </div>
-
+                                
                                                         <!-- Second Column -->
                                                         <div class="col-md-6">
                                                             <div class="row mb-3">
                                                                 <div class="col-12">
-                                                                    <label for="landmark"
-                                                                        class="form-label">Landmark</label>
-                                                                    <input type="text" id="landmark" name="landmark"
-                                                                        class="form-control" placeholder="Landmark" />
+                                                                    <label for="landmark" class="form-label">Landmark</label>
+                                                                    <input type="text" id="landmark" name="landmark" class="form-control"
+                                                                        placeholder="Landmark" required />
                                                                 </div>
                                                             </div>
-
+                                
                                                             <div class="row mb-3">
                                                                 <div class="col-12">
                                                                     <label for="city" class="form-label">City</label>
-                                                                    <input type="text" id="city" name="city"
-                                                                        class="form-control" placeholder="City" required
-                                                                        readonly />
+                                                                    <input type="text" id="city" name="city" class="form-control" placeholder="City" />
                                                                 </div>
                                                             </div>
-
+                                
                                                             <div class="row mb-3">
                                                                 <div class="col-12">
                                                                     <label for="state" class="form-label">State</label>
-                                                                    <input type="text" id="state" name="state"
-                                                                        class="form-control" placeholder="State"
-                                                                        required readonly />
+                                                                    <input type="text" id="state" name="state" class="form-control"
+                                                                        placeholder="State" />
                                                                 </div>
                                                             </div>
-
+                                
                                                             <div class="row mb-3">
                                                                 <div class="col-12">
                                                                     <label for="phone" class="form-label">Phone</label>
-                                                                    <input type="tel" id="phone" name="phone"
-                                                                        class="form-control" placeholder="Phone Number"
-                                                                        required pattern="[0-9]{10}" />
+                                                                    <input type="tel" id="phone" name="phone" class="form-control"
+                                                                        placeholder="Phone Number" />
                                                                 </div>
                                                             </div>
-
+                                
                                                             <div class="row mb-3">
                                                                 <div class="col-12">
-                                                                    <label for="altPhone" class="form-label">Alternative
-                                                                        Phone</label>
-                                                                    <input type="tel" id="altPhone" name="altPhone"
-                                                                        class="form-control"
-                                                                        placeholder="Alternative Phone"
-                                                                        pattern="[0-9]{10}" />
+                                                                    <label for="altPhone" class="form-label">Alternative Phone</label>
+                                                                    <input type="tel" id="altPhone" name="altPhone" class="form-control"
+                                                                        placeholder="Alternative Phone" />
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -788,6 +771,102 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://checkout.razorpay.com/v1/checkout.js" async defer></script>
+    <script>
+        document.getElementById('addressForm').addEventListener('submit', async function (event) {
+            event.preventDefault(); // Prevent default form submission
+    
+            if (!validateForm()) {
+                return; // Stop if validation fails
+            }
+    
+            const formData = {
+                addressType: document.getElementById('addressType').value.trim(),
+                name: document.getElementById('name').value.trim(),
+                pincode: document.getElementById('pincode').value.trim(),
+                city: document.getElementById('city').value.trim(),
+                landmark: document.getElementById('landmark').value.trim(),
+                state: document.getElementById('state').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                altPhone: document.getElementById('altPhone').value.trim()
+            };
+    
+            try {
+                const response = await fetch('/check-out-add-address', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+    
+                if (response.ok) {
+                    // Address added successfully, reload the page
+                    window.location.reload();
+                } else {
+                    const result = await response.json();
+                    alert(result.message || 'Failed to add address. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again later.');
+            }
+        });
+    
+        function validateForm() {
+            let isValid = true;
+            const namePattern = /^[A-Za-z\s]+$/;
+            const pincodePattern = /^\d{6}$/;
+            const phonePattern = /^\d{10}$/;
+    
+            const fields = [
+                { id: "addressType", pattern: /.+/, error: "Address Type is required." },
+                { id: "name", pattern: namePattern, error: "Name should contain alphabets only." },
+                { id: "pincode", pattern: pincodePattern, error: "Pincode should be a 6-digit number." },
+                { id: "city", pattern: namePattern, error: "City should contain alphabets only." },
+                { id: "state", pattern: namePattern, error: "State should contain alphabets only." },
+                { id: "phone", pattern: phonePattern, error: "Phone number should be a 10-digit number." },
+                { id: "landmark", pattern: /.+/, error: "Landmark is required." },
+                { id: "altPhone", pattern: phonePattern, error: "Alternate phone number should be a 10-digit number." }
+            ];
+    
+            fields.forEach(field => {
+                const input = document.getElementById(field.id);
+                const errorElementId = `${field.id}-error`;
+                let errorElement = document.getElementById(errorElementId);
+    
+                if (!errorElement) {
+                    errorElement = document.createElement('div');
+                    errorElement.id = errorElementId;
+                    errorElement.className = "text-danger small mt-1";
+                    input.parentNode.appendChild(errorElement);
+                }
+    
+                if (!input.value.trim()) {
+                    errorElement.textContent = field.error;
+                    isValid = false;
+                } else if (!field.pattern.test(input.value.trim())) {
+                    errorElement.textContent = field.error;
+                    isValid = false;
+                } else {
+                    errorElement.textContent = '';
+                }
+            });
+    
+            const phone = document.getElementById('phone').value.trim();
+            const altPhone = document.getElementById('altPhone').value.trim();
+            const altPhoneError = document.getElementById('altPhone-error');
+    
+            if (phone === altPhone) {
+                altPhoneError.textContent = 'Phone number and alternate phone number should be different.';
+                isValid = false;
+            } else {
+                altPhoneError.textContent = '';
+            }
+    
+            return isValid;
+        }
+    </script>
+    
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const pincodeInput = document.getElementById('pincode');

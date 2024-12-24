@@ -124,6 +124,11 @@
             font-weight: 400;
         }
 
+        .text-danger {
+            font-size: 0.875em;
+            margin-top: 0.25rem;
+        }
+
 
         @media (max-width: 576px) {
             .content-main {
@@ -140,7 +145,9 @@
             <div class="card-body">
                 <h4 class="card-title mb-4">Add Address</h4>
 
-                <form id="addressForm" action="/addAddress" method="POST" class="container">
+                <form id="addressForm" action="/addAddress" method="POST" class="container"
+                    onsubmit="return validateForm()">
+
                     <div class="row">
                         <!-- First Column -->
                         <div class="col-md-6">
@@ -148,7 +155,7 @@
                                 <div class="col-12">
                                     <label for="addressType" class="form-label">Address Type</label>
                                     <input type="text" id="addressType" name="addressType" class="form-control"
-                                        placeholder="e.g., Home, Office" required />
+                                        placeholder="e.g., Home, Office" />
                                 </div>
                             </div>
 
@@ -156,7 +163,7 @@
                                 <div class="col-12">
                                     <label for="name" class="form-label">Full Name</label>
                                     <input type="text" id="name" name="name" class="form-control"
-                                        placeholder="Full Name" required />
+                                        placeholder="Full Name" />
                                 </div>
                             </div>
 
@@ -164,7 +171,7 @@
                                 <div class="col-12">
                                     <label for="pincode" class="form-label">Pincode</label>
                                     <input type="text" id="pincode" name="pincode" class="form-control"
-                                        placeholder="6-digit Pincode" required />
+                                        placeholder="6-digit Pincode" />
                                     <div id="pincode-validation-message" class="text-muted small mt-1"></div>
                                 </div>
                             </div>
@@ -193,16 +200,15 @@
                             <div class="row mb-3">
                                 <div class="col-12">
                                     <label for="city" class="form-label">City</label>
-                                    <input type="text" id="city" name="city" class="form-control" placeholder="City"
-                                        required readonly />
+                                    <input type="text" id="city" name="city" class="form-control" placeholder="City" />
                                 </div>
                             </div>
 
                             <div class="row mb-3">
                                 <div class="col-12">
                                     <label for="state" class="form-label">State</label>
-                                    <input type="text" id="state" name="state" class="form-control" placeholder="State"
-                                        required readonly />
+                                    <input type="text" id="state" name="state" class="form-control"
+                                        placeholder="State" />
                                 </div>
                             </div>
 
@@ -210,7 +216,7 @@
                                 <div class="col-12">
                                     <label for="phone" class="form-label">Phone</label>
                                     <input type="tel" id="phone" name="phone" class="form-control"
-                                        placeholder="Phone Number" required pattern="[0-9]{10}" />
+                                        placeholder="Phone Number" />
                                 </div>
                             </div>
 
@@ -218,7 +224,7 @@
                                 <div class="col-12">
                                     <label for="altPhone" class="form-label">Alternative Phone</label>
                                     <input type="tel" id="altPhone" name="altPhone" class="form-control"
-                                        placeholder="Alternative Phone" pattern="[0-9]{10}" />
+                                        placeholder="Alternative Phone" />
                                 </div>
                             </div>
                         </div>
@@ -347,141 +353,68 @@
     </script>
 
 
-    <script>
-        document.getElementById('addressForm').addEventListener('submit', function (event) {
-            if (!validateForm()) {
-                event.preventDefault();
+<script>
+    document.getElementById('addressForm').addEventListener('submit', function (event) {
+        if (!validateForm()) {
+            event.preventDefault(); // Prevent form submission if validation fails
+        }
+    });
+
+    function validateForm() {
+        let isValid = true;
+
+        // Validation Patterns
+        const namePattern = /^[A-Za-z\s]+$/;
+        const pincodePattern = /^\d{6}$/;
+        const phonePattern = /^\d{10}$/;
+
+        // All fields are required now
+        const requiredFields = [
+            { id: "addressType", pattern: /.+/, error: "Address Type is required." },
+            { id: "name", pattern: namePattern, error: "Name should contain alphabets only." },
+            { id: "pincode", pattern: pincodePattern, error: "Pincode should be a 6-digit number." },
+            { id: "city", pattern: namePattern, error: "City should contain alphabets only." },
+            { id: "state", pattern: namePattern, error: "State should contain alphabets only." },
+            { id: "phone", pattern: phonePattern, error: "Phone number should be a 10-digit number." },
+            { id: "landmark", pattern: /.+/, error: "Landmark is required." },
+            { id: "altPhone", pattern: phonePattern, error: "Alternate phone number should be a 10-digit number." },
+        ];
+
+        requiredFields.forEach(field => {
+            const input = document.getElementById(field.id);
+            const errorElementId = `${field.id}-error`;
+            let errorElement = document.getElementById(errorElementId);
+
+            if (!errorElement) {
+                errorElement = document.createElement('div');
+                errorElement.id = errorElementId;
+                errorElement.className = "text-danger small mt-1";
+                input.parentNode.appendChild(errorElement);
+            }
+
+            if (!input.value.trim()) {
+                errorElement.textContent = `${field.error}`;
+                isValid = false;
+            } else if (!field.pattern.test(input.value.trim())) {
+                errorElement.textContent = field.error;
+                isValid = false;
+            } else {
+                errorElement.textContent = ''; // Clear error if valid
             }
         });
 
-        function validateForm() {
-            let isValid = true;
-            const requiredFields = ["addressType", "name", "city", "landmark", "state", "pincode", "phone", "altPhone"];
-            requiredFields.forEach(function (field) {
-                const input = document.getElementById(field);
-                const inputValue = input.value.trim();
-                const errorElement = document.getElementById(field + '-error');
+        // Phone and Alternate Phone Check
+        const phone = document.getElementById('phone').value.trim();
+        const altPhone = document.getElementById('altPhone').value.trim();
+        const altPhoneError = document.getElementById('altPhone-error');
 
-                if (inputValue === "" && field !== 'landmark' && field !== 'altPhone') {
-                    if (!errorElement) {
-                        const errorMessage = "This field is required.";
-                        const errorDiv = document.createElement('div');
-                        errorDiv.className = "text-danger";
-                        errorDiv.textContent = errorMessage;
-                        errorDiv.id = field + '-error';
-                        input.parentNode.appendChild(errorDiv);
-                    }
-                    isValid = false;
-                } else {
-                    if (errorElement) {
-                        errorElement.remove();
-                    }
-                }
-            });
-
-            const namePattern = /^[A-Za-z\s]+$/;
-            const pincodePattern = /^\d{6}$/;
-            const phonePattern = /^\d{10}$/;
-
-            if (!namePattern.test(document.getElementById('name').value)) {
-                Swal.fire({
-                   
-                    text: 'Name should contain alphabets only.',
-                    icon: 'error',
-                    position: 'top-end',
-                    toast: true,
-                    background: 'purple',
-                    color:"gold"
-                });
-                isValid = false;
-            }
-            if (!namePattern.test(document.getElementById('city').value)) {
-                Swal.fire({
-                    
-                    text: 'City should contain alphabets only.',
-                    icon: 'error',
-                    position: 'top-end',
-                    toast: true,
-                    background: 'purple',
-                    color:"gold"
-                });
-                isValid = false;
-            }
-            if (document.getElementById('landmark').value && !namePattern.test(document.getElementById('landmark').value)) {
-                Swal.fire({
-                   
-                    text: 'Landmark should contain alphabets only.',
-                    icon: 'error',
-                    position: 'top-end',
-                    toast: true,
-                    background: 'purple',
-                    color:"gold"
-                });
-                isValid = false;
-            }
-            if (!namePattern.test(document.getElementById('state').value)) {
-                Swal.fire({
-                  
-                    text: 'State should contain alphabets only.',
-                    icon: 'error',
-                    position: 'top-end',
-                    toast: true,
-                    background: 'purple',
-                    color:"gold"
-                });
-                isValid = false;
-            }
-            if (!pincodePattern.test(document.getElementById('pincode').value)) {
-                Swal.fire({
-                 
-                    text: 'Pincode should be a 6-digit number.',
-                    icon: 'error',
-                    position: 'top-end',
-                    toast: true,
-                    background: 'purple',
-                    color:"gold"
-                });
-                isValid = false;
-            }
-            if (!phonePattern.test(document.getElementById('phone').value)) {
-                Swal.fire({
-                 
-                    text: 'Phone number should be a 10-digit number.',
-                    icon: 'error',
-                    position: 'top-end',
-                    toast: true,
-                    background: 'purple',
-                    color:"gold"
-                });
-                isValid = false;
-            }
-            const altPhoneValue = document.getElementById('altPhone').value;
-            if (altPhoneValue && !phonePattern.test(altPhoneValue)) {
-                Swal.fire({
-                   
-                    text: 'Alternate phone number should be a 10-digit number.',
-                    icon: 'error',
-                    position: 'center',
-                    toast: true,
-                    background: 'purple',
-                    color:"gold"
-                    
-                });
-                isValid = false;
-            }
-            if (document.getElementById('phone').value === altPhoneValue) {
-                Swal.fire({
-                  
-                    text: 'Phone number and alternate phone number should be different.',
-                    icon: 'error',
-                    position: 'top-end',
-                    toast: true,
-                    background: 'purple',
-                    color:"gold"
-                });
-                isValid = false;
-            }
-
-            return isValid;
+        if (phone === altPhone) {
+            altPhoneError.textContent = 'Phone number and alternate phone number should be different.';
+            isValid = false;
+        } else if (altPhoneError) {
+            altPhoneError.textContent = ''; // Clear error if valid
         }
-    </script>
+
+        return isValid;
+    }
+</script>

@@ -49,16 +49,10 @@ router.delete('/removeFromWishlist',userAuth,userController.removeFromWishlistPa
 router.get('/forgot-password',headerData,profileController.getForgotPasswordPage);
 router.post('/forgot-email-valid',profileController.forgotEmailValid);
 router.post('/verify-passForgot-otp',profileController.verifyPassForgotOtp)
-router.get('/reset-password',headerData,profileController.getResetPasswordPage);
+router.get('/resetPassword',headerData,profileController.getResetPasswordPage);
 router.post('/resend-forgot-otp',profileController.resendOtp);
 router.post('/reset-password',profileController.postNewPassword);
-router.get('/user-profile',headerData,userAuth,profileController.userProfilePage);
-router.get('/change-email',headerData,userAuth,profileController.changeEmail);
-router.post('/change-email',userAuth,profileController.changeEmailValid);
-router.get('/new-email',headerData,userAuth,profileController.loadNewEmailPage);
-router.post('/verify-change-email-otp',userAuth,profileController.verifyEmailChangeOtp);
-router.post('/resend-verify-email-otp',userAuth,profileController.resendEmailChangeOtp);
-router.post('/update-email',userAuth,profileController.updateEmail);
+router.get('/userProfile',headerData,userAuth,profileController.userProfilePage);
 router.get('/change-password',headerData,userAuth,profileController.changePasswordPage);
 router.post('/change-password',userAuth,profileController.changePasswordValid);
 router.post('/verify-change-password-otp',userAuth,profileController.verifyPasswordChangeOtp);
@@ -68,7 +62,7 @@ router.get('/about',profileController.about);
 //address mgt
 
 router.get('/add-address',headerData,userAuth,profileController.addAddressPage);
-router.post('/add-address',userAuth,profileController.postAddAddress);
+router.post('/addAddress',userAuth,profileController.postAddAddress);
 router.get('/edit-address',headerData,userAuth,profileController.editAddress);
 router.post('/edit-address',userAuth,profileController.postEditAddress);
 router.delete('/delete-address',userAuth,profileController.deleteAddess);
@@ -85,7 +79,7 @@ router.post('/remove-coupon',userAuth,cartController.removeCoupon);
 
 //ckeck out and order
 
-router.get('/check-out',headerData,userAuth,orderController.loadCheckOutPage);
+router.get('/checkout',headerData,userAuth,orderController.loadCheckOutPage);
 router.post('/check-out-add-address',userAuth,orderController.postAddAddress);
 router.get('/select-address',userAuth,orderController.selectAddress);
 router.post('/handle-payment',userAuth,orderController.handlePaymentMethod);

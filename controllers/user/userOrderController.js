@@ -172,22 +172,30 @@ const postAddAddress = async (req, res) => {
         const userId = req.session.user;
         const userData = await User.findOne({ _id: userId });
         const { addressType, name, city, landmark, state, pincode, phone, altPhone } = req.body;
-        const userAddress = await Address.findOne({ userId: userData._id })
+
+        if (!userData) {
+            return res.status(401).json({ message: 'User not authenticated.' });
+        }
+
+        let userAddress = await Address.findOne({ userId: userData._id });
         if (!userAddress) {
             const newAddress = new Address({
                 userId: userData._id,
-                address: { addressType, name, city, landmark, state, pincode, phone, altPhone }
+                address: [{ addressType, name, city, landmark, state, pincode, phone, altPhone }]
             });
             await newAddress.save();
         } else {
             userAddress.address.push({ addressType, name, city, landmark, state, pincode, phone, altPhone });
             await userAddress.save();
         }
-        res.redirect('/checkout');
+
+        return res.status(200).json({ message: 'Address added successfully.' });
     } catch (error) {
-        res.redirect('/pageNotFound')
+        
+        return res.status(500).json({ message: 'Failed to add address. Please try again.' });
     }
 };
+
 
 //=============================================================================================
 
