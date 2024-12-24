@@ -20,15 +20,15 @@ router.use(express.static('public'))
  
 router.get('/pageNotFound',userController.pageNotFound);
 router.get('/',headerData, userController.loadHomepage);
-router.get('/signUp',userController.loadSignUp);
-router.post('/signUp',userController.signUp);
+router.get('/signup',userController.loadSignUp);
+router.post('/signup',userController.signup);
 router.get('/shop',headerData,userController.loadShopping);
 router.get('/logIn',userController.loadLogIn);
 router.post('/logIn',userController.logIn);
 router.post('/verifyOtp',userController.verifyOtp);
 router.get('/resendOtp',userController.resendOtp);
 router.get('/auth/google',passport.authenticate('google',{scope:["profile","email"]}));
-router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:"/signUp"}),(req,res)=>{
+router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:"/signup"}),(req,res)=>{
     req.session.user=req.user;
     return res.redirect('/')});
 router.get('/logOut',userController.logOut);

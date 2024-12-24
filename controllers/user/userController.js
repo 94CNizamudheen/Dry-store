@@ -182,7 +182,7 @@ const loadHomepage = async (req, res) => {
 
 const loadSignUp = async (req, res) => {
     try {
-        return res.render("signUp",{message:""});
+        return res.render("signup",{message:""});
     } catch (error) {
         res.status(500).send("Server error");
     }
@@ -351,15 +351,15 @@ async function sendVerificationEmail(email, otp) {
     }
 }
 
-const signUp = async (req, res) => {
+const signup = async (req, res) => {
     try {
         const { name, phone, email, password, cPassword, referralCode  } = req.body;
         if (password !== cPassword) {
-            res.render("signUp", { message: "Passwords not matching" });
+            res.render("signup", { message: "Passwords not matching" });
         }
         const findUser = await User.findOne({ email });
         if (findUser) {
-            return res.render("signUp", {
+            return res.render("signup", {
                 message: "User with this email already exists",
             });
         }
@@ -367,7 +367,7 @@ const signUp = async (req, res) => {
         if (referralCode) {
             const referrer = await User.findOne({ referralCode });
             if (!referrer) {
-                return res.render("signUp", {
+                return res.render("signup", {
                     message: "Invalid referral code",
                 });
             }
@@ -754,7 +754,7 @@ module.exports = {
     pageNotFound,
     loadSignUp,
     loadShopping,
-    signUp,
+    signup,
     loadLogIn,
     logIn,
     verifyOtp,
