@@ -375,12 +375,15 @@ const signup = async (req, res) => {
         }
         const genaratedReferralCode = `REF${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
         const otp = genarateOtp();
+        
         const emailSend = await sendVerificationEmail(email, otp,);
         if (!emailSend) {
             return res.json("Email error");
         }
         const hashedPassword = await bcrypt.hash(password, 10);
+        
         req.session.userOtp = otp;
+        console.log("otp is:",req.session.userOtp)
         req.session.userData = { name, phone, email, password: hashedPassword ,referralCode:genaratedReferralCode,referredBy};
         res.render("verifyOtp");
     } catch (error) {
@@ -441,7 +444,6 @@ const verifyOtp = async (req, res) => {
             return res.redirect('/home');
         }
         const { otp,referrerCode } = req.body;
-        console.log(otp);
 
         if (otp === req.session.userOtp) {
             const user = req.session.userData;
