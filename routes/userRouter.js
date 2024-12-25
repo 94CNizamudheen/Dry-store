@@ -47,6 +47,7 @@ router.delete('/removeFromWishlist',userAuth,userController.removeFromWishlistPa
 //profile management
 
 router.get('/forgot-password',headerData,profileController.getForgotPasswordPage);
+router.get('/forgotPassOtp',headerData,profileController.getForgotPasswordOtp);
 router.post('/forgot-email-valid',profileController.forgotEmailValid);
 router.post('/verify-passForgot-otp',profileController.verifyPassForgotOtp)
 router.get('/resetPassword',headerData,profileController.getResetPasswordPage);

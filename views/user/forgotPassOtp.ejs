@@ -85,7 +85,7 @@
             <div class="p-4">
                 <p class="text-center text-muted mb-4">Please enter the 6-digit OTP sent to your registered email</p>
                 
-                <form method="post" action="/forgotPass-otp" id="otpForm" onsubmit="return validateOtpForm()">
+                <form  id="otpForm" onsubmit="return validateOtpForm()">
                     <div class="mb-3">
                         <input type="text" 
                                required 
@@ -102,7 +102,7 @@
                         Time remaining: <span id="timer" class="font-weight-bold">1:00</span>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100">Verify OTP</button>
+                    <button type="submit" class="btn btn-primary w-100" id="verifyBtn" >Verify OTP</button>
                 </form>
 
                 <p class="text-center mt-3">
@@ -133,13 +133,16 @@
         
         function startOtpTimer() {
             const timerElement = document.getElementById('timer');
+            const verifyBtn = document.getElementById("verifyBtn");
             otpTimerInterval = setInterval(function() {
+                verifyBtn.disabled = false;  
                 const minutes = Math.floor(timer / 60);
                 const seconds = timer % 60;
                 timerElement.textContent = `${minutes}:${seconds < 10 ? "0" : ''}${seconds}`;
                 updateTimerColor((timer / 60) * 100);
                 
                 if (--timer < 0) {
+                    verifyBtn.disabled = true;
                     clearInterval(otpTimerInterval);
                     timerElement.textContent = "Expired";
                     timerElement.style.color = "red";

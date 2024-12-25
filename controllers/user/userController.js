@@ -455,6 +455,7 @@ const verifyOtp = async (req, res) => {
                 password: user.password,
                 referralCode:user.referralCode,
                 referredBy:user.referredBy,
+                rewardPoints:250,
 
 
             });

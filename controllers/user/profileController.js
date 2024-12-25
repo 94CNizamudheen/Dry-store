@@ -63,30 +63,48 @@ const getForgotPasswordPage= async(req,res)=>{
     }
 };
 
-const forgotEmailValid=async(req,res)=>{
+const forgotEmailValid = async (req, res) => {
     try {
-        const {email}=req.body;
-        const findUser= await User.findOne({email:email});
-        if(findUser){
-            const otp= generateOtp();
-            const emailSend= await sendVerificationEmail(email,otp);
-            if(emailSend){
-                req.session.userOtp= otp,
-                req.session.email=email,
-                res.render('forgotPassOtp');
-            }else{
-                res.json({success:false,message:"Failed to send Otp. Please try again"});
+        const { email } = req.body;
+        const findUser = await User.findOne({ email: email });
+        
+        if (findUser) {
+            const otp = generateOtp();
+            const emailSend = await sendVerificationEmail(email, otp);
+            
+            if (emailSend) {
+                req.session.userOtp = otp;
+                req.session.email = email;
+                res.json({
+                    success: true,
+                    message: "OTP sent successfully"
+                });
+            } else {
+                res.json({
+                    success: false,
+                    message: "Failed to send OTP. Please try again"
+                });
             }
-        }else{
-            res.render('forget-password',{
-                message:"User with this email does Not exist"
-            })
+        } else {
+            res.json({
+                success: false,
+                message: "User with this email does not exist"
+            });
         }
     } catch (error) {
-       res.redirect('/pageNotFound');
-       
+        res.json({
+            success: false,
+            message: "An unexpected error occurred"
+        });
     }
 };
+const getForgotPasswordOtp= async(req,res)=>{
+    try {
+        res.render('forgotPassOtp')
+    } catch (error) {
+        res.redirect('/pageNotFound')
+    }
+}
 
 const verifyPassForgotOtp= async(req,res)=>{
     try {
@@ -133,7 +151,8 @@ const postNewPassword=async(req,res)=>{
         if(newPassword===confirmPassword){
             const hashedPassword=await securePassword(newPassword);
             const update = await User.findOneAndUpdate({ email:email},{$set:{password:hashedPassword}},{ new: true });
-            return res.redirect('/')
+
+            return res.redirect('/logIn')
         }else{
             res.render('resetPassword',{
                 message:"Password not Matching"
@@ -358,6 +377,7 @@ module.exports={
     changePasswordPage,
     changePasswordValid,
     verifyPasswordChangeOtp,
+    getForgotPasswordOtp,
     resendPasswordChangeOtp,
     addAddressPage,
     postAddAddress,
