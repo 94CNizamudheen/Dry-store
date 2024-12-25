@@ -68,6 +68,9 @@ const loadCheckOutPage = async (req, res) => {
         const userData = await User.findById(userId);
         const addressData = await Address.findOne({ userId: userId });
         const quickbuyQuantity= req.query.quantity;
+        if(!userId){
+            return res.redirect('/logIn');
+        }
         
         let cartedProducts;
         if (productId) {
