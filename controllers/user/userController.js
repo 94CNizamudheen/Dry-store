@@ -479,7 +479,7 @@ const verifyOtp = async (req, res) => {
             await addReferralReward(saveUserData._id); 
             req.session.user = saveUserData;
             return res.status(200).json({ 
-                success: true, 
+                success: true,
                 redirectUrl: '/' 
             });
           
