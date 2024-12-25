@@ -15,10 +15,7 @@
             margin: 0 auto;
         }
 
-        .progress-tracker {
-            position: relative;
-            margin: 30px 0;
-        }
+       
 
         .progress-line {
             position: absolute;
@@ -215,25 +212,12 @@
             right: 10px;
         }
 
-        .order-card {
-            transition: opacity 0.3s ease;
-            margin: 0 auto;
-            max-width: 900px;
-            opacity: 1;
-        }
-
         #ordersContainer {
             position: relative;
             min-height: 200px;
         }
 
-        .order-card {
-            transition: opacity 0.3s ease;
-            margin: 0 auto;
-            max-width: 900px;
-            opacity: 0;
-            display: none;
-        }
+      
 
         .order-card.active {
             display: block;
@@ -257,6 +241,114 @@
             margin: 0 auto 8px;
             color: #666; /* Default color for inactive icons */
         }
+        /* Container Adjustments */
+@media screen and (max-width: 768px) {
+    .order-card {
+        padding: 1rem;
+        margin: 0 10px;
+    }
+    
+    /* Order Items Section */
+    .item-row {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+        padding: 15px 0;
+    }
+
+    .item-image {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto;
+    }
+
+    .item-row .text-end {
+        text-align: center !important;
+        width: 100%;
+    }
+
+    /* Activity Feed */
+    .activity-item {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 10px;
+    }
+
+    .activity-icon {
+        margin: 0 0 10px 0;
+    }
+
+    /* Address Section */
+    .row.mt-4 {
+        margin: 1rem -10px;
+    }
+
+    .col-md-4 {
+        margin-bottom: 1rem;
+    }
+
+    .address-card {
+        padding: 1rem;
+    }
+
+    /* Navigation Arrows */
+    .nav-arrow {
+        width: 30px;
+        height: 30px;
+        top: 20px;
+    }
+
+    .nav-arrow-left {
+        left: 5px;
+    }
+
+    .nav-arrow-right {
+        right: 5px;
+    }
+
+    /* Order Details */
+    .text-end {
+        text-align: left !important;
+        margin-top: 10px;
+    }
+
+    /* Buttons */
+    .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    /* Total Price Section */
+    #finalAmount, .text-end h6 {
+        text-align: right !important;
+        margin: 5px 0;
+    }
+}
+
+/* Small Screen Optimizations */
+@media screen and (max-width: 480px) {
+    .order-card {
+        padding: 0.75rem;
+    }
+
+    h5, h6 {
+        font-size: 0.9rem;
+    }
+
+    .text-muted {
+        font-size: 0.8rem;
+    }
+
+    .address-type {
+        font-size: 0.75rem;
+        padding: 3px 8px;
+    }
+
+    .address-details {
+        font-size: 0.85rem;
+    }
+}
 
         .step.placed .status-icon,
         .step.packaging .status-icon,
@@ -268,6 +360,98 @@
         .step.cancelled .status-icon {
             color: #f44336; /* Color for cancelled status */
         }
+        /* Base styles remain the same */
+.progress-tracker {
+    position: relative;
+    margin: 30px 0;
+}
+
+.progress-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #f3ebeb;
+    transform: translateY(-50%);
+}
+
+.progress-steps {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Mobile responsive adjustments */
+@media screen and (max-width: 768px) {
+    .progress-tracker {
+        margin: 40px 10px;
+        overflow-x: hidden;
+    }
+    
+    .progress-steps {
+        padding: 0 10px;
+    }
+    
+    .step {
+        width: 20px;  /* Slightly smaller circles on mobile */
+        height: 20px;
+    }
+    
+    .status-icon {
+        width: 20px;  /* Smaller icons */
+        height: 20px;
+    }
+    
+    .step-label {
+        font-size: 10px;  /* Smaller font */
+        width: 70px;  /* Constrain width */
+        text-align: center;
+        white-space: normal;  /* Allow text wrapping */
+        line-height: 1.2;
+        top: 25px;
+    }
+    
+    /* Adjust spacing between steps */
+    .progress-steps {
+        gap: 10px;
+    }
+    
+    /* Optional: Convert to vertical layout for very small screens */
+    @media screen and (max-width: 380px) {
+        .progress-tracker {
+            margin: 20px 0;
+        }
+        
+        .progress-steps {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 30px;
+            padding-left: 30px;
+        }
+        
+        .progress-line {
+            width: 2px;
+            height: 100%;
+            left: 40px;
+            top: 0;
+            transform: none;
+        }
+        
+        .step {
+            margin-left: 10px;
+        }
+        
+        .step-label {
+            top: 50%;
+            left: 35px;
+            transform: translateY(-50%);
+            text-align: left;
+            white-space: nowrap;
+            width: auto;
+        }
+    }
+}
     </style>
 
 
