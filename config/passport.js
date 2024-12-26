@@ -21,6 +21,7 @@ passport.use(new GoogleStrategy({
                 name:profile.displayName,
                 email:profile.emails[0].value,
                 googleId:profile.id,
+                rewardPoints:250,
             })
             await user.save();
             return done(null,user)
